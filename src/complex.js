@@ -36,12 +36,14 @@ Z.divide   =function(x,y){x=complexify(x);y=complexify(y);var d=y.re*y.re+y.im*y
 // 0j1*2 ←→ ¯1
 // 1j2*3 ←→ ¯11j¯2
 // .5j1.5*5 ←→ 9.875j¯0.375
+// 9 4 0 ¯4 ¯9*.5 ←→ 3 2 0 0j2 0j3
 Z.pow=function(x,y){
   if(typeof x==='number'&&typeof y==='number'&&(x>=0||isInt(y)))return Math.pow(x,y)
   if(typeof y==='number'&&isInt(y,0)){var r=1;while(y){(y&1)&&(r=Z.multiply(r,x));x=Z.multiply(x,x);y>>=1};return r}
+  if(typeof x==='number'&&y===.5)return x<0?new Z(0,Math.sqrt(-x)):Math.sqrt(x)
   return Z.exp(Z.multiply(y,Z.log(x)))
 }
-Z.sqrt=function(x){return typeof x==='number'&&x>=0?Math.sqrt(x):Z.pow(x,.5)}
+Z.sqrt=function(x){return Z.pow(x,.5)}
 Z.magnitude=function(x){return Math.sqrt(x.re*x.re+x.im*x.im)}
 Z.direction=function(x){return Math.atan2(x.im,x.re)}
 Z.sin=function(x){return Z.negitimes(Z.sinh(Z.itimes(x)))}
