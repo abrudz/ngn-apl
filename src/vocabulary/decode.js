@@ -37,6 +37,8 @@ addVocabulary({
   // ... A←2 1⍴2 10
   // ... A⊥M ←→ (2 8⍴0 1  2  3   4   5   6   7
   // ...             0 1 10 11 100 101 110 111)
+  // 2j3⊤4j5 6j7 8j9 ←→ 2j2 2j1 ¯1j2
+  // 10⊥3 4.5j1 ←→ 34.5j1
   '⊥':function(om,al){
     assert(al)
     if(!al.shape.length)al=new A([al.unwrap()])
@@ -49,7 +51,7 @@ addVocabulary({
       var y=[];for(var l=0;l<firstDimB;l++)y.push(b[j+l*(b.length/firstDimB)])
       if(x.length===1)x=repeat([x[0]],y.length)
       if(y.length===1)y=repeat([y[0]],x.length)
-      var z=y[0];for(var k=1;k<y.length;k++)z=z*x[k]+y[k]
+      var z=y[0];for(var k=1;k<y.length;k++)z=Z.add(Z.multiply(z,x[k]),y[k])
       data.push(z)
     }
     return new A(data,al.shape.slice(0,-1).concat(om.shape.slice(1)))
