@@ -31,16 +31,17 @@ addVocabulary({
   // ...         0 1 0
   // ...         1 1 4
   // ...         1 3 11)
+  // 0j1 2j3 4j5⊤6j7 ←→ 0 ¯2j2 2j2
   '⊤':function(om,al){
     assert(al)
     var a=al.toArray(),b=om.toArray(),shape=al.shape.concat(om.shape),data=Array(prod(shape))
     var n=al.shape.length?al.shape[0]:1,m=a.length/n
     for(var i=0;i<m;i++)for(var j=0;j<b.length;j++){
-      var y=Math.abs(b[j])
+      var y=typeof b[j]==='number'?Math.abs(b[j]):b[j]
       for(var k=n-1;k>=0;k--){
         var x=a[k*m+i]
-        data[(k*m+i)*b.length+j]=x?y%x:y
-        y=x?Math.round((y-y%x)/x):0
+        data[(k*m+i)*b.length+j]=iszero(x)?y:Z.residue(x,y)
+        y=iszero(x)?0:Z.divide(Z.subtract(y,Z.residue(x,y)),x)
       }
     }
     return new A(data,shape)
