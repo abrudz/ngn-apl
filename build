@@ -71,43 +71,11 @@ if [ ! -e $f -o "$(find src -newer $f | wc -l)" -ne 0 ]; then
   chmod +x $f
 fi
 
-# Build web demo
-mkdir -p web web-tmp
-cp_uv web-src/index.html web/index.html
-cp_uv web-src/tipsy.gif  web/tipsy.gif
-o=web-tmp/examples.js; echo "Building $o"; web-src/examples-gen.js
-o=web/all.js
-if [ ! -e $o ] || [ -n "$(find src web-src web-tmp test lib -newer $o)" ]; then
-    echo "Building $o"
-    (
-        cat lib/apl.js                                  \
-            web-src/jquery.min.js                       \
-            web-src/jquery.fieldselection.min.js        \
-            web-src/jquery.keyboard.js                  \
-            web-src/jquery.keyboard.extension-typing.js \
-            web-src/jquery.tipsy.js                     \
-            web-tmp/examples.js                         \
-            web-src/index.js                            \
-            test/rundoctest.js
-        echo -n 'var aplTests = '
-        node test/collectdoctests.js
-    ) >$o
-fi
-xcat 'web-src/index.css web-src/keyboard.css web-src/tipsy.css' web/all.css
+#web demo
+#todo: echo -n 'var aplTests = ' ; node test/collectdoctests.js
 
-# Build mobile demo
-mkdir -p m/images m-tmp
-cp_uv m-src/index.html        m/index.html
-cp_uv m-src/images/cursor.png m/images/cursor.png
-xcat 'lib/apl.js web-src/jquery.min.js m-src/index.js' m/all.js
-xcat m-src/index.css m/all.css
-
-# Test
-
-echo 'Running doctests'
-test/collectdoctests.js | test/rundoctests.js
-
-echo 'Running example tests'
-examples/test
+#test
+echo 'Running doctests'; test/collectdoctests.js | test/rundoctests.js
+echo 'Running example tests'; examples/test
 
 echo 'OK'

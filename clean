@@ -1,4 +1,3 @@
 #!/bin/bash
 set -e
-
-rm -rfv lib web web-tmp m m-tmp
+rm -rfv lib

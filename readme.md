@@ -11,8 +11,6 @@
 /_/   \_\_|   |_____|  |___________|
 </pre>
 
-[![Build Status](https://travis-ci.org/ngn/apl.png?branch=master)](https://travis-ci.org/ngn/apl)
-
 An [APL](https://en.wikipedia.org/wiki/APL_%28programming_language%29) compiler written in JavaScript<br>
 Runs on [NodeJS](http://nodejs.org/) or in a browser<br>
 
