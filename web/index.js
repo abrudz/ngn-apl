@@ -162,17 +162,6 @@ $(function($){
     return false
   })
 
-  // Examples
-  for(var i=0;i<window.examples.length;i++){
-    $('#examples').append(' <a href="#example'+i+'>'+window.examples[i][0]+'</a>')
-  }
-
-  $('#examples').on('click','a',function(){
-    var a=window.examples[+$(this).attr('href').replace(/#example(\d+)$/,'$1')]
-    $('#code').val(a[1]).focus()
-    return false
-  })
-
   // Tests
   function runDocTests(){
     $('#result').removeClass('error').html('')
