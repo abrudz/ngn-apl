@@ -2,31 +2,21 @@
 set -e
 cd "$(dirname "$0")"
 
-if [ ! -e node_modules ]; then npm install; fi
-cp_uv() { if [[ $1 -nt $2 ]]; then cp -v "$1" "$2"; fi }
-
-# xcat INPUTFILES OUTPUTFILE
-# Concatenates INPUTFILES into OUTPUTFILE only if at least one of them is newer than OUTPUTFILE
-xcat() { [ -e $2 ] && [ -z "$(find $1 -newer $2)" ] || ( echo "$1 -> $2" && cat $1 >$2 ); }
-
-# Build lib/apl.js
+#build lib/apl.js
 f=lib/apl.js
 if [ ! -e $f -o "$(find src -newer $f | wc -l)" -ne 0 ]; then
-  echo "Building $f"
+  echo "building $f"
   mkdir -p lib
   echo '//usr/bin/env node "$0" $@;exit $?' >$f
   cat src/{helpers,errors,array}.js >>$f
   node >>$f <<.
     var old=require('./old-apl')
     var ast=old.parse(require('fs').readFileSync('src/prelude.apl','utf8'))
-    var code=old.compileAST(ast) // creates ast.vars as a side effect
-    var vars={};for(var k in ast.vars)vars[k]=ast.vars[k] // flatten prototype chain
+    var code=old.compileAST(ast) //creates ast.vars as a side effect
+    var vars={};for(var k in ast.vars)vars[k]=ast.vars[k] //flatten prototype chain
     process.stdout.write('var prelude='+old.repr({code:code,nSlots:ast.nSlots,vars:vars})+';\\n')
 .
   cat                               \
-    src/helpers.js                  \
-    src/errors.js                   \
-    src/array.js                    \
     src/complex.js                  \
     src/vm.js                       \
     src/parser.js                   \
@@ -75,7 +65,6 @@ fi
 #todo: echo -n 'var aplTests = ' ; node test/collectdoctests.js
 
 #test
-echo 'Running doctests'; test/collectdoctests.js | test/rundoctests.js
-echo 'Running example tests'; examples/test
-
-echo 'OK'
+echo doctests; test/collectdoctests.js | test/rundoctests.js
+echo examples; examples/test
+echo ok
