@@ -145,151 +145,6 @@ A.zilde=new A([],[0])
 A.scalar=function(x){return new A([x],[])}
 A.bool=[A.zero,A.one]
 var prelude={"code":[1,new A([],[0],[1],0),4,0,73,9,1,new A("ABCDEFGHIJKLMNOPQRSTUVWXYZ",[26],[1],0),4,0,84,9,1,new A("ÁÂÃÇÈÊËÌÍÎÏÐÒÓÔÕÙÚÛÝþãìðòõ",[26],[1],0),4,0,85,9,7,22,3,1,2,3,0,65,3,1,0,3,0,29,3,1,2,6,3,0,44,5,6,8,3,0,72,3,0,44,6,4,0,44,9,7,36,7,15,3,2,0,3,1,0,3,2,2,6,3,1,2,5,8,3,0,72,7,12,3,2,0,3,1,0,5,3,1,2,5,8,6,8,4,0,74,9,7,173,3,1,2,3,0,62,5,3,0,62,5,3,0,16,1,new A([1],[],[],0),6,11,8,9,1,new A("RANK ERROR",[10],[1],0),3,0,61,5,8,9,3,1,0,4,1,4,9,3,1,2,7,123,3,2,0,3,0,62,5,3,0,62,5,3,0,16,1,new A([1],[],[],0),6,11,8,9,1,new A("RANK ERROR",[10],[1],0),3,0,61,5,8,9,3,2,0,3,0,13,5,4,2,0,9,3,1,4,3,0,62,5,3,0,62,5,3,0,15,3,2,0,3,0,62,5,6,11,8,9,1,new A("RANK ERROR",[10],[1],0),3,0,61,5,8,9,3,1,4,3,0,62,5,3,0,19,3,2,0,6,3,0,45,3,0,65,5,5,11,8,9,1,new A("INDEX ERROR",[11],[1],0),3,0,61,5,8,9,3,1,4,3,0,67,3,2,0,6,3,0,75,5,4,1,4,8,3,0,27,5,5,9,3,1,4,8,3,0,72,7,229,3,1,0,3,0,62,5,3,0,62,5,3,0,14,1,new A([0],[],[],0),6,11,9,9,3,1,0,3,0,70,5,8,9,3,1,0,3,0,62,5,3,0,3,3,0,65,5,5,3,0,14,1,new A([0],[],[],0),6,11,5,9,3,1,0,8,9,3,1,0,3,0,62,5,4,1,4,9,3,1,0,3,0,13,5,4,1,0,9,3,1,0,3,0,62,3,0,27,5,5,4,1,5,3,0,79,3,0,27,5,5,3,0,35,3,0,65,5,5,4,1,6,9,3,1,5,3,0,13,3,0,21,1,new A([1],[],[],0),3,0,62,3,1,6,6,6,3,0,36,3,0,26,6,3,0,37,3,0,62,6,3,0,27,5,5,4,1,5,3,0,35,3,0,65,5,5,3,0,70,5,4,1,7,9,3,1,0,7,18,3,2,0,3,0,62,3,2,2,6,3,0,70,3,1,7,6,8,3,0,27,5,3,1,5,6,3,0,76,3,0,65,5,5,3,0,70,5,3,0,62,3,1,7,3,0,13,3,1,4,6,6,8,6,4,0,75,9,7,335,3,1,2,3,0,62,5,3,0,62,5,3,0,16,1,new A([1],[],[],0),6,11,8,9,1,new A("RANK ERROR",[10],[1],0),3,0,61,5,8,9,3,1,0,3,0,62,5,3,0,62,5,3,0,15,1,new A([1],[],[],0),6,11,8,9,1,new A("NONCE ERROR",[11],[1],0),3,0,61,5,8,9,1,new A([0],[],[],0),3,0,14,3,1,2,6,3,0,13,5,4,1,2,9,3,1,2,3,0,33,1,new A([1,1],[2],[1],0),6,3,0,44,5,4,1,4,9,3,1,2,3,0,65,3,1,4,6,4,1,5,9,3,1,0,3,0,65,3,1,4,6,4,1,6,9,3,0,73,7,52,3,1,5,3,0,70,1,new A([1],[],[],0),6,3,0,14,1,new A([1],[],[],0),6,11,34,9,3,0,73,7,26,3,1,5,3,0,26,1,new A([1],[],[],0),6,4,1,5,9,3,1,6,3,0,26,1,new A([1],[],[],0),6,4,1,6,8,5,8,8,5,9,3,0,73,7,52,3,1,5,3,0,70,1,new A([-1],[],[],0),6,3,0,14,1,new A([1],[],[],0),6,11,34,9,3,0,73,7,26,3,1,5,3,0,26,1,new A([-1],[],[],0),6,4,1,5,9,3,1,6,3,0,26,1,new A([-1],[],[],0),6,4,1,6,8,5,8,8,5,9,3,1,5,3,0,62,5,3,0,42,5,3,0,65,3,1,5,6,3,0,13,3,0,81,5,3,1,5,3,0,62,5,6,4,1,5,9,1,new A([0],[],[],0),4,1,7,9,3,1,6,3,0,43,5,7,38,3,2,0,3,0,70,3,2,2,6,3,0,26,3,1,7,6,4,2,4,9,1,new A([1],[],[],0),3,0,0,3,2,2,6,4,1,7,9,3,2,4,8,3,0,27,5,3,1,5,6,8,3,0,72,3,0,43,6,4,0,43,9,7,235,3,1,2,3,0,62,5,3,0,62,5,3,0,16,1,new A([1],[],[],0),6,11,8,9,1,new A("RANK ERROR",[10],[1],0),3,0,61,5,8,9,3,1,2,3,0,13,5,4,1,4,9,3,1,0,7,46,3,2,0,3,0,62,5,3,0,62,5,3,0,14,1,new A([0],[],[],0),6,11,22,9,3,2,0,3,0,62,1,new A([1],[],[],0),3,0,62,3,1,4,3,0,62,5,6,6,8,9,3,2,0,8,5,4,1,0,9,3,1,0,3,0,62,5,3,0,62,5,3,0,17,3,1,4,3,0,62,5,6,11,8,9,1,new A("RANK ERROR",[10],[1],0),3,0,61,5,8,9,3,1,4,3,0,70,3,1,0,3,0,62,5,3,0,62,5,6,4,1,4,9,3,1,0,3,0,62,5,3,0,0,3,1,4,6,3,0,35,1,new A([0],[],[],0),6,3,0,3,1,new A([0],[],[],0),3,0,18,3,1,4,6,6,3,0,0,3,1,0,3,0,62,5,3,0,1,3,1,4,6,3,0,34,1,new A([0],[],[],0),6,3,0,3,1,new A([0],[],[],0),3,0,17,3,1,4,6,6,6,4,1,4,9,3,1,0,3,0,70,3,1,4,6,8,3,0,72,7,60,3,1,0,3,0,62,5,3,0,62,5,3,0,14,1,new A([0],[],[],0),6,11,5,9,3,1,0,8,9,3,1,0,3,1,0,3,0,62,5,3,0,62,5,3,0,0,1,new A([-1],[],[],0),6,2,1,1,new A([0],[1],[1],0),2,2,3,0,68,3,0,43,6,5,8,6,4,0,26,9,7,23,3,1,0,1,new A([0],[],[],0),2,1,1,new A([0],[1],[1],0),2,2,3,0,68,3,0,13,6,3,1,2,6,8,3,0,72,7,38,3,1,0,3,0,62,3,1,0,3,0,79,5,3,1,0,3,0,62,5,3,0,26,1,new A([1],[],[],0),6,3,0,3,3,0,65,5,5,2,2,6,8,6,4,0,76,9,7,4,3,1,0,8,4,0,77,9,7,4,3,1,2,8,3,0,72,7,4,3,1,0,8,6,4,0,78,9,7,15,3,1,0,3,0,20,3,1,2,6,3,0,44,5,8,3,0,72,7,21,1,new A([1],[],[],0),3,0,13,3,1,0,3,0,62,5,6,3,0,62,3,0,73,6,8,6,4,0,79,9,3,0,13,3,0,72,7,23,3,1,0,3,0,62,3,1,0,3,0,62,5,3,0,3,3,0,65,5,5,6,8,6,4,0,13,9,7,22,3,1,2,3,0,3,3,0,25,3,0,0,6,3,1,0,3,0,80,5,6,8,3,0,72,7,724,7,28,1,new A([0.5],[],[],0),3,0,5,3,2,0,3,0,0,5,3,0,3,3,0,25,3,0,0,6,3,2,0,6,6,8,4,1,4,9,7,290,1,new A([1],[],[],0),2,1,1,new A([0],[1],[1],0),2,2,3,0,68,3,2,0,3,0,62,5,6,4,2,4,9,3,2,4,3,0,19,1,new A([1],[],[],0),6,11,43,9,3,2,0,7,35,3,3,0,3,0,13,5,3,1,4,5,4,3,4,9,3,3,4,3,0,4,3,3,0,6,3,3,4,3,0,76,5,2,2,8,5,8,9,1,new A([2],[],[],0),3,0,4,3,2,4,6,3,0,35,5,4,2,5,9,3,2,0,3,0,70,3,2,5,3,0,13,3,2,0,3,0,62,5,3,0,70,1,new A([1],[],[],0),6,6,6,4,2,6,9,3,2,0,3,0,26,3,2,5,3,0,13,1,new A([0],[],[],0),6,6,4,2,7,9,3,2,6,3,2,1,5,10,2,4,2,8,9,4,2,9,9,9,3,2,7,3,0,3,3,0,25,3,0,0,6,3,2,8,3,0,71,5,3,0,0,5,6,4,2,10,9,3,2,10,3,0,3,3,0,25,3,0,0,6,3,2,8,6,3,0,1,3,2,7,6,3,2,1,5,10,2,4,2,11,9,4,2,12,9,9,3,2,11,3,0,13,3,2,8,6,3,2,12,3,0,70,3,2,4,3,0,1,5,3,0,13,1,new A([2],[],[],0),3,0,4,3,2,4,6,3,0,34,5,6,6,3,0,76,3,2,10,3,0,13,3,2,9,6,6,2,2,8,4,1,5,9,7,214,3,2,0,3,0,62,5,3,0,70,1,new A([1],[],[],0),6,4,2,4,3,0,14,1,new A([1],[],[],0),6,11,9,9,3,2,0,3,0,4,5,8,9,1,new A([2],[],[],0),3,0,4,3,2,4,6,3,0,35,5,4,2,5,9,3,2,0,3,0,70,3,2,5,3,0,13,3,2,5,6,6,3,2,1,5,4,2,6,9,3,2,0,3,0,26,3,2,5,3,0,13,3,2,5,6,6,3,2,1,5,4,2,7,9,3,2,0,3,0,70,3,2,4,3,0,1,3,2,5,6,3,0,13,3,2,5,6,6,4,2,8,9,3,2,7,3,0,3,3,0,25,3,0,0,6,3,2,8,6,3,0,3,3,0,25,3,0,0,6,3,2,6,6,3,0,1,5,4,2,9,9,3,2,7,3,0,70,3,2,4,3,0,1,5,3,0,13,1,new A([2],[],[],0),3,0,4,3,2,4,6,3,0,34,5,6,6,3,0,76,3,2,9,3,0,13,3,2,6,6,6,8,4,1,6,9,3,1,0,3,0,62,5,3,0,62,5,3,0,14,1,new A([0],[],[],0),6,11,9,9,3,1,0,3,0,4,5,8,9,3,1,0,3,0,62,5,3,0,62,5,3,0,14,1,new A([1],[],[],0),6,11,17,9,3,1,0,3,0,76,5,3,1,1,5,3,0,13,5,8,9,3,1,0,3,0,62,5,3,0,62,5,3,0,15,1,new A([2],[],[],0),6,11,8,9,1,new A("RANK ERROR",[10],[1],0),3,0,61,5,8,9,3,1,0,3,0,62,5,3,0,19,3,0,65,5,5,3,0,29,1,new A([0],[],[],0),6,11,8,9,1,new A("LENGTH ERROR",[12],[1],0),3,0,61,5,8,9,3,1,0,3,1,5,5,10,2,4,1,7,9,4,1,8,9,9,3,1,7,3,0,71,5,3,0,0,5,3,0,3,3,0,25,3,0,0,6,3,1,8,3,1,6,5,6,8,6,4,0,80,9,7,31,7,11,3,2,2,3,1,0,3,2,0,6,8,3,0,72,7,11,3,2,0,3,1,0,3,2,0,6,8,6,8,4,0,81,9,3,0,1,4,0,2,9,3,0,5,4,0,6,9,3,0,8,4,0,9,9,3,0,46,4,0,47,9,3,0,29,4,0,30,8],"nSlots":86,"vars":{"get_⎕OFF":{"category":2,"slot":83,"scopeDepth":0},"⎕OFF":{"category":1},"⎕A":{"scopeDepth":0,"slot":84,"category":1},"⎕Á":{"scopeDepth":0,"slot":85,"category":1},"⎕a":{"scopeDepth":0,"slot":82,"category":1},"+":{"category":2,"slot":0,"scopeDepth":0},"-":{"category":2,"slot":1,"scopeDepth":0},"−":{"category":2,"slot":2,"scopeDepth":0},"×":{"category":2,"slot":3,"scopeDepth":0},"÷":{"category":2,"slot":4,"scopeDepth":0},"*":{"category":2,"slot":5,"scopeDepth":0},"⋆":{"category":2,"slot":6,"scopeDepth":0},"⍟":{"category":2,"slot":7,"scopeDepth":0},"|":{"category":2,"slot":8,"scopeDepth":0},"∣":{"category":2,"slot":9,"scopeDepth":0},"\\":{"category":3,"slot":10,"scopeDepth":0},"⍀":{"category":3,"slot":11,"scopeDepth":0},"○":{"category":2,"slot":12,"scopeDepth":0},",":{"category":2,"slot":13,"scopeDepth":0},"=":{"category":2,"slot":14,"scopeDepth":0},"≠":{"category":2,"slot":15,"scopeDepth":0},"<":{"category":2,"slot":16,"scopeDepth":0},">":{"category":2,"slot":17,"scopeDepth":0},"≤":{"category":2,"slot":18,"scopeDepth":0},"≥":{"category":2,"slot":19,"scopeDepth":0},"≡":{"category":2,"slot":20,"scopeDepth":0},"∘":{"category":4,"slot":21,"scopeDepth":0},"∪":{"category":2,"slot":22,"scopeDepth":0},"∩":{"category":2,"slot":23,"scopeDepth":0},"⊥":{"category":2,"slot":24,"scopeDepth":0},".":{"category":4,"slot":25,"scopeDepth":0},"↓":{"category":2,"slot":26,"scopeDepth":0},"¨":{"category":3,"slot":27,"scopeDepth":0},"⊤":{"category":2,"slot":28,"scopeDepth":0},"∊":{"category":2,"slot":29,"scopeDepth":0},"∈":{"category":2,"slot":30,"scopeDepth":0},"!":{"category":2,"slot":31,"scopeDepth":0},"⍎":{"category":2,"slot":32,"scopeDepth":0},"⍷":{"category":2,"slot":33,"scopeDepth":0},"⌊":{"category":2,"slot":34,"scopeDepth":0},"⌈":{"category":2,"slot":35,"scopeDepth":0},"_fork1":{"category":2,"slot":36,"scopeDepth":0},"_fork2":{"category":2,"slot":37,"scopeDepth":0},"⍕":{"category":2,"slot":38,"scopeDepth":0},"⍋":{"category":2,"slot":39,"scopeDepth":0},"⍒":{"category":2,"slot":40,"scopeDepth":0},"⍁":{"category":4,"slot":41,"scopeDepth":0},"⍳":{"category":2,"slot":42,"scopeDepth":0},"⊂":{"category":2,"slot":43,"scopeDepth":0},"~":{"category":2,"slot":44,"scopeDepth":0},"∨":{"category":2,"slot":45,"scopeDepth":0},"∧":{"category":2,"slot":46,"scopeDepth":0},"^":{"category":2,"slot":47,"scopeDepth":0},"⍱":{"category":2,"slot":48,"scopeDepth":0},"⍲":{"category":2,"slot":49,"scopeDepth":0},"⍣":{"category":4,"slot":50,"scopeDepth":0},"get_⎕":{"category":2,"slot":51,"scopeDepth":0},"⎕":{"category":1},"set_⎕":{"category":2,"slot":52,"scopeDepth":0},"get_⍞":{"category":2,"slot":53,"scopeDepth":0},"⍞":{"category":1},"set_⍞":{"category":2,"slot":54,"scopeDepth":0},"get_⎕IO":{"category":2,"slot":55,"scopeDepth":0},"⎕IO":{"category":1},"set_⎕IO":{"category":2,"slot":56,"scopeDepth":0},"⎕DL":{"category":2,"slot":57,"scopeDepth":0},"⎕RE":{"category":2,"slot":58,"scopeDepth":0},"⎕UCS":{"category":2,"slot":59,"scopeDepth":0},"?":{"category":2,"slot":60,"scopeDepth":0},"↗":{"category":2,"slot":61,"scopeDepth":0},"⍴":{"category":2,"slot":62,"scopeDepth":0},"⌽":{"category":2,"slot":63,"scopeDepth":0},"⊖":{"category":2,"slot":64,"scopeDepth":0},"/":{"category":3,"slot":65,"scopeDepth":0},"⌿":{"category":3,"slot":66,"scopeDepth":0},"⌷":{"category":2,"slot":67,"scopeDepth":0},"_index":{"category":2,"slot":68,"scopeDepth":0},"_substitute":{"category":2,"slot":69,"scopeDepth":0},"↑":{"category":2,"slot":70,"scopeDepth":0},"⍉":{"category":2,"slot":71,"scopeDepth":0},"⍠":{"category":4,"slot":72,"scopeDepth":0},"⍬":{"scopeDepth":0,"slot":73,"category":1},"_atop":{"scopeDepth":0,"slot":74,"category":4},"⊃":{"scopeDepth":0,"slot":75,"category":2},"⍪":{"scopeDepth":0,"slot":76,"category":2},"⊢":{"scopeDepth":0,"slot":77,"category":2},"⊣":{"scopeDepth":0,"slot":78,"category":2},"≢":{"scopeDepth":0,"slot":79,"category":2},"⌹":{"scopeDepth":0,"slot":80,"category":2},"⍨":{"scopeDepth":0,"slot":81,"category":3}}};
-function assert(x){if(!x)throw Error('assertion failed')}
-function isInt(x,start,end){return x===~~x&&(start==null||start<=x&&(end==null||x<end))}
-function prod(a){var r=1;for(var i=0;i<a.length;i++)r*=a[i];return r}
-function all(a){for(var i=0;i<a.length;i++)if(!a[i])return;return 1}
-function extend(x,y){for(var k in y)x[k]=y[k];return x}
-function formatNumber(x){return(''+x).replace('Infinity','∞').replace(/-/g,'¯')}
-function repeat(a,n){ // catenates "n" instances of a string or array "a"
-  assert(a.length!=null)
-  assert(isInt(n,0))
-  if(!n)return a.slice(0,0)
-  var m=n*a.length;while(a.length*2<m)a=a.concat(a)
-  return a.concat(a.slice(0,m-a.length))
-}
-this.Uint8Array =this.Uint8Array ||Array
-this.Uint16Array=this.Uint16Array||Array
-this.Uint32Array=this.Uint32Array||Array
-this.Int8Array  =this.Int8Array  ||Array
-this.Int16Array =this.Int16Array ||Array
-this.Int32Array =this.Int32Array ||Array
-Array.prototype.set=Array.prototype.set||function(a,i0){for(var i=0;i<a.length;i++)this[i0+i]=a[i]}
-function spread(a,i,m,n){ // repeat the pattern a[i...i+m] so it covers a[i...i+n]
-  if(a instanceof Array){for(var j=m;j<n;j++)a[i+j]=a[i+j%m]}
-  else{a=a.subarray(i,i+n);while(2*m<n){a.set(a.subarray(0,m),m);m*=2};a.set(a.subarray(0,n-m),m)}
-}
-function arrayEquals(x,y){
-  assert(x.length!=null)
-  assert(y.length!=null)
-  if(x.length!==y.length)return 0
-  for(var i=0;i<x.length;i++)if(x[i]!==y[i])return 0
-  return 1
-}
-function reversed(a){
-  if(a instanceof Array)return a.slice(0).reverse()
-  var i=-1,j=a.length,b=new a.constructor(a.length);b.set(a)
-  while(++i<--j){var h=b[i];b[i]=b[j];b[j]=h}
-  return b
-}
-String.prototype.includes=String.prototype.includes||function(){
-  'use strict';return String.prototype.indexOf.apply(this,arguments)!==-1
-}
-function aplError(name,m,o){ // m:message, o:options
-  m=m||''
-  if(o&&o.aplCode&&o.offset!=null){
-    var a=o.aplCode.slice(0,o.offset).split('\n')
-    var l=a.length,c=1+(a[a.length-1]||'').length // line and column
-    m+='\n'+(o.file||'-')+':'+l+':'+c+o.aplCode.split('\n')[l-1]+'_'.repeat(c-1)+'^'
-  }
-  var e=Error(m);e.name=name;for(var k in o)e[k]=o[k]
-  throw e
-}
-function syntaxError(m,o){aplError('SYNTAX ERROR',m,o)}
-function domainError(m,o){aplError('DOMAIN ERROR',m,o)}
-function lengthError(m,o){aplError('LENGTH ERROR',m,o)}
-function   rankError(m,o){aplError(  'RANK ERROR',m,o)}
-function  indexError(m,o){aplError( 'INDEX ERROR',m,o)}
-function  nonceError(m,o){aplError( 'NONCE ERROR',m,o)}
-function  valueError(m,o){aplError( 'VALUE ERROR',m,o)}
-function each(a,f){ // iterates through the elements of an APL array in ravel order.
-  if(a.empty())return
-  var data=a.data,shape=a.shape,stride=a.stride,lastAxis=shape.length-1,p=a.offset,i=[],axis=shape.length
-  while(--axis>=0)i.push(0)
-  while(1){
-    f(data[p],i,p)
-    axis=lastAxis
-    while(axis>=0&&i[axis]+1===shape[axis]){
-      p-=i[axis]*stride[axis];i[axis--]=0
-    }
-    if(axis<0)break
-    i[axis]++
-    p+=stride[axis]
-  }
-}
-function each2(a,b,f){ // like each() but iterates over two APL array in parallel
-  var data =a.data,shape =a.shape,stride =a.stride
-  var data1=b.data,shape1=b.shape,stride1=b.stride
-  shape.length!==shape1.length&&rankError()
-  shape!=''+shape1&&lengthError() // abuse JS type coercion -- compare the shapes as strings
-  if(a.empty())return
-  var lastAxis=shape.length-1,p=a.offset,q=b.offset
-  var i=Array(shape.length);for(var j=0;j<i.length;j++)i[j]=0
-  while(1){
-    f(data[p],data1[q],i)
-    var axis = lastAxis
-    while(axis>=0&&i[axis]+1===shape[axis]){p-=i[axis]*stride[axis];q-=i[axis]*stride1[axis];i[axis--]=0}
-    if(axis<0)break
-    i[axis]++;p+=stride[axis];q+=stride1[axis]
-  }
-}
-
-function A(data,shape,stride,offset){ // APL array constructor
-  this.data=data
-  this.shape=shape||[this.data.length]
-  this.stride=stride||strideForShape(this.shape)
-  this.offset=offset||0
-  assert(this.data.length!=null)
-  assert(this.shape.length!=null)
-  assert(this.stride.length!=null)
-  assert(!this.data.length||isInt(this.offset,0,this.data.length))
-  assert(this.stride.length===this.shape.length)
-  for(var i=0;i<this.shape.length;i++)assert(isInt(this.shape[i],0))
-  if(this.data.length)for(var i=0;i<this.stride.length;i++)assert(isInt(this.stride[i],-this.data.length,this.data.length+1))
-}
-extend(A.prototype,{
-  empty: function(){var shape=this.shape;for(var i=0;i<shape.length;i++)if(!shape[i])return 1;return 0},
-  map:function(f){var r=[];each(this,function(x,i,p){r.push(f(x,i,p))});return new A(r,this.shape)},
-  map2:function(a,f){var r=[];each2(this,a,function(x,y,i){r.push(f(x,y,i))});return new A(r,this.shape)},
-  toArray:function(){var r=[];each(this,function(x){r.push(x)});return r},
-  toInt:function(m,M){var r=this.unwrap();if(r!==r|0||m!=null&&r<m||M!=null&&M<=r)domainError();return r},
-  toBool:function(){return this.toInt(0,2)},
-  toSimpleString:function(){
-    if(this.shape.length>1)rankError()
-    if(typeof this.data==='string'){
-      if(!this.shape.length)return this.data[this.offset]
-      if(!this.shape[0])return''
-      if(this.stride[0]===1)return this.data.slice(this.offset,this.offset+this.shape[0])
-      return this.toArray().join('')
-    }else{
-      var a=this.toArray()
-      for(var i=0;i<a.length;i++)typeof a[i]!=='string'&&domainError()
-      return a.join('')
-    }
-  },
-  isSingleton:function(){var s=this.shape;for(var i=0;i<s.length;i++)if(s[i]!==1)return 0;return 1},
-  isSimple:function(){return!this.shape.length&&!(this.data[this.offset]instanceof A)},
-  unwrap:function(){this.isSingleton()||lengthError();return this.data[this.offset]},
-  getPrototype:function(){return this.empty()||typeof this.data[this.offset]!=='string'?0:' '}, // todo
-  toString:function(){return format(this).join('\n')},
-  repr:function(){return'new A('+repr(this.data)+','+repr(this.shape)+','+repr(this.stride)+','+repr(this.offset)+')'}
-})
-function strideForShape(shape){
-  assert(shape.length!=null)
-  if(!shape.length)return[]
-  var r=Array(shape.length)
-  r[r.length-1]=1
-  for(var i=r.length-2;i>=0;i--){
-    assert(isInt(shape[i],0))
-    r[i]=r[i+1]*shape[i+1]
-  }
-  return r
-}
-A.zero =new A([0],[])
-A.one  =new A([1],[])
-A.zilde=new A([],[0])
-A.scalar=function(x){return new A([x],[])}
-A.bool=[A.zero,A.one]
 // complexify(x)
 // * if x is real, it's converted to a complex instance with imaginary part 0
 // * if x is already complex, it's preserved
@@ -328,12 +183,14 @@ Z.divide   =function(x,y){x=complexify(x);y=complexify(y);var d=y.re*y.re+y.im*y
 // 0j1*2 ←→ ¯1
 // 1j2*3 ←→ ¯11j¯2
 // .5j1.5*5 ←→ 9.875j¯0.375
+// 9 4 0 ¯4 ¯9*.5 ←→ 3 2 0 0j2 0j3
 Z.pow=function(x,y){
   if(typeof x==='number'&&typeof y==='number'&&(x>=0||isInt(y)))return Math.pow(x,y)
   if(typeof y==='number'&&isInt(y,0)){var r=1;while(y){(y&1)&&(r=Z.multiply(r,x));x=Z.multiply(x,x);y>>=1};return r}
+  if(typeof x==='number'&&y===.5)return x<0?new Z(0,Math.sqrt(-x)):Math.sqrt(x)
   return Z.exp(Z.multiply(y,Z.log(x)))
 }
-Z.sqrt=function(x){return typeof x==='number'&&x>=0?Math.sqrt(x):Z.pow(x,.5)}
+Z.sqrt=function(x){return Z.pow(x,.5)}
 Z.magnitude=function(x){return Math.sqrt(x.re*x.re+x.im*x.im)}
 Z.direction=function(x){return Math.atan2(x.im,x.re)}
 Z.sin=function(x){return Z.negitimes(Z.sinh(Z.itimes(x)))}
@@ -1271,6 +1128,8 @@ addVocabulary({
   // ... A←2 1⍴2 10
   // ... A⊥M ←→ (2 8⍴0 1  2  3   4   5   6   7
   // ...             0 1 10 11 100 101 110 111)
+  // 2j3⊤4j5 6j7 8j9 ←→ 2j2 2j1 ¯1j2
+  // 10⊥3 4.5j1 ←→ 34.5j1
   '⊥':function(om,al){
     assert(al)
     if(!al.shape.length)al=new A([al.unwrap()])
@@ -1283,7 +1142,7 @@ addVocabulary({
       var y=[];for(var l=0;l<firstDimB;l++)y.push(b[j+l*(b.length/firstDimB)])
       if(x.length===1)x=repeat([x[0]],y.length)
       if(y.length===1)y=repeat([y[0]],x.length)
-      var z=y[0];for(var k=1;k<y.length;k++)z=z*x[k]+y[k]
+      var z=y[0];for(var k=1;k<y.length;k++)z=Z.add(Z.multiply(z,x[k]),y[k])
       data.push(z)
     }
     return new A(data,al.shape.slice(0,-1).concat(om.shape.slice(1)))
@@ -1437,16 +1296,17 @@ addVocabulary({
   // ...         0 1 0
   // ...         1 1 4
   // ...         1 3 11)
+  // 0j1 2j3 4j5⊤6j7 ←→ 0 ¯2j2 2j2
   '⊤':function(om,al){
     assert(al)
     var a=al.toArray(),b=om.toArray(),shape=al.shape.concat(om.shape),data=Array(prod(shape))
     var n=al.shape.length?al.shape[0]:1,m=a.length/n
     for(var i=0;i<m;i++)for(var j=0;j<b.length;j++){
-      var y=Math.abs(b[j])
+      var y=typeof b[j]==='number'?Math.abs(b[j]):b[j]
       for(var k=n-1;k>=0;k--){
         var x=a[k*m+i]
-        data[(k*m+i)*b.length+j]=x?y%x:y
-        y=x?Math.round((y-y%x)/x):0
+        data[(k*m+i)*b.length+j]=iszero(x)?y:Z.residue(x,y)
+        y=iszero(x)?0:Z.divide(Z.subtract(y,Z.residue(x,y)),x)
       }
     }
     return new A(data,shape)
