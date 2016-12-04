@@ -10,6 +10,7 @@
 
 ⎕a←'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
 ⎕á←'ÁÂÃÇÈÊËÌÍÎÏÐÒÓÔÕÙÚÛÝþãìðòõ'
+⎕d←'0123456789'
 
 ~←~⍠{(~⍺∊⍵)/⍺}
 ⍝ "ABCDEFGHIJKLMNOPQRSTUVWXYZ"~"AEIOU" ←→ 'BCDFGHJKLMNPQRSTVWXYZ'
