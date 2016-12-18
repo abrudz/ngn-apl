@@ -1,8 +1,7 @@
-An [APL](https://en.wikipedia.org/wiki/APL_%28programming_language%29) interpreter written in JavaScript<br>
-Runs in a browser or on [NodeJS](https://nodejs.org/)<br>
-
 **[Demo](https://ngn.github.com/apl/web/index.html)**<br>
-See also: [Paul L Jackson's web site](https://plj541.github.io/APL.js/) and [repl.it](https://repl.it/languages/APL)
+
+An [APL](https://en.wikipedia.org/wiki/APL_%28programming_language%29) interpreter written in JavaScript.
+Runs in a browser or on [NodeJS](https://nodejs.org/).
 
 Supports: most primitives, dfns (`{⍺ ⍵}`), nested arrays, complex numbers (`1j2`), infinities (`¯` or `∞`), forks and
 atops, strand assignment (`(a b)←c`), indexed assignment (`a[b]←c`), user-defined operators (`{⍺⍺ ⍵⍵}`)
@@ -10,11 +9,11 @@ atops, strand assignment (`(a b)←c`), indexed assignment (`a[b]←c`), user-de
 Doesn't support: traditional functions (`∇R←X f Y`), non-zero index origin (`⎕IO`), comparison tolerance (`⎕CT`),
 prototypes, NaN-s, modified assignment (`x+←1`), control structures (`:If`), object-oriented features, namespaces
 
+Used in [Paul L Jackson's web site](https://plj541.github.io/APL.js/) and [repl.it](https://repl.it/languages/APL)
+
 #Offline usage
 
-Install [NodeJS](https://nodejs.org/).
-
-Download [apl.js](https://ngn.github.io/apl/apl.js) and run it with `node` to start a session:
+Download [apl.js](https://ngn.github.io/apl/apl.js) and run it with [NodeJS](https://nodejs.org/) to start a session:
 
     node apl.js
 
@@ -22,7 +21,7 @@ Running it with an argument executes an APL script:
 
     node apl.js filename.apl
 
-It can be `require()`d as a CommonJS module from JavaScript:
+`apl.js` can be `require()`d as a CommonJS module from JavaScript:
 
     var apl=require('./apl')
     console.log(apl('1 2 3+4 5 6').toString())
