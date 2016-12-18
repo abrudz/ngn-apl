@@ -10,7 +10,7 @@ if [ ! -e $f -o "$(find src -newer $f | wc -l)" -ne 0 ]; then
   echo '//usr/bin/env node "$0" $@;exit $?' >$f
   cat src/{helpers,errors,array}.js >>$f
   node >>$f <<.
-    var old=require('./old-apl')
+    var old=require('./apl')
     var ast=old.parse(require('fs').readFileSync('src/prelude.apl','utf8'))
     var code=old.compileAST(ast) //creates ast.vars as a side effect
     var vars={};for(var k in ast.vars)vars[k]=ast.vars[k] //flatten prototype chain
