@@ -4,7 +4,7 @@ cd "$(dirname "$0")"
 
 #build lib/apl.js
 f=lib/apl.js
-if [ ! -e $f -o "$(find src -newer $f | wc -l)" -ne 0 ]; then
+if [ ! -e $f -o "$(find src -newer $f 2>/dev/null | wc -l)" -ne 0 ]; then
   echo "building $f"
   mkdir -p lib
   echo '//usr/bin/env node "$0" $@;exit $?' >$f
