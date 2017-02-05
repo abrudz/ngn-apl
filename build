@@ -2,6 +2,15 @@
 set -e
 cd "$(dirname "$0")"
 
+if ! which node 2>&1 >/dev/null; then
+  echo 'node is not installed or not on your $PATH'
+  exit 1
+fi
+if [ "$(node -v|head -c3)" != v7. ]; then
+  echo "this project requires node v7.x.x but the one on your \$PATH is $(node -v)"
+  exit 1
+fi
+
 #build lib/apl.js
 f=lib/apl.js
 if [ ! -e $f -o "$(find src -newer $f 2>/dev/null | wc -l)" -ne 0 ]; then
