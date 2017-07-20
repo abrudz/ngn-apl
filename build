@@ -6,8 +6,9 @@ if ! which node 2>&1 >/dev/null; then
   echo 'node is not installed or not on your $PATH'
   exit 1
 fi
-if [ "$(node -v|head -c3)" != v7. ]; then
-  echo "this project requires node v7.x.x but the one on your \$PATH is $(node -v)"
+v="$(node -v|head -c3)"
+if [ "$v" != v7. -a "$v" != v8. -a "$v" != v9. ]; then
+  echo "this project requires node v7+ but the one on your \$PATH is $(node -v)"
   exit 1
 fi
 
