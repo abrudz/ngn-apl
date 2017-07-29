@@ -188,11 +188,7 @@ const compileAST=(ast,o)=>{
         // A×A←2 5 ←→ 4 25
         return render(node[2]).concat(renderLHS(node[1]))
       case'X':
-        // r←3 ⋄ get_c←{2×○r} ⋄ get_S←{○r*2}
-        // ... before←.01×⌊100×r c S
-        // ... r←r+1
-        // ... after←.01×⌊100×r c S
-        // ... before after ←→ (3 18.84 28.27)(4 25.13 50.26)
+        // r←3 ⋄ get_c←{2×○r} ⋄ get_S←{○r*2} ⋄ before←.01×⌊100×r c S ⋄ r←r+1 ⋄ after←.01×⌊100×r c S ⋄ before after ←→ (3 18.84 28.27)(4 25.13 50.26)
         // {⍺}0 !!! VALUE ERROR
         // {x}0 ⋄ x←0 !!! VALUE ERROR
         // {⍫1⋄2}⍬ ←→ 1
