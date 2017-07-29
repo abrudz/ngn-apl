@@ -1567,7 +1567,6 @@ voc['⍴']=(om,al)=>{
     // ⍬⍴⍬       ←→ 0
     // 2 3⍴⍬     ←→ 2 3⍴0
     // 2 3⍴⍳7    ←→ 2 3⍴0 1 2 3 4 5
-    // ⍴1e9⍴0    ←→ ,1e9
     al.shape.length<=1||rnkErr()
     var a=al.toArray(),n=prod(a)
     for(var i=0;i<a.length;i++)isInt(a[i],0)||domErr
