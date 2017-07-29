@@ -1,46 +1,28 @@
-var voc={}
-
-// pervasive() is a higher-order function
-//
-// Consider a function that accepts and returns only scalars.  To make it
-// pervasive means to make it work with any-dimensional arrays, too.
-//
-// What pervasive() actually does is to take two versions of a scalar function
-// (a monadic and a dyadic one), make them pervasive, and combine them into a
-// single function that dispatches based on the number of arguments.
-const pervasive=h=>{
-  var monad=h.monad,dyad=h.dyad
-  var pervadeMonadic=!monad?nyiErr:x=>{
-    if(x instanceof A)return x.map(pervadeMonadic)
-    var r=monad(x);typeof r==='number'&&r!==r&&domErr('NaN');return r
+const voc={}
+,perv=h=>{
+  var f1=!h.monad?nyiErr:x=>{
+    if(x instanceof A)return x.map(f1)
+    var r=h.monad(x);typeof r==='number'&&r!==r&&domErr();return r
   }
-  var pervadeDyadic=!dyad?nyiErr:(x,y)=>{
-    // tx,ty: 0=unwrapped scalar; 1=singleton array; 2=non-singleton array
+  var f2=!h.dyad?nyiErr:(x,y)=>{
     var tx=x instanceof A?(x.isSingleton()?20:30):10
     var ty=y instanceof A?(y.isSingleton()? 2: 3): 1
     switch(tx+ty){ // todo: use the larger shape when tx=10 and ty=1
-      case 11:        var r=dyad(x,y);typeof r==='number'&&r!==r&&domErr('NaN');return r
-      case 12:case 13:return y.map(yi=>pervadeDyadic(x,yi))
-      case 21:case 31:return x.map(xi=>pervadeDyadic(xi,y))
-      case 23:        xi=x.data[x.offset];return y.map(yi=>pervadeDyadic(xi,yi))
-      case 32:case 22:yi=y.data[y.offset];return x.map(xi=>pervadeDyadic(xi,yi))
-      case 33:
-        x.shape.length!==y.shape.length&&rnkErr()
-        x.shape!=''+y.shape&&lenErr()
-        return x.map2(y,pervadeDyadic)
-      default:asrt(0)
+      case 11:        var r=h.dyad(x,y);typeof r==='number'&&r!==r&&domErr();return r
+      case 12:case 13:return y.map(yi=>f2(x,yi))
+      case 21:case 31:return x.map(xi=>f2(xi,y))
+      case 23:        xi=x.data[x.offset];return y.map(yi=>f2(xi,yi))
+      case 32:case 22:yi=y.data[y.offset];return x.map(xi=>f2(xi,yi))
+      case 33:        x.shape.length!==y.shape.length&&rnkErr();x.shape!=''+y.shape&&lenErr();return x.map2(y,f2)
+      default:        asrt(0)
     }
   }
-  return(om,al)=>{
-    asrt(om instanceof A);asrt(al instanceof A||al==null)
-    return(al!=null?pervadeDyadic:pervadeMonadic)(om,al)
-  }
+  return(om,al)=>{asrt(om instanceof A);asrt(!al||al instanceof A);return(al?f2:f1)(om,al)}
 }
-const real=f=>(x,y,axis)=>
-  typeof x!=='number'||y!=null&&typeof y!=='number'?domErr():f(x,y,axis)
-const numeric=(f,g)=>(x,y,axis)=>
+,real=f=>(x,y,axis)=>typeof x!=='number'||y!=null&&typeof y!=='number'?domErr():f(x,y,axis)
+,numeric=(f,g)=>(x,y,axis)=>
   (typeof x!=='number'||y!=null&&typeof y!=='number'?g(Zify(x),y==null?y:Zify(y),axis):f(x,y,axis))
-const match=(x,y)=>{
+,match=(x,y)=>{
   if(x instanceof A){
     if(!(y instanceof A)||x.shape!=''+y.shape)return 0
     var r=1;each2(x,y,(xi,yi)=>{r&=match(xi,yi)});return r
@@ -50,8 +32,8 @@ const match=(x,y)=>{
     return x===y
   }
 }
-const numApprox=(x,y)=>x===y||Math.abs(x-y)<1e-11
-const approx=(x,y)=>{
+,numApprox=(x,y)=>x===y||Math.abs(x-y)<1e-11
+,approx=(x,y)=>{
   // approx() is like match(), but it is tolerant to precision errors;
   // used for comparing expected and actual results in doctests
   if(x instanceof A){
@@ -68,8 +50,8 @@ const approx=(x,y)=>{
     return x===y
   }
 }
-const bool=x=>(x&1)!==x?domErr():x
-const getAxisList=(axes,rank)=>{
+,bool=x=>(x&1)!==x?domErr():x
+,getAxisList=(axes,rank)=>{
   asrt(isInt(rank,0))
   if(axes==null)return[]
   asrt(axes instanceof A)
@@ -79,7 +61,7 @@ const getAxisList=(axes,rank)=>{
     a=a.toArray()
     for(var i=0;i<a.length;i++){
       isInt(a[i],0,rank)||domErr()
-      a.indexOf(a[i])<i&&domErr('Non-unique axes')
+      a.indexOf(a[i])<i&&domErr()
     }
     return a
   }else if(isInt(a,0,rank)){
@@ -88,21 +70,19 @@ const getAxisList=(axes,rank)=>{
     domErr()
   }
 }
-const withIdentity=(x,f)=>{f.identity=x instanceof A?x:A.scalar(x);return f}
-const adverb     =f=>{f.adv =1;return f}
-const conjunction=f=>{f.conj=1;return f}
-const cps        =f=>{f.cps =1;return f}
-voc['+']=withIdentity(0,pervasive({
+,withId=(x,f)=>{f.identity=x instanceof A?x:A.scalar(x);return f}
+,adv =f=>{f.adv =1;return f}
+,conj=f=>{f.conj=1;return f}
+,cps =f=>{f.cps =1;return f}
+
+voc['+']=withId(0,perv({
   // +4            ←→ 4
   // ++4           ←→ 4
   // +4 5          ←→ 4 5
   // +((5 6)(7 1)) ←→ (5 6)(7 1)
   // + (5 6)(7 1)  ←→ (5 6)(7 1)
   // +1j¯2         ←→ 1j2
-  monad:numeric(
-    x=>x,
-    Z.conjugate
-  ),
+  monad:numeric(x=>x,Z.conjugate),
   // 1+2                      ←→ 3
   // 2 3+5 8                  ←→ 7 11
   // (2 3⍴1 2 3 4 5 6)+    ¯2 ←→ 2 3 ⍴ ¯1 0 1 2 3 4
@@ -114,66 +94,46 @@ voc['+']=withIdentity(0,pervasive({
   // +/⍬                      ←→ 0
   // ¯+¯¯                     !!! DOMAIN ERROR
   // 1j¯+2j¯¯                 !!! DOMAIN ERROR
-  dyad:numeric(
-    (y,x)=>x+y,
-    (y,x)=>Z.add(x,y)
-  )
+  dyad:numeric((y,x)=>x+y,(y,x)=>Z.add(x,y))
 }))
-voc['-']=withIdentity(0,pervasive({
+voc['-']=withId(0,perv({
   // -4     ←→ ¯4
   // -1 2 3 ←→ ¯1 ¯2 ¯3
   // -1j2   ←→ ¯1j¯2
-  monad:numeric(
-    x=>-x,
-    Z.negate
-  ),
+  monad:numeric(x=>-x,Z.negate),
   // 1-3     ←→ ¯2
   // 5-¯3    ←→ 8
   // 5j2-3j8 ←→ 2j¯6
   // 5-3j8   ←→ 2j¯8
   // -/⍬     ←→ 0
-  dyad:numeric(
-    (y,x)=>x-y,
-    (y,x)=>Z.subtract(x,y)
-  )
+  dyad:numeric((y,x)=>x-y,(y,x)=>Z.subtract(x,y))
 }))
-voc['×']=withIdentity(1,pervasive({
+voc['×']=withId(1,perv({
   // ×¯2 ¯1 0 1 2 ←→ ¯1 ¯1 0 1 1
   // ×¯           ←→ 1
   // ×¯¯          ←→ ¯1
   // ×3j¯4        ←→ .6j¯.8
-  monad:numeric(
-    x=>(x>0)-(x<0),
-    x=>{var d=Math.sqrt(x.re*x.re+x.im*x.im);return simplify(x.re/d,x.im/d)}
-  ),
+  monad:numeric(x=>(x>0)-(x<0),x=>{var d=Math.sqrt(x.re*x.re+x.im*x.im);return simplify(x.re/d,x.im/d)}),
   // 7×8       ←→ 56
   // 1j¯2×¯2j3 ←→ 4j7
   // 2×1j¯2    ←→ 2j¯4
   // ×/⍬       ←→ 1
-  dyad:numeric(
-    (y,x)=>x*y,
-    (y,x)=>Z.multiply(x,y)
-  )
+  dyad:numeric((y,x)=>x*y,(y,x)=>Z.multiply(x,y))
 }))
-voc['÷']=withIdentity(1,pervasive({
+voc['÷']=withId(1,perv({
   // ÷2   ←→ .5
   // ÷2j3 ←→ 0.15384615384615385J¯0.23076923076923078
   // 0÷0  !!! DOMAIN ERROR
-  monad:numeric(
-    x=>1/x,
-    x=>{var d=x.re*x.re+x.im*x.im;return simplify(x.re/d,-x.im/d)}
-  ),
+  monad:numeric(x=>1/x,
+                x=>{var d=x.re*x.re+x.im*x.im;return simplify(x.re/d,-x.im/d)}),
   // 27÷9     ←→ 3
   // 4j7÷1j¯2 ←→ ¯2j3
   // 0j2÷0j1  ←→ 2
   // 5÷2j1    ←→ 2j¯1
   // ÷/⍬      ←→ 1
-  dyad:numeric(
-    (y,x)=>x/y,
-    (y,x)=>Z.divide(x,y)
-  )
+  dyad:numeric((y,x)=>x/y,(y,x)=>Z.divide(x,y))
 }))
-voc['*']=withIdentity(1,pervasive({
+voc['*']=withId(1,perv({
   // *2   ←→ 7.38905609893065
   // *2j3 ←→ ¯7.315110094901103J1.0427436562359045
   monad:exp=numeric(Math.exp,Z.exp),
@@ -186,7 +146,7 @@ voc['*']=withIdentity(1,pervasive({
   // */⍬ ←→ 1
   dyad:(y,x)=>Z.pow(x,y)
 }))
-voc['⍟']=pervasive({
+voc['⍟']=perv({
   // ⍟123 ←→ 4.812184355372417
   // ⍟0 ←→ ¯¯
   // ⍟¯1 ←→ 0j1×○1
@@ -199,7 +159,7 @@ voc['⍟']=pervasive({
   dyad:(y,x)=>typeof x==='number'&&typeof y==='number'&&x>0&&y>0
               ?Math.log(y)/Math.log(x):Z.divide(Z.log(y),Z.log(x))
 })
-voc['|']=withIdentity(0,pervasive({
+voc['|']=withId(0,perv({
   // ∣¯8 0 8 ¯3.5 ←→ 8 0 8 3.5
   // |5j12 ←→ 13
   monad:numeric(x=>Math.abs(x),Z.magnitude),
@@ -216,7 +176,7 @@ voc['|']=withIdentity(0,pervasive({
   dyad:(y,x)=>Z.residue(x,y)
 }))
 
-voc['⍀']=adverb((om,al,axis)=>voc['\\'](om,al,axis||A.zero))
+voc['⍀']=adv((om,al,axis)=>voc['\\'](om,al,axis||A.zero))
 
 // +\20 10 ¯5 7               ←→ 20 30 25 32
 // ,\"AB" "CD" "EF"           ←→ 'AB' 'ABCD' 'ABCDEF'
@@ -242,7 +202,7 @@ voc['⍀']=adverb((om,al,axis)=>voc['\\'](om,al,axis||A.zero))
 // 1 0 1⍀2 2⍴'ABCD'    ←→ 3 2⍴'AB  CD'
 // 1 0 1\[0]2 2⍴'ABCD' ←→ 3 2⍴'AB  CD'
 // 1 0 1\[1]2 2⍴'ABCD' ←→ 2 3⍴'A BC D'
-voc['\\']=adverb((om,al,axis)=>{
+voc['\\']=adv((om,al,axis)=>{
   if(typeof om==='function'){
     asrt(typeof al==='undefined')
     var f=om
@@ -263,7 +223,7 @@ voc['\\']=adverb((om,al,axis)=>{
       })
     }
   }else{
-    om.shape.length||nyiErr('Expand of scalar not implemented')
+    om.shape.length||nyiErr()
     axis=axis?axis.toInt(0,om.shape.length):om.shape.length-1
     al.shape.length>1&&rnkErr()
     var a=al.toArray(),b=[],i=0,shape=om.shape.slice(0);shape[axis]=a.length
@@ -287,14 +247,11 @@ voc['\\']=adverb((om,al,axis)=>{
     return new A(data,shape)
   }
 })
-voc['○']=pervasive({
+voc['○']=perv({
   // ○2     ←→ 6.283185307179586
   // ○2J2   ←→ 6.283185307179586J6.283185307179586
   // ○'ABC' !!! DOMAIN ERROR
-  monad:numeric(
-    x=>Math.PI*x,
-    x=>new Z(Math.PI*x.re,Math.PI*x.im)
-  ),
+  monad:numeric(x=>Math.PI*x,x=>new Z(Math.PI*x.re,Math.PI*x.im)),
   // ¯12○2          ←→ ¯0.4161468365471J0.9092974268257
   // ¯12○2j3        ←→ ¯0.02071873100224J0.04527125315609
   // ¯11○2          ←→ 0j2
@@ -385,7 +342,7 @@ voc['○']=pervasive({
         case 10:return Math.abs(x)
         case 11:return 0
         case 12:return 0
-        default:domErr('Unknown circular or hyperbolic function:'+i)
+        default:domErr()
       }
     }else if(x instanceof Z){
       switch(i){
@@ -416,7 +373,7 @@ voc['○']=pervasive({
         case  10:return Z.magnitude(x)
         case  11:return x.im
         case  12:return Z.direction(x)
-        default:domErr('Unknown circular or hyperbolic function:'+i)
+        default:domErr()
       }
     }else{
       domErr()
@@ -526,23 +483,23 @@ var eq
 // 123j0               ←→ 123
 // 2j¯3+¯2j3           ←→ 0
 // =/⍬                 ←→ 1
-voc['=']=withIdentity(1,pervasive({dyad:eq=(y,x)=>
+voc['=']=withId(1,perv({dyad:eq=(y,x)=>
   +(x instanceof Z&&y instanceof Z?x.re===y.re&&x.im===y.im:x===y)
 })),
 
 // 3≢5 ←→ 1
 // 8≠8 ←→ 0
 // ≠/⍬ ←→ 0
-voc['≠']=withIdentity(0,pervasive({dyad:(y,x)=>1-eq(y,x)})),
+voc['≠']=withId(0,perv({dyad:(y,x)=>1-eq(y,x)})),
 
 // </⍬ ←→ 0
 // >/⍬ ←→ 0
 // ≤/⍬ ←→ 1
 // ≥/⍬ ←→ 1
-voc['<']=withIdentity(0,pervasive({dyad:real((y,x)=>+(x< y))})),
-voc['>']=withIdentity(0,pervasive({dyad:real((y,x)=>+(x> y))})),
-voc['≤']=withIdentity(1,pervasive({dyad:real((y,x)=>+(x<=y))})),
-voc['≥']=withIdentity(1,pervasive({dyad:real((y,x)=>+(x>=y))})),
+voc['<']=withId(0,perv({dyad:real((y,x)=>+(x< y))})),
+voc['>']=withId(0,perv({dyad:real((y,x)=>+(x> y))})),
+voc['≤']=withId(1,perv({dyad:real((y,x)=>+(x<=y))})),
+voc['≥']=withId(1,perv({dyad:real((y,x)=>+(x>=y))})),
 
 // 3≡3                    ←→ 1
 // 3≡,3                   ←→ 0
@@ -573,16 +530,16 @@ const depthOf=x=>{
 // 3⍴∘⍴2 3⍴⍳6 ←→ 2 3 2
 // 3∘-1       ←→ 2
 // (-∘2)9     ←→ 7
-voc['∘']=conjunction((g,f)=>{
+voc['∘']=conj((g,f)=>{
   if(typeof f==='function'){
     if(typeof g==='function'){
       return(om,al)=>f(g(om),al) // f∘g
     }else{
-      return(om,al)=>{al==null||synErr('The function does not take a left argument');return f(g,om)} // f∘B
+      return(om,al)=>{al==null||synErr();return f(g,om)} // f∘B
     }
   }else{
     asrt(typeof g==='function')
-    return(om,al)=>{al==null||synErr('The function does not take a left argument');return g(om,f)} // A∘g
+    return(om,al)=>{al==null||synErr();return g(om,f)} // A∘g
   }
 })
 
@@ -663,7 +620,7 @@ voc['⊥']=(om,al)=>{
   return new A(data,al.shape.slice(0,-1).concat(om.shape.slice(1)))
 }
 
-voc['.']=conjunction((g,f)=>f===voc['∘']?outerProduct(g):innerProduct(g,f))
+voc['.']=conj((g,f)=>f===voc['∘']?outerProduct(g):innerProduct(g,f))
 
 // 2 3 4∘.×1 2 3 4 ←→ 3 4⍴2 4  6  8 3 6  9 12 4 8 12 16
 // 0 1 2 3 4∘.!0 1 2 3 4←→5 5⍴1 1 1 1 1 0 1 2 3 4 0 0 1 3 6 0 0 0 1 4 0 0 0 0 1
@@ -678,7 +635,7 @@ voc['.']=conjunction((g,f)=>f===voc['∘']?outerProduct(g):innerProduct(g,f))
 const outerProduct=f=>{
   asrt(typeof f==='function')
   return(om,al)=>{
-    al||synErr('Adverb ∘. (Outer product) can be applied to dyadic verbs only')
+    al||synErr()
     var a=al.toArray(),b=om.toArray(),data=[]
     for(var i=0;i<a.length;i++)for(var j=0;j<b.length;j++){
       var x=a[i],y=b[j]
@@ -728,7 +685,7 @@ const innerProduct=(g,f)=>{
 // 2 3⍴¨1 2                       ←→ (1 1)(2 2 2)
 // 4 5⍴¨"THE" "CAT"               ←→ 'THET' 'CATCA'
 // {1+⍵*2}¨2 3⍴⍳6                 ←→ 2 3⍴1 2 5 10 17 26
-voc['¨']=adverb((f,g)=>{
+voc['¨']=adv((f,g)=>{
   asrt(typeof f==='function');asrt(g==null)
   return(om,al)=>{
     if(!al){
@@ -809,7 +766,7 @@ voc['∊']=(om,al)=>{
 
 const enlist=(x,r)=>{x instanceof A?each(x,y=>enlist(y,r)):r.push(x)}
 var Beta
-voc['!']=withIdentity(1,pervasive({
+voc['!']=withId(1,perv({
 
   // !5    ←→ 120
   // !21   ←→ 51090942171709440000
@@ -852,10 +809,10 @@ voc['!']=withIdentity(1,pervasive({
     switch(256*negInt(k)+16*negInt(n)+negInt(n-k)){
       case 0x000:r=Math.exp(lnΓ(n+1)-lnΓ(k+1)-lnΓ(n-k+1))            ;break
       case 0x001:r=0                                                 ;break
-      case 0x010:r=domErr()                                     ;break
+      case 0x010:r=domErr()                                          ;break
       case 0x011:r=Math.pow(-1,k)*Beta(k-n-1,k)                      ;break
       case 0x100:r=0                                                 ;break
-      case 0x101:asrt(0)                                           ;break
+      case 0x101:asrt(0)                                             ;break
       case 0x110:r=Math.pow(-1,n-k)*Beta(Math.abs(k+1),Math.abs(n+1));break
       case 0x111:r=0                                                 ;break
     }
@@ -868,10 +825,10 @@ var smallFactorials=[1];(_=>{var x=1;for(var i=1;i<=25;i++)smallFactorials.push(
 var Γ,lnΓ
 ;(_=>{
   const g=7
-  const p=[0.99999999999980993,676.5203681218851,-1259.1392167224028,771.32342877765313,-176.61502916214059,
-           12.507343278686905,-0.13857109526572012,9.9843695780195716e-6,1.5056327351493116e-7]
-  const g_ln=607/128
-  const p_ln=[0.99999999999999709182,57.156235665862923517,-59.597960355475491248,14.136097974741747174,
+  ,p=[0.99999999999980993,676.5203681218851,-1259.1392167224028,771.32342877765313,-176.61502916214059,
+      12.507343278686905,-0.13857109526572012,9.9843695780195716e-6,1.5056327351493116e-7]
+  ,g_ln=607/128
+  ,p_ln=[0.99999999999999709182,57.156235665862923517,-59.597960355475491248,14.136097974741747174,
               -0.49191381609762019978,0.33994649984811888699e-4,0.46523628927048575665e-4,-0.98374475304879564677e-4,
               0.15808870322491248884e-3,-0.21026444172410488319e-3,0.21743961811521264320e-3,-0.16431810653676389022e-3,
               0.84418223983852743293e-4,-0.26190838401581408670e-4,0.36899182659531622704e-5]
@@ -945,7 +902,7 @@ voc['⍷']=(om,al)=>{
   return new A(data,om.shape)
 }
 
-voc['⌊']=withIdentity(Infinity,pervasive({
+voc['⌊']=withId(Infinity,perv({
   // ⌊123   ←→ 123
   // ⌊12.3  ←→ 12
   // ⌊¯12.3 ←→ ¯13
@@ -963,7 +920,7 @@ voc['⌊']=withIdentity(Infinity,pervasive({
   dyad:real((y,x)=>Math.min(y,x))
 }))
 
-voc['⌈']=withIdentity(-Infinity,pervasive({
+voc['⌈']=withId(-Infinity,perv({
   // ⌈123   ←→ 123
   // ⌈12.3  ←→ 13
   // ⌈¯12.3 ←→ ¯12
@@ -1129,13 +1086,13 @@ const grade=(om,al,direction)=>{
 // f←{⍺+2×⍵} ⋄ g←f⍁789 ⋄ f/⍬ !!! DOMAIN ERROR
 // {}⍁1 2                    !!! RANK ERROR
 // ({}⍁(1 1 1⍴123))/⍬        ←→ 123
-voc['⍁']=conjunction((f,x)=>{
+voc['⍁']=conj((f,x)=>{
   if(f instanceof A){var h=f;f=x;x=h}
   asrt(typeof f==='function')
   asrt(x instanceof A)
   x.isSingleton()||rnkErr()
   if(x.shape.length)x=A.scalar(x.unwrap())
-  return withIdentity(x,(om,al,axis)=>f(om,al,axis))
+  return withId(x,(om,al,axis)=>f(om,al,axis))
 })
 
 voc['⍳']=(om,al)=>{
@@ -1227,92 +1184,69 @@ voc['⊂']=(om,al,axes)=>{
   return new A(data,shape)
 }
 
-voc['~']=pervasive({
-  // ~0 1 ←→ 1 0
-  // ~2   !!! DOMAIN ERROR
-  monad:x=>+!bool(x)
-})
+// ~0 1 ←→ 1 0
+// ~2   !!! DOMAIN ERROR
+voc['~']=perv({monad:x=>+!bool(x)})
 
-voc['∨']=withIdentity(0,pervasive({
-  // 1∨1               ←→ 1
-  // 1∨0               ←→ 1
-  // 0∨1               ←→ 1
-  // 0∨0               ←→ 0
-  // 0 0 1 1 ∨ 0 1 0 1 ←→ 0 1 1 1
-  // 12∨18             ←→ 6 ⍝ 12=2×2×3, 18=2×3×3
-  // 299∨323           ←→ 1 ⍝ 299=13×23, 323=17×19
-  // 12345∨12345       ←→ 12345
-  // 0∨123             ←→ 123
-  // 123∨0             ←→ 123
-  // ∨/⍬               ←→ 0
-  // ¯12∨18            ←→ 6
-  // 12∨¯18            ←→ 6
-  // ¯12∨¯18           ←→ 6
-  // 1.5∨2.5           !!! DOMAIN ERROR
-  // 'a'∨1             !!! DOMAIN ERROR
-  // 1∨'a'             !!! DOMAIN ERROR
-  // 'a'∨'b'           !!! DOMAIN ERROR
-  // 135j¯14∨155j34    ←→ 5j12
-  // 2 3 4∨0j1 1j2 2j3 ←→ 1 1 1
-  // 2j2 2j4∨5j5 4j4   ←→ 1j1 2
-  dyad:(y,x)=>{
-    if(!Z.isint(x)||!Z.isint(y))domErr('∨ is implemented only for Gaussian integers')
-    return Z.gcd(x,y)
-  }
-}))
+// 1∨1               ←→ 1
+// 1∨0               ←→ 1
+// 0∨1               ←→ 1
+// 0∨0               ←→ 0
+// 0 0 1 1 ∨ 0 1 0 1 ←→ 0 1 1 1
+// 12∨18             ←→ 6 ⍝ 12=2×2×3, 18=2×3×3
+// 299∨323           ←→ 1 ⍝ 299=13×23, 323=17×19
+// 12345∨12345       ←→ 12345
+// 0∨123             ←→ 123
+// 123∨0             ←→ 123
+// ∨/⍬               ←→ 0
+// ¯12∨18            ←→ 6
+// 12∨¯18            ←→ 6
+// ¯12∨¯18           ←→ 6
+// 1.5∨2.5           !!! DOMAIN ERROR
+// 'a'∨1             !!! DOMAIN ERROR
+// 1∨'a'             !!! DOMAIN ERROR
+// 'a'∨'b'           !!! DOMAIN ERROR
+// 135j¯14∨155j34    ←→ 5j12
+// 2 3 4∨0j1 1j2 2j3 ←→ 1 1 1
+// 2j2 2j4∨5j5 4j4   ←→ 1j1 2
+voc['∨']=withId(0,perv({dyad:(y,x)=>Z.isint(x)&&Z.isint(y)?Z.gcd(x,y):domErr()}))
 
-voc['∧']=withIdentity(1,pervasive({
-  // 1∧1                            ←→ 1
-  // 1∧0                            ←→ 0
-  // 0∧1                            ←→ 0
-  // 0∧0                            ←→ 0
-  // 0 0 1 1∧0 1 0 1                ←→ 0 0 0 1
-  // 0 0 0 1 1∧1 1 1 1 0            ←→ 0 0 0 1 0
-  // t←3 3⍴1 1 1 0 0 0 1 0 1 ⋄ 1∧t  ←→ 3 3 ⍴ 1 1 1 0 0 0 1 0 1
-  // t←3 3⍴1 1 1 0 0 0 1 0 1 ⋄ ∧/t  ←→ 1 0 0
-  // 12∧18   # 12=2×2×3, 18=2×3×3   ←→ 36
-  // 299∧323 # 299=13×23, 323=17×19 ←→ 96577
-  // 12345∧12345                    ←→ 12345
-  // 0∧123                          ←→ 0
-  // 123∧0                          ←→ 0
-  // ∧/⍬                            ←→ 1
-  // ¯12∧18                         ←→ ¯36
-  // 12∧¯18                         ←→ ¯36
-  // ¯12∧¯18                        ←→ 36
-  // 1.5∧2.5                        !!! DOMAIN ERROR
-  // 'a'∧1                          !!! DOMAIN ERROR
-  // 1∧'a'                          !!! DOMAIN ERROR
-  // 'a'∧'b'                        !!! DOMAIN ERROR
-  // 135j¯14∧155j34                 ←→ 805j¯1448
-  // 2 3 4∧0j1 1j2 2j3              ←→ 0j2 3j6 8j12
-  // 2j2 2j4∧5j5 4j4                ←→ 10j10 ¯4j12
-  dyad:(y,x)=>{
-    if(!Z.isint(x)||!Z.isint(y))domErr('∧ is implemented only for Gaussian integers')
-    return Z.lcm(x,y)
-  }
-}))
+// 0 0 1 1∧0 1 0 1                ←→ 0 0 0 1
+// t←3 3⍴1 1 1 0 0 0 1 0 1 ⋄ 1∧t  ←→ 3 3 ⍴ 1 1 1 0 0 0 1 0 1
+// t←3 3⍴1 1 1 0 0 0 1 0 1 ⋄ ∧/t  ←→ 1 0 0
+// 12∧18                          ←→ 36
+// 299∧323                        ←→ 96577
+// 12345∧12345                    ←→ 12345
+// 0∧123                          ←→ 0
+// 123∧0                          ←→ 0
+// ∧/⍬                            ←→ 1
+// ¯12∧18                         ←→ ¯36
+// 12∧¯18                         ←→ ¯36
+// ¯12∧¯18                        ←→ 36
+// 1.5∧2.5                        !!! DOMAIN ERROR
+// 'a'∧1                          !!! DOMAIN ERROR
+// 1∧'a'                          !!! DOMAIN ERROR
+// 'a'∧'b'                        !!! DOMAIN ERROR
+// 135j¯14∧155j34                 ←→ 805j¯1448
+// 2 3 4∧0j1 1j2 2j3              ←→ 0j2 3j6 8j12
+// 2j2 2j4∧5j5 4j4                ←→ 10j10 ¯4j12
+voc['∧']=withId(1,perv({dyad:(y,x)=>Z.isint(x)&&Z.isint(y)?Z.lcm(x,y):domErr()}))
 
-// 0⍱0 ←→ 1
-// 0⍱1 ←→ 0
-// 1⍱0 ←→ 0
-// 1⍱1 ←→ 0
+// 0 0 1 1⍱0 1 0 1 ←→ 1 0 0 0
 // 0⍱2 !!! DOMAIN ERROR
-voc['⍱']=pervasive({dyad:real((y,x)=>+!(bool(x)|bool(y)))}),
+voc['⍱']=perv({dyad:real((y,x)=>+!(bool(x)|bool(y)))}),
 
-// 0⍲0 ←→ 1
-// 0⍲1 ←→ 1
-// 1⍲0 ←→ 1
-// 1⍲1 ←→ 0
+// 0 0 1 1⍲0 1 0 1 ←→ 1 1 1 0
 // 0⍲2 !!! DOMAIN ERROR
-voc['⍲']=pervasive({dyad:real((y,x)=>+!(bool(x)&bool(y)))})
+voc['⍲']=perv({dyad:real((y,x)=>+!(bool(x)&bool(y)))})
 
-// ({⍵+1}⍣5) 3 ←→ 8
-// ({⍵+1}⍣0) 3 ←→ 3
+// ({⍵+1}⍣5)3 ←→ 8
+// ({⍵+1}⍣0)3 ←→ 3
 // (⍴⍣3)2 2⍴⍳4 ←→ ,1
 // 'a'(,⍣3)'b' ←→ 'aaab'
 // 1{⍺+÷⍵}⍣=1 ←→ 1.618033988749895
 // c←0 ⋄ 5⍣{c←c+1}0 ⋄ c ←→ 5
-voc['⍣']=conjunction((g,f)=>{
+voc['⍣']=conj((g,f)=>{
   if(f instanceof A&&typeof g==='function'){var h=f;f=g;g=h}else{asrt(typeof f==='function')}
   if(typeof g==='function'){
     return(om,al)=>{
@@ -1330,7 +1264,6 @@ voc['⍣']=conjunction((g,f)=>{
     }
   }
 })
-
 voc['get_⎕']=cps((_,_1,_2,callback)=>{
   if(typeof window!=='undefined'&&typeof window.prompt==='function'){
     setTimeout(_=>{callback(exec(prompt('⎕:')||''))},0)
@@ -1339,13 +1272,11 @@ voc['get_⎕']=cps((_,_1,_2,callback)=>{
     readline('      ',line=>{callback(exec(new A(line).toSimpleString()))})
   }
 })
-
 voc['set_⎕']=x=>{
   var s=format(x).join('\n')+'\n'
   if(typeof window!=='undefined'&&typeof window.alert==='function'){window.alert(s)}else{process.stdout.write(s)}
   return x
 }
-
 voc['get_⍞']=cps((_,_1,_2,callback)=>{
   if(typeof window!=='undefined'&&typeof window.prompt==='function'){
     setTimeout(_=>{callback(new A(prompt('')||''))},0)
@@ -1353,25 +1284,19 @@ voc['get_⍞']=cps((_,_1,_2,callback)=>{
     readline('',line=>{callback(new A(line))})
   }
 })
-
 voc['set_⍞']=x=>{
   var s=format(x).join('\n')
   if(typeof window!=='undefined'&&typeof window.alert==='function'){window.alert(s)}else{process.stdout.write(s)}
   return x
 }
 
-// The index origin is fixed at 0.  Reading it returns 0.  Attempts to set it
-// to anything other than that fail.
-//
 // ⎕IO   ←→ 0
 // ⎕IO←0 ←→ 0
 // ⎕IO←1 !!!
 voc['get_⎕IO']=_=>A.zero
-voc['set_⎕IO']=x=>{if(match(x,A.zero)){return x}else{domErr('The index origin (⎕IO) is fixed at 0')}}
+voc['set_⎕IO']=x=>{if(match(x,A.zero)){return x}else{domErr()}}
 
-voc['⎕DL']=cps((om,al,_,callback)=>{
-  var t0=+new Date;setTimeout(_=>{callback(new A([new Date-t0]))},om.unwrap())
-})
+voc['⎕DL']=cps((om,al,_,callback)=>{var t0=+new Date;setTimeout(_=>{callback(new A([new Date-t0]))},om.unwrap())})
 
 // 'b(c+)d'⎕RE'abcd' ←→ 1 'bcd' (,'c')
 // 'B(c+)d'⎕RE'abcd' ←→ ⍬
@@ -1406,7 +1331,7 @@ voc['?']=(om,al)=>al?deal(om,al):roll(om)
 // ?'a' !!! DOMAIN ERROR
 // ?1j2 !!! DOMAIN ERROR
 // ?∞   !!! DOMAIN ERROR
-var roll=pervasive({monad:om=>{isInt(om,1)||domErr();return Math.floor(Math.random()*om)}})
+var roll=perv({monad:om=>{isInt(om,1)||domErr();return Math.floor(Math.random()*om)}})
 
 // n←100 ⋄ (+/n?n)=(+/⍳n) ←→ 1 # a permutation (an "n?n" dealing) contains all 0...n
 // n←100 ⋄ A←(n÷2)?n ⋄ ∧/(0≤A),A<n ←→ 1 # any number x in a dealing is 0 <= x < n
@@ -1487,7 +1412,7 @@ voc['⌽']=(om,al,axis)=>{
     // 0⌽1 2 3 4                 ←→ 1 2 3 4
     // 0⌽1234                    ←→ 1234
     // 5⌽⍬                       ←→ ⍬
-    axis=axis?axis.unwrap():om.shape.length-1 
+    axis=axis?axis.unwrap():om.shape.length-1
     isInt(axis)||domErr()
     if(om.shape.length&&!(0<=axis&&axis<om.shape.length))idxErr()
     var step=al.unwrap()
@@ -1534,8 +1459,8 @@ voc['⌽']=(om,al,axis)=>{
 // 1⊖3 3⍴⍳9 ←→ 3 3⍴3 4 5 6 7 8 0 1 2
 voc['⊖']=(om,al,axis)=>voc['⌽'](om,al,axis||A.zero)
 
-voc['⌿']=adverb((om,al,axis)=>voc['/'](om,al,axis||A.zero)),
-voc['/']=adverb((om,al,axis)=>{
+voc['⌿']=adv((om,al,axis)=>voc['/'](om,al,axis||A.zero)),
+voc['/']=adv((om,al,axis)=>{
   if(typeof om==='function'){
     // +/3                    ←→ 3
     // +/3 5 8                ←→ 16
@@ -1687,7 +1612,7 @@ voc['⌷']=(om,al,axes)=>{
       var axis=axes[i]
       isInt(axis)||domErr()
       0<=axis&&axis<om.shape.length||rnkErr()
-      h[axis]&&rnkErr('Duplicate axis')
+      h[axis]&&rnkErr()
       h[axis]=1
     }
   }else{
@@ -1910,9 +1835,9 @@ voc['⍉']=(om,al)=>{
   }
 }
 
-//  ({'monadic'}⍠{'dyadic'})0 ←→ 'monadic'
-// 0({'monadic'}⍠{'dyadic'})0 ←→ 'dyadic'
-voc['⍠']=conjunction((f,g)=>{
+//  ({1}⍠{2})0 ←→ 1
+// 0({1}⍠{2})0 ←→ 2
+voc['⍠']=conj((f,g)=>{
   asrt(typeof f==='function')
   asrt(typeof g==='function')
   return(om,al,axis)=>(al?f:g)(om,al,axis)
