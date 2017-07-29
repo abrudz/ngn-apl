@@ -1,33 +1,30 @@
 $($=>{
-  // Bookmarkable source code
+  var a=document.body.querySelectorAll('[id]'),I={};for(var i=0;i<a.length;i++)I[a[i].id]=a[i]
+
+  // bookmarkable source code
   var hashParams={}
   if(location.hash){
     var a=location.hash.substring(1).split(',')
     for(var i=0;i<a.length;i++){var b=a[i].split('=');hashParams[b[0]]=unescape(b[1])}
   }
-  $('#code').text(hashParams.code||'').focus()
-  $('#permalink').tipsy({gravity:'e',opacity:1,delayIn:1000}).bind('mouseover focus',_=>{
-    $(this).attr('href','#code='+escape($('#code').val()));return false
+  I.code.value=hashParams.code||'';I.code.focus()
+  $(I.permalink).tipsy({gravity:'e',opacity:1,delayIn:1000}).bind('mouseover focus',_=>{
+    $(this).attr('href','#code='+escape($('#code').val()));return!1
   })
 
-  const execute=_=>{ // "Execute" button
+  const execute=_=>{
     try{
-      var s=$('#code').val()
-      if(s===')t'){
-        $('#result').removeClass('error').text('Running tests...')
-        setTimeout(runDocTests,1)
-      }else{
-        $('#result').removeClass('error').text(apl.format(apl(s)).join('\n')+'\n')
-      }
+      var s=I.code.value;I.result.classList.remove('error')
+      if(s===')t'){I.result.textContent='Running tests...';setTimeout(runDocTests,1)}
+      else{I.result.textContent=apl.format(apl(s)).join('\n')+'\n'}
     }catch(e){
       console&&console.error&&console.error(e.stack)
-      $('#result').addClass('error').text(e)
+      I.result.classList.add('error');I.result.textContent=e
     }
   }
 
-  $('#go').tipsy({gravity:'e',opacity:1,delayIn:1000}).closest('form').submit(_=>{execute();return false})
-
-  if(hashParams.run)$('#go').click()
+  $(I.go).tipsy({gravity:'e',opacity:1,delayIn:1000}).closest('form').submit(_=>{execute();return!1})
+  hashParams.run&&I.go.click()
 
   var hSymbolDefs={
     '+':'Conjugate, Add',
@@ -146,25 +143,23 @@ $($=>{
   $.keyboard.keyaction.exec=execute
   $.keyboard.defaultOptions.combos={}
   $.keyboard.comboRegex=/(`)(.)/mig
-  $('textarea').keyboard({
+  $(I.code).addTyping().keyboard({
     layout:'custom',useCombos:false,autoAccept:true,usePreview:false,customLayout:layout,useCombos:true,combos:combos,
     display:{bksp:'Bksp',shift:'⇧',alt:'APL',enter:'Enter',exec:'⍎'}
   })
-
-  $('textarea').addTyping().focus()
-
-  $('#code').keydown(e=>{if(e.keyCode===13&&e.ctrlKey){$('#go').click();return false}})
+  I.code.focus()
+  I.code.onkeydown=x=>{if(x.which===13&&x.ctrlKey){I.go.click();return!1}}
 
   var tipsyOpts={gravity:'s',delayIn:1000,opacity:1,title:_=>hSymbolDefs[$(this).text()]||''}
   $('.ui-keyboard').on('mouseover','.ui-keyboard-button',event=>{
     var $b=$(event.target).closest('.ui-keyboard-button')
     if(!$b.data('tipsyInitialised'))$b.data('tipsyInitialised',1).tipsy(tipsyOpts).tipsy('show')
-    return false
+    return!1
   })
 
   // Tests
   const runDocTests=_=>{
-    $('#result').removeClass('error').html('')
+    I.result.classList.remove('error');I.result.classList.textContent=''
     var nExecuted=0,nFailed=0,t0=+new Date
     for(var i=0;i<aplTests.length;i++){
       var x=aplTests[i],code=x[0],mode=x[1],expectation=x[2]
@@ -179,9 +174,7 @@ $($=>{
         $('#result').text($('#result').text()+s)
       }
     }
-    $('#result').text($('#result').text()+(
-      (nFailed?nFailed+' out of '+nExecuted+' tests failed':'All '+nExecuted+' tests passed')+
-      ' in '+(new Date-t0)+' ms.\n'
-    ))
+    I.result.textContent+=(nFailed?nFailed+' out of '+nExecuted+' tests failed':'All '+nExecuted+' tests passed')
+                          +' in '+(new Date-t0)+' ms.\n'
   }
 })
