@@ -215,9 +215,8 @@ voc['|']=withIdentity(0,pervasive({
   // ¯10 7j10 0.3|17 5 10 ←→ ¯3 ¯5j7 0.1
   dyad:(y,x)=>Z.residue(x,y)
 }))
-var scanOrExpand
 
-voc['⍀']=adverb((om,al,axis)=>scanOrExpand(om,al,axis||A.zero))
+voc['⍀']=adverb((om,al,axis)=>voc['\\'](om,al,axis||A.zero))
 
 // +\20 10 ¯5 7               ←→ 20 30 25 32
 // ,\"AB" "CD" "EF"           ←→ 'AB' 'ABCD' 'ABCDEF'
@@ -243,7 +242,7 @@ voc['⍀']=adverb((om,al,axis)=>scanOrExpand(om,al,axis||A.zero))
 // 1 0 1⍀2 2⍴'ABCD'    ←→ 3 2⍴'AB  CD'
 // 1 0 1\[0]2 2⍴'ABCD' ←→ 3 2⍴'AB  CD'
 // 1 0 1\[1]2 2⍴'ABCD' ←→ 2 3⍴'A BC D'
-voc['\\']=scanOrExpand=adverb((om,al,axis)=>{
+voc['\\']=adverb((om,al,axis)=>{
   if(typeof om==='function'){
     asrt(typeof al==='undefined')
     var f=om
@@ -749,7 +748,7 @@ const outerProduct=f=>{
 // 7+.=7               ←→ 1
 // (3 2⍴5 ¯3 ¯2 4 ¯1 0)+.×2 2⍴6 ¯3 5 7 ←→ 3 2⍴15 ¯36 8 34 ¯6 3
 const innerProduct=(g,f)=>{
-  var F=voc['¨'](reduce(f)),G=outerProduct(g)
+  var F=voc['¨'](voc['/'](f)),G=outerProduct(g)
   return(om,al)=>{
     if(!al.shape.length)al=new A([al.unwrap()])
     if(!om.shape.length)om=new A([om.unwrap()])
@@ -929,10 +928,8 @@ voc['!']=withIdentity(1,pervasive({
   })
 }))
 
-
 const negInt=x=>isInt(x)&&x<0
 var smallFactorials=[1];(_=>{var x=1;for(var i=1;i<=25;i++)smallFactorials.push(x*=i)})()
-
 var Γ,lnΓ
 ;(_=>{
   const g=7
@@ -1610,8 +1607,7 @@ voc['⍴']=(om,al)=>{
   }
 }
 
-var rotate
-voc['⌽']=rotate=(om,al,axis)=>{
+voc['⌽']=(om,al,axis)=>{
   asrt(typeof axis==='undefined'||axis instanceof A)
   if(al){
     // 1⌽1 2 3 4 5 6             ←→ 2 3 4 5 6 1
@@ -1667,11 +1663,10 @@ voc['⌽']=rotate=(om,al,axis)=>{
 // ⊖    2 5⍴1 2 3 4 5 6 7 8 9 0 ←→ 2 5⍴6 7 8 9 0 1 2 3 4 5
 // ⊖[1] 2 5⍴1 2 3 4 5 6 7 8 9 0 ←→ 2 5⍴5 4 3 2 1 0 9 8 7 6
 // 1⊖3 3⍴⍳9 ←→ 3 3⍴3 4 5 6 7 8 0 1 2
-voc['⊖']=(om,al,axis)=>rotate(om,al,axis||A.zero)
+voc['⊖']=(om,al,axis)=>voc['⌽'](om,al,axis||A.zero)
 
-var reduce
-voc['⌿']=adverb((om,al,axis)=>reduce(om,al,axis||A.zero)),
-voc['/']=reduce=adverb((om,al,axis)=>{
+voc['⌿']=adverb((om,al,axis)=>voc['/'](om,al,axis||A.zero)),
+voc['/']=adverb((om,al,axis)=>{
   if(typeof om==='function'){
     // +/3                    ←→ 3
     // +/3 5 8                ←→ 16
@@ -1810,7 +1805,7 @@ voc['/']=reduce=adverb((om,al,axis)=>{
 // (1 2)0⌷3 4⍴11 12 13 14 21 22 23 24 31 32 33 34 ←→ 21 31
 // a←2 2⍴0 ⋄ a[;0]←1 ⋄ a ←→ 2 2⍴1 0 1 0
 // a←2 3⍴0 ⋄ a[1;0 2]←1 ⋄ a ←→ 2 3⍴0 0 0 1 0 1
-var squish=voc['⌷']=(om,al,axes)=>{
+voc['⌷']=(om,al,axes)=>{
   if(typeof om==='function')return(x,y)=>om(x,y,al)
   al||nyiErr()
   al.shape.length>1&&rnkErr()
@@ -1861,7 +1856,7 @@ var squish=voc['⌷']=(om,al,axes)=>{
 // ...                              'XXX')
 voc._index=(alphaAndAxes,om)=>{
   var h=alphaAndAxes.toArray(),al=h[0],axes=h[1]
-  return squish(om,al,axes)
+  return voc['⌷'](om,al,axes)
 }
 
 // a←⍳5 ⋄ a[1 3]←7 8 ⋄ a ←→ 0 7 2 8 4
@@ -1892,7 +1887,7 @@ voc._substitute=args=>{
   }else{
     axes=[];for(var i=0;i<a.length;i++)a.push(i)
   }
-  var subs=squish(voc['⍳'](new A(om.shape)),al,new A(axes))
+  var subs=voc['⌷'](voc['⍳'](new A(om.shape)),al,new A(axes))
   if(value.isSingleton())value=new A([value],subs.shape,repeat([0],subs.shape.length))
   var data=om.toArray(),stride=strideForShape(om.shape)
   each2(subs,value,(u,v)=>{
