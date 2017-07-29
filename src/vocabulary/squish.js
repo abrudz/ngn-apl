@@ -1,5 +1,5 @@
 var squish
-addVocabulary({
+addVoc({
   // "a0 a1...⌷b" is equivalent to "b[a0;a1;...]"
   //
   // 1⌷3 5 8                ←→ 5
@@ -18,19 +18,19 @@ addVocabulary({
   // a←2 3⍴0 ⋄ a[1;0 2]←1 ⋄ a ←→ 2 3⍴0 0 0 1 0 1
   '⌷':squish=(om,al,axes)=>{
     if(typeof om==='function')return(x,y)=>om(x,y,al)
-    al||nonceError()
-    al.shape.length>1&&rankError()
-    var a=al.toArray();a.length>om.shape.length&&lengthError()
+    al||nyiErr()
+    al.shape.length>1&&rnkErr()
+    var a=al.toArray();a.length>om.shape.length&&lenErr()
 
     if(axes){
       axes=axes.toArray()
-      a.length===axes.length||lengthError()
+      a.length===axes.length||lenErr()
       var h=Array(om.shape.length)
       for(var i=0;i<axes.length;i++){
         var axis=axes[i]
-        isInt(axis)||domainError()
-        0<=axis&&axis<om.shape.length||rankError()
-        h[axis]&&rankError('Duplicate axis')
+        isInt(axis)||domErr()
+        0<=axis&&axis<om.shape.length||rnkErr()
+        h[axis]&&rnkErr('Duplicate axis')
         h[axis]=1
       }
     }else{
@@ -92,13 +92,13 @@ addVocabulary({
     var h=args.toArray().map(x=>x instanceof A?x:new A([x],[]))
     var value=h[0],al=h[1],om=h[2],axes=h[3]
 
-    al.shape.length>1&&rankError()
-    var a=al.toArray();a.length>om.shape.length&&lengthError()
+    al.shape.length>1&&rnkErr()
+    var a=al.toArray();a.length>om.shape.length&&lenErr()
 
     if(axes){
-      axes.shape.length>1&&rankError()
+      axes.shape.length>1&&rnkErr()
       axes=axes.toArray()
-      a.length===axes.length||lengthError()
+      a.length===axes.length||lenErr()
     }else{
       axes=[];for(var i=0;i<a.length;i++)a.push(i)
     }
@@ -121,9 +121,9 @@ addVocabulary({
 })
 
 const indexAtSingleAxis=(om,sub,ax)=>{
-  assert(om instanceof A&&sub instanceof A&&isInt(ax)&&0<=ax&&ax<om.shape.length)
+  asrt(om instanceof A&&sub instanceof A&&isInt(ax)&&0<=ax&&ax<om.shape.length)
   var u=sub.toArray(),n=om.shape[ax]
-  for(var i=0;i<u.length;i++){isInt(u[i])||domainError();0<=u[i]&&u[i]<n||indexError()}
+  for(var i=0;i<u.length;i++){isInt(u[i])||domErr();0<=u[i]&&u[i]<n||idxErr()}
   var isUniform=0
   if(u.length>=2){var d=u[1]-u[0];isUniform=1;for(var i=2;i<u.length;i++)if(u[i]-u[i-1]!==d){isUniform=0;break}}
   if(isUniform){

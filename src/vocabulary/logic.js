@@ -1,4 +1,4 @@
-addVocabulary({
+addVoc({
   '~': pervasive({
     // ~0 1 ←→ 1 0
     // ~2   !!! DOMAIN ERROR
@@ -27,7 +27,7 @@ addVocabulary({
     // 2 3 4∨0j1 1j2 2j3 ←→ 1 1 1
     // 2j2 2j4∨5j5 4j4   ←→ 1j1 2
     dyad:(y,x)=>{
-      if(!Z.isint(x)||!Z.isint(y))domainError('∨ is implemented only for Gaussian integers')
+      if(!Z.isint(x)||!Z.isint(y))domErr('∨ is implemented only for Gaussian integers')
       return Z.gcd(x,y)
     }
   })),
@@ -57,7 +57,7 @@ addVocabulary({
     // 2 3 4∧0j1 1j2 2j3              ←→ 0j2 3j6 8j12
     // 2j2 2j4∧5j5 4j4                ←→ 10j10 ¯4j12
     dyad:(y,x)=>{
-      if(!Z.isint(x)||!Z.isint(y))domainError('∧ is implemented only for Gaussian integers')
+      if(!Z.isint(x)||!Z.isint(y))domErr('∧ is implemented only for Gaussian integers')
       return Z.lcm(x,y)
     }
   })),

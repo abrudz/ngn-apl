@@ -1,7 +1,7 @@
 var rotate
-addVocabulary({
+addVoc({
   '⌽':rotate=(om,al,axis)=>{
-    assert(typeof axis==='undefined'||axis instanceof A)
+    asrt(typeof axis==='undefined'||axis instanceof A)
     if(al){
       // 1⌽1 2 3 4 5 6             ←→ 2 3 4 5 6 1
       // 3⌽'ABCDEFGH'              ←→ 'DEFGHABC'
@@ -12,10 +12,10 @@ addVocabulary({
       // 0⌽1234                    ←→ 1234
       // 5⌽⍬                       ←→ ⍬
       axis=axis?axis.unwrap():om.shape.length-1 
-      isInt(axis)||domainError()
-      if(om.shape.length&&!(0<=axis&&axis<om.shape.length))indexError()
+      isInt(axis)||domErr()
+      if(om.shape.length&&!(0<=axis&&axis<om.shape.length))idxErr()
       var step=al.unwrap()
-      isInt(step)||domainError()
+      isInt(step)||domErr()
       if(!step)return om
       var n=om.shape[axis]
       step=(n+step%n)%n // force % to handle negatives properly
@@ -36,10 +36,10 @@ addVocabulary({
       // ⌽    2 5⍴1 2 3 4 5 6 7 8 9 0 ←→ 2 5⍴5 4 3 2 1 0 9 8 7 6
       // ⌽[0] 2 5⍴1 2 3 4 5 6 7 8 9 0 ←→ 2 5⍴6 7 8 9 0 1 2 3 4 5
       if(axis){
-        axis.isSingleton()||lengthError()
+        axis.isSingleton()||lenErr()
         axis=axis.unwrap()
-        isInt(axis)||domainError()
-        0<=axis&&axis<om.shape.length||indexError()
+        isInt(axis)||domErr()
+        0<=axis&&axis<om.shape.length||idxErr()
       }else{
         axis=[om.shape.length-1]
       }

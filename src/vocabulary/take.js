@@ -1,4 +1,4 @@
-addVocabulary({
+addVoc({
   '↑':(om,al)=>al?take(om,al):first(om)
 })
 
@@ -26,11 +26,11 @@ addVocabulary({
 // 4↑3 3⍴⍳9         ←→ 4 3⍴(⍳9),0 0 0
 // ⍬↑3 3⍴⍳9         ←→ 3 3⍴⍳9
 const take=(om,al)=>{
-  al.shape.length<=1||rankError()
+  al.shape.length<=1||rnkErr()
   if(!om.shape.length)om=new A([om.unwrap()],al.shape.length?repeat([1],al.shape[0]):[1])
   var a=al.toArray()
-  a.length<=om.shape.length||rankError()
-  for(var i=0;i<a.length;i++)typeof a[i]==='number'&&a[i]===Math.floor(a[i])||domainError()
+  a.length<=om.shape.length||rnkErr()
+  for(var i=0;i<a.length;i++)typeof a[i]==='number'&&a[i]===Math.floor(a[i])||domErr()
   var mustCopy=0,shape=om.shape.slice(0)
   for(var i=0;i<a.length;i++){shape[i]=Math.abs(a[i]);if(shape[i]>om.shape[i])mustCopy=1}
   if(mustCopy){

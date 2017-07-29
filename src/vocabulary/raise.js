@@ -1,4 +1,4 @@
-addVocabulary({
+addVoc({
   // ↗'CUSTOM ERROR' !!! CUSTOM ERROR
-  '↗':om=>aplError(om.toString())
+  '↗':om=>err(om.toString())
 })

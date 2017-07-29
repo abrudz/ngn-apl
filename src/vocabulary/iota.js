@@ -1,4 +1,4 @@
-addVocabulary({
+addVoc({
   '⍳':(om,al)=>{
     if(al){
       // 2 5 9 14 20⍳9                           ←→ 2
@@ -14,7 +14,7 @@ addVocabulary({
       // 123 123⍳123                             ←→ 0
       // ⍬⍳123 234                               ←→ 0 0
       // 123 234⍳⍬                               ←→ ⍬
-      al.shape.length===1||rankError()
+      al.shape.length===1||rnkErr()
       return om.map(x=>{
         var rank=al.shape
         try{each(al,(y,indices)=>{if(match(x,y)){rank=indices;throw'break'}})}
@@ -34,8 +34,8 @@ addVocabulary({
       // ...              (1 2 0)(1 2 1)(1 2 2)(1 2 3))
       // ⍴⍳2 3 4 ←→ 2 3 4
       // ⍳¯1 !!! DOMAIN ERROR
-      om.shape.length<=1||rankError()
-      var a=om.toArray();for(var i=0;i<a.length;i++)isInt(a[i],0)||domainError()
+      om.shape.length<=1||rnkErr()
+      var a=om.toArray();for(var i=0;i<a.length;i++)isInt(a[i],0)||domErr()
       var n=prod(a),data
       if(!n){
         data=[]
@@ -43,14 +43,14 @@ addVocabulary({
         data=n<=0x100      ?new Uint8Array (n):
              n<=0x10000    ?new Uint16Array(n):
              n<=0x100000000?new Uint32Array(n):
-             domainError()
+             domErr()
         for(var i=0;i<n;i++)data[i]=i
       }else{
         var m=Math.max.apply(Math,a)
         var ctor=m<=0x100      ?Uint8Array :
                  m<=0x10000    ?Uint16Array:
                  m<=0x100000000?Uint32Array:
-                 domainError()
+                 domErr()
         var itemData=new ctor(n*a.length)
         var u=n
         for(var i=0;i<a.length;i++){

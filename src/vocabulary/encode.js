@@ -1,4 +1,4 @@
-addVocabulary({
+addVoc({
   // 1760 3 12⊤75    ←→ 2 0 3
   // 3 12⊤75         ←→ 0 3
   // 100000 12⊤75    ←→ 6 3
@@ -33,7 +33,7 @@ addVocabulary({
   // ...         1 3 11)
   // 0j1 2j3 4j5⊤6j7 ←→ 0 ¯2j2 2j2
   '⊤':(om,al)=>{
-    assert(al)
+    asrt(al)
     var a=al.toArray(),b=om.toArray(),shape=al.shape.concat(om.shape),data=Array(prod(shape))
     var n=al.shape.length?al.shape[0]:1,m=a.length/n
     for(var i=0;i<m;i++)for(var j=0;j<b.length;j++){

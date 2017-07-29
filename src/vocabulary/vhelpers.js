@@ -1,5 +1,5 @@
 var vocabulary={}
-const addVocabulary=h=>{for(var k in h)vocabulary[k]=h[k]}
+const addVoc=h=>{for(var k in h)vocabulary[k]=h[k]}
 
 // pervasive() is a higher-order function
 //
@@ -11,36 +11,36 @@ const addVocabulary=h=>{for(var k in h)vocabulary[k]=h[k]}
 // single function that dispatches based on the number of arguments.
 const pervasive=h=>{
   var monad=h.monad,dyad=h.dyad
-  var pervadeMonadic=!monad?nonceError:x=>{
+  var pervadeMonadic=!monad?nyiErr:x=>{
     if(x instanceof A)return x.map(pervadeMonadic)
-    var r=monad(x);typeof r==='number'&&r!==r&&domainError('NaN');return r
+    var r=monad(x);typeof r==='number'&&r!==r&&domErr('NaN');return r
   }
-  var pervadeDyadic=!dyad?nonceError:(x,y)=>{
+  var pervadeDyadic=!dyad?nyiErr:(x,y)=>{
     // tx,ty: 0=unwrapped scalar; 1=singleton array; 2=non-singleton array
     var tx=x instanceof A?(x.isSingleton()?20:30):10
     var ty=y instanceof A?(y.isSingleton()? 2: 3): 1
     switch(tx+ty){ // todo: use the larger shape when tx=10 and ty=1
-      case 11:        var r=dyad(x,y);typeof r==='number'&&r!==r&&domainError('NaN');return r
+      case 11:        var r=dyad(x,y);typeof r==='number'&&r!==r&&domErr('NaN');return r
       case 12:case 13:return y.map(yi=>pervadeDyadic(x,yi))
       case 21:case 31:return x.map(xi=>pervadeDyadic(xi,y))
       case 23:        xi=x.data[x.offset];return y.map(yi=>pervadeDyadic(xi,yi))
       case 32:case 22:yi=y.data[y.offset];return x.map(xi=>pervadeDyadic(xi,yi))
       case 33:
-        x.shape.length!==y.shape.length&&rankError()
-        x.shape!=''+y.shape&&lengthError()
+        x.shape.length!==y.shape.length&&rnkErr()
+        x.shape!=''+y.shape&&lenErr()
         return x.map2(y,pervadeDyadic)
-      default:assert(0)
+      default:asrt(0)
     }
   }
   return(om,al)=>{
-    assert(om instanceof A);assert(al instanceof A||al==null)
+    asrt(om instanceof A);asrt(al instanceof A||al==null)
     return(al!=null?pervadeDyadic:pervadeMonadic)(om,al)
   }
 }
 const real=f=>(x,y,axis)=>
-  typeof x!=='number'||y!=null&&typeof y!=='number'?domainError():f(x,y,axis)
+  typeof x!=='number'||y!=null&&typeof y!=='number'?domErr():f(x,y,axis)
 const numeric=(f,g)=>(x,y,axis)=>
-  (typeof x!=='number'||y!=null&&typeof y!=='number'?g(complexify(x),y==null?y:complexify(y),axis):f(x,y,axis))
+  (typeof x!=='number'||y!=null&&typeof y!=='number'?g(Zify(x),y==null?y:Zify(y),axis):f(x,y,axis))
 const match=(x,y)=>{
   if(x instanceof A){
     if(!(y instanceof A)||x.shape!=''+y.shape)return 0
@@ -69,24 +69,24 @@ const approx=(x,y)=>{
     return x===y
   }
 }
-const bool=x=>(x&1)!==x?domainError():x
+const bool=x=>(x&1)!==x?domErr():x
 const getAxisList=(axes,rank)=>{
-  assert(isInt(rank,0))
+  asrt(isInt(rank,0))
   if(axes==null)return[]
-  assert(axes instanceof A)
-  if(axes.shape.length!==1||axes.shape[0]!==1)syntaxError() // [sic]
+  asrt(axes instanceof A)
+  if(axes.shape.length!==1||axes.shape[0]!==1)synErr() // [sic]
   var a=axes.unwrap()
   if(a instanceof A){
     a=a.toArray()
     for(var i=0;i<a.length;i++){
-      isInt(a[i],0,rank)||domainError()
-      a.indexOf(a[i])<i&&domainError('Non-unique axes')
+      isInt(a[i],0,rank)||domErr()
+      a.indexOf(a[i])<i&&domErr('Non-unique axes')
     }
     return a
   }else if(isInt(a,0,rank)){
     return[a]
   }else{
-    domainError()
+    domErr()
   }
 }
 const withIdentity=(x,f)=>{f.identity=x instanceof A?x:A.scalar(x);return f}

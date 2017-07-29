@@ -1,5 +1,5 @@
 var eq
-addVocabulary({
+addVoc({
   // 12=12               ←→ 1
   // 2=12                ←→ 0
   // "Q"="Q"             ←→ 1

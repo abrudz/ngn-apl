@@ -1,4 +1,4 @@
-addVocabulary({
+addVoc({
   // (÷∘-)2     ←→ ¯0.5
   // 8(÷∘-)2    ←→ ¯4
   // ÷∘-2       ←→ ¯0.5
@@ -12,11 +12,11 @@ addVocabulary({
       if(typeof g==='function'){
         return(om,al)=>f(g(om),al) // f∘g
       }else{
-        return(om,al)=>{al==null||syntaxError('The function does not take a left argument');return f(g,om)} // f∘B
+        return(om,al)=>{al==null||synErr('The function does not take a left argument');return f(g,om)} // f∘B
       }
     }else{
-      assert(typeof g==='function')
-      return(om,al)=>{al==null||syntaxError('The function does not take a left argument');return g(om,f)} // A∘g
+      asrt(typeof g==='function')
+      return(om,al)=>{al==null||synErr('The function does not take a left argument');return g(om,f)} // A∘g
     }
   })
 })

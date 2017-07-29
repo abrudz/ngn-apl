@@ -1,4 +1,4 @@
-addVocabulary({
+addVoc({
   // ⍴¨(0 0 0 0)(0 0 0)             ←→ (,4)(,3)
   // ⍴¨"MONDAY" "TUESDAY"           ←→ (,6)(,7)
   // ⍴   (2 2⍴⍳4)(⍳10)97.3(3 4⍴"K") ←→ ,4
@@ -12,37 +12,37 @@ addVocabulary({
   // 4 5⍴¨"THE" "CAT"               ←→ 'THET' 'CATCA'
   // {1+⍵*2}¨2 3⍴⍳6                 ←→ 2 3⍴1 2 5 10 17 26
   '¨':adverb((f,g)=>{
-    assert(typeof f==='function');assert(g==null)
+    asrt(typeof f==='function');asrt(g==null)
     return(om,al)=>{
       if(!al){
         return om.map(x=>{
           x instanceof A||(x=new A([x],[]))
-          var r=f(x);assert(r instanceof A)
+          var r=f(x);asrt(r instanceof A)
           return r.shape.length?r:r.unwrap()
         })
-      }else if(arrayEquals(al.shape,om.shape)){
+      }else if(arrEq(al.shape,om.shape)){
         return om.map2(al,(x,y)=>{
           x instanceof A||(x=new A([x],[]))
           y instanceof A||(y=new A([y],[]))
-          var r=f(x,y);assert(r instanceof A)
+          var r=f(x,y);asrt(r instanceof A)
           return r.shape.length?r:r.unwrap()
         })
       }else if(al.isSingleton()){
         var y=al.data[0]instanceof A?al.unwrap():al
         return om.map(x=>{
           x instanceof A||(x=new A([x],[]))
-          var r=f(x,y);assert(r instanceof A)
+          var r=f(x,y);asrt(r instanceof A)
           return r.shape.length?r:r.unwrap()
         })
       }else if(om.isSingleton()){
         var x=om.data[0]instanceof A?om.unwrap():om
         return al.map(y=>{
           y instanceof A||(y=new A([y],[]))
-          var r=f(x,y);assert(r instanceof A)
+          var r=f(x,y);asrt(r instanceof A)
           return r.shape.length?r:r.unwrap()
         })
       }else{
-        lengthError()
+        lenErr()
       }
     }
   })

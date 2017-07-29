@@ -1,4 +1,4 @@
-addVocabulary({
+addVoc({
   // f←{⍺+2×⍵} ⋄ f/⍬           !!! DOMAIN ERROR
   // f←{⍺+2×⍵} ⋄ (f⍁123)/⍬     ←→ 123
   // f←{⍺+2×⍵} ⋄ (456⍁f)/⍬     ←→ 456
@@ -7,9 +7,9 @@ addVocabulary({
   // ({}⍁(1 1 1⍴123))/⍬        ←→ 123
   '⍁':conjunction((f,x)=>{
     if(f instanceof A){var h=f;f=x;x=h}
-    assert(typeof f==='function')
-    assert(x instanceof A)
-    x.isSingleton()||rankError()
+    asrt(typeof f==='function')
+    asrt(x instanceof A)
+    x.isSingleton()||rnkErr()
     if(x.shape.length)x=A.scalar(x.unwrap())
     return withIdentity(x,(om,al,axis)=>f(om,al,axis))
   })

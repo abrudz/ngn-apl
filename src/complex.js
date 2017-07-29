@@ -1,7 +1,7 @@
-// complexify(x)
+// Zify(x) - complexify
 // * if x is real, it's converted to a complex instance with imaginary part 0
 // * if x is already complex, it's preserved
-const complexify=x=>typeof x==='number'?new Z(x,0):x instanceof Z?x:domainError()
+const Zify=x=>typeof x==='number'?new Z(x,0):x instanceof Z?x:domErr()
 
 // simplify(re, im)
 // * if the imaginary part is 0, the real part is returned
@@ -9,27 +9,27 @@ const complexify=x=>typeof x==='number'?new Z(x,0):x instanceof Z?x:domainError(
 const simplify=(re,im)=>im===0?re:new Z(re,im)
 
 function Z(re,im){ // complex number constructor
-  assert(typeof re==='number')
-  assert(typeof im==='number'||im==null)
-  if(re!==re||im!==im)domainError('NaN')
+  asrt(typeof re==='number')
+  asrt(typeof im==='number'||im==null)
+  if(re!==re||im!==im)domErr('NaN')
   this.re=re;this.im=im||0
 }
-Z.prototype.toString=function(){return formatNumber(this.re)+'J'+formatNumber(this.im)}
+Z.prototype.toString=function(){return fmtNum(this.re)+'J'+fmtNum(this.im)}
 Z.prototype.repr=function(){return'new Z('+repr(this.re)+','+repr(this.im)+')'}
 
-Z.exp=x=>{x=complexify(x);var r=Math.exp(x.re);return simplify(r*Math.cos(x.im),r*Math.sin(x.im))}
+Z.exp=x=>{x=Zify(x);var r=Math.exp(x.re);return simplify(r*Math.cos(x.im),r*Math.sin(x.im))}
 Z.log=x=>{
   if(typeof x==='number'&&x>0){return Math.log(x)}
-  else{x=complexify(x);return simplify(Math.log(Math.sqrt(x.re*x.re+x.im*x.im)),Z.direction(x))}
+  else{x=Zify(x);return simplify(Math.log(Math.sqrt(x.re*x.re+x.im*x.im)),Z.direction(x))}
 }
 Z.conjugate=x=>new Z(x.re,-x.im)
 Z.negate   =x=>new Z(-x.re,-x.im)
-Z.itimes   =x=>{x=complexify(x);return simplify(-x.im,x.re)}
-Z.negitimes=x=>{x=complexify(x);return simplify(x.im,-x.re)}
-Z.add      =(x,y)=>{x=complexify(x);y=complexify(y);return simplify(x.re+y.re,x.im+y.im)}
-Z.subtract =(x,y)=>{x=complexify(x);y=complexify(y);return simplify(x.re-y.re,x.im-y.im)}
-Z.multiply =(x,y)=>{x=complexify(x);y=complexify(y);return simplify(x.re*y.re-x.im*y.im,x.re*y.im+x.im*y.re)}
-Z.divide   =(x,y)=>{x=complexify(x);y=complexify(y);const d=y.re*y.re+y.im*y.im
+Z.itimes   =x=>{x=Zify(x);return simplify(-x.im,x.re)}
+Z.negitimes=x=>{x=Zify(x);return simplify(x.im,-x.re)}
+Z.add      =(x,y)=>{x=Zify(x);y=Zify(y);return simplify(x.re+y.re,x.im+y.im)}
+Z.subtract =(x,y)=>{x=Zify(x);y=Zify(y);return simplify(x.re-y.re,x.im-y.im)}
+Z.multiply =(x,y)=>{x=Zify(x);y=Zify(y);return simplify(x.re*y.re-x.im*y.im,x.re*y.im+x.im*y.re)}
+Z.divide   =(x,y)=>{x=Zify(x);y=Zify(y);const d=y.re*y.re+y.im*y.im
                     return simplify((x.re*y.re+x.im*y.im)/d,(y.re*x.im-y.im*x.re)/d)}
 
 // ¯1 ¯2 ¯3 ¯4*2 ←→ 1 4 9 16
@@ -53,14 +53,14 @@ Z.tan=x=>Z.negitimes(Z.tanh(Z.itimes(x)))
 // arcsin x = -i ln(ix + sqrt(1 - x^2))
 // arccos x = -i ln(x + i sqrt(x^2 - 1))
 // arctan x = (i/2) (ln(1-ix) - ln(1+ix))
-Z.asin=x=>{x=complexify(x);return Z.negitimes(Z.log(Z.add(Z.itimes(x),Z.sqrt(Z.subtract(1,Z.pow(x,2))))))}
+Z.asin=x=>{x=Zify(x);return Z.negitimes(Z.log(Z.add(Z.itimes(x),Z.sqrt(Z.subtract(1,Z.pow(x,2))))))}
 Z.acos=x=>{
-  x=complexify(x);r=Z.negitimes(Z.log(Z.add(x,Z.sqrt(Z.subtract(Z.pow(x,2),1)))))
+  x=Zify(x);r=Z.negitimes(Z.log(Z.add(x,Z.sqrt(Z.subtract(Z.pow(x,2),1)))))
   // TODO look up the algorithm for determining the sign of arccos; the following line is dubious
   return r instanceof Z&&(r.re<0||(r.re===0&&r.im<0))?Z.negate(r):r
 }
 Z.atan=x=>{
-  x=complexify(x);ix=Z.itimes(x)
+  x=Zify(x);ix=Z.itimes(x)
   return Z.multiply(new Z(0,.5),Z.subtract(Z.log(Z.subtract(1,ix)),Z.log(Z.add(1,ix))))
 }
 
@@ -72,19 +72,19 @@ Z.tanh=x=>{var a=Z.exp(x),b=Z.divide(1,a);return Z.divide(Z.subtract(a,b),Z.add(
 // arccosh x = +/- i arccos(x)
 // arctanh x =     i arctan(-ix)
 Z.asinh=x=>Z.itimes(Z.asin(Z.negitimes(x)))
-Z.acosh=x=>{x=complexify(x);var sign=x.im>0||(!x.im&&x.re<=1)?1:-1;return Z.multiply(new Z(0,sign),Z.acos(x))}
+Z.acosh=x=>{x=Zify(x);var sign=x.im>0||(!x.im&&x.re<=1)?1:-1;return Z.multiply(new Z(0,sign),Z.acos(x))}
 Z.atanh=x=>Z.itimes(Z.atan(Z.negitimes(x)))
 
 Z.floor=x=>{
   if(typeof x==='number')return Math.floor(x)
-  x=complexify(x)
+  x=Zify(x)
   var re=Math.floor(x.re),im=Math.floor(x.im),r=x.re-re,i=x.im-im
   if(r+i>=1)r>=i?re++:im++
   return simplify(re,im)
 }
 Z.ceil=x=>{
   if(typeof x==='number')return Math.ceil(x)
-  x=complexify(x)
+  x=Zify(x)
   var re=Math.ceil(x.re),im=Math.ceil(x.im),r=re-x.re,i=im-x.im
   if(r+i>=1)r>=i?re--:im--
   return simplify(re,im)

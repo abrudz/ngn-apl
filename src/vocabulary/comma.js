@@ -1,4 +1,4 @@
-addVocabulary({
+addVoc({
   ',':(om,al,axis)=>{
     if(al){
       // 10,66               ←→ 10 66
@@ -19,8 +19,8 @@ addVocabulary({
       var nAxes=Math.max(al.shape.length,om.shape.length)
       if(axis){
         axis=axis.unwrap()
-        typeof axis!=='number'&&domainError()
-        nAxes&&!(-1<axis&&axis<nAxes)&&rankError()
+        typeof axis!=='number'&&domErr()
+        nAxes&&!(-1<axis&&axis<nAxes)&&rnkErr()
       }else{
         axis=nAxes-1
       }
@@ -36,21 +36,21 @@ addVocabulary({
         if(isInt(axis))s[axis]=1
         om=new A([om.unwrap()],s,repeat([0],al.shape.length))
       }else if(al.shape.length+1===om.shape.length){
-        isInt(axis)||rankError()
+        isInt(axis)||rnkErr()
         var shape =al.shape .slice(0);shape .splice(axis,0,1)
         var stride=al.stride.slice(0);stride.splice(axis,0,0)
         al=new A(al.data,shape,stride,al.offset)
       }else if(al.shape.length===om.shape.length+1){
-        isInt(axis)||rankError()
+        isInt(axis)||rnkErr()
         var shape =om.shape .slice(0);shape .splice(axis,0,1)
         var stride=om.stride.slice(0);stride.splice(axis,0,0)
         om=new A(om.data,shape,stride,om.offset)
       }else if(al.shape.length!==om.shape.length){
-        rankError()
+        rnkErr()
       }
 
-      assert(al.shape.length===om.shape.length)
-      for(var i=0;i<al.shape.length;i++)if(i!==axis&&al.shape[i]!==om.shape[i])lengthError()
+      asrt(al.shape.length===om.shape.length)
+      for(var i=0;i<al.shape.length;i++)if(i!==axis&&al.shape[i]!==om.shape[i])lenErr()
 
       var shape=al.shape.slice(0);if(isInt(axis)){shape[axis]+=om.shape[axis]}else{shape.splice(Math.ceil(axis),0,2)}
       var data=Array(prod(shape))
@@ -87,7 +87,7 @@ addVocabulary({
       }
       return new A(data,shape,stride)
     }else{
-      assert(0)
+      asrt(0)
     }
   }
 })

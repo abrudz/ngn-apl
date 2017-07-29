@@ -1,4 +1,4 @@
-addVocabulary({
+addVoc({
   // ⍕123            ←→ 1 3⍴'123'
   // ⍕123 456        ←→ 1 7⍴'123 456'
   // ⍕123 'a'        ←→ 1 5⍴'123 a'
@@ -23,7 +23,7 @@ addVocabulary({
   // ⍕¯∞             ←→ 1 2⍴'¯∞'
   // ⍕¯1             ←→ 1 2⍴'¯1'
   // ⍕¯1e¯100J¯2e¯99 ←→ 1 14⍴'¯1e¯100J¯2e¯99'
-  '⍕':(om,al)=>{al&&nonceError();var t=format(om);return new A(t.join(''),[t.length,t[0].length])}
+  '⍕':(om,al)=>{al&&nyiErr();var t=format(om);return new A(t.join(''),[t.length,t[0].length])}
 })
 
 // Format an APL object as an array of strings
@@ -32,7 +32,7 @@ const format=a=>{
   if(a===null)return['null']
   if(t==='undefined')return['undefined']
   if(t==='string')return[a]
-  if(t==='number'){var r=[formatNumber(a)];r.align='right';return r}
+  if(t==='number'){var r=[fmtNum(a)];r.align='right';return r}
   if(t==='function')return['#procedure']
   if(!(a instanceof A))return[''+a]
   if(a.empty())return['']

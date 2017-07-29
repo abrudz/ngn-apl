@@ -30,8 +30,8 @@ const compileAST=(ast,o)=>{
       if(/^[gs]et_.*/.test(key))ast.vars[key.slice(4)]={category:NOUN}
     }
   }
-  const err=(node,message)=>{syntaxError({message:message,file:o.file,offset:node.offset,aplCode:o.aplCode})}
-  assert(VERB<ADV&&ADV<CONJ)//we are relying on this ordering below
+  const err=(node,message)=>{synErr({message:message,file:o.file,offset:node.offset,aplCode:o.aplCode})}
+  asrt(VERB<ADV&&ADV<CONJ)//we are relying on this ordering below
   const categorizeLambdas=node=>{
     switch(node[0]){
       case'B':case':':case'←':case'[':case'{':case'.':case'⍬':
@@ -39,7 +39,7 @@ const compileAST=(ast,o)=>{
         if(node[0]==='{'){node.category=r;return VERB}else{return r}
       case'S':case'N':case'J':return 0
       case'X':var s=node[1];return s==='⍺⍺'||s==='⍶'||s==='∇∇'?ADV:s==='⍵⍵'||s==='⍹'?CONJ:VERB
-      default:assert(0)
+      default:asrt(0)
     }
   }
   categorizeLambdas(ast)
@@ -58,7 +58,7 @@ const compileAST=(ast,o)=>{
           }else{
             // x ⋄ x←0 !!! VALUE ERROR
             return vars[name]&&vars[name].category||
-              valueError('Symbol '+name+' is referenced before assignment.',
+              valErr('Symbol '+name+' is referenced before assignment.',
                 {file:o.file,offset:node.offset,aplCode:o.aplCode})
           }
         case'{':
@@ -141,7 +141,7 @@ const compileAST=(ast,o)=>{
           extend(node,a[0])
           return h[0]
       }
-      assert(0)
+      asrt(0)
     }
     const visitLHS=(node,rhsCategory)=>{
       node.scopeNode=scopeNode
@@ -291,7 +291,7 @@ const compileAST=(ast,o)=>{
         while(i>=2)r=r.concat(GET,v.scopeDepth,v.slot,render(node[i--]),DYA,
                               GET,w.scopeDepth,w.slot,render(node[i--]),DYA)
         return i?r.concat(render(node[1]),GET,u.scopeDepth,u.slot,DYA):r
-      default:assert(0)
+      default:asrt(0)
     }
   }
   const renderLHS=node=>{
@@ -319,7 +319,7 @@ const compileAST=(ast,o)=>{
         a.push.apply(a,renderLHS(node[1]))
         return a
     }
-    assert(0)
+    asrt(0)
   }
   return render(ast)
 }
@@ -334,5 +334,5 @@ const aplify=x=>{
   if(typeof x==='number')return A.scalar(x)
   if(x instanceof Array)return new A(x.map(y=>{y=aplify(y);return y.shape.length?y:y.unwrap()}))
   if(x instanceof A)return x
-  aplError('Cannot aplify object:'+x)
+  err('Cannot aplify object:'+x)
 }

@@ -1,4 +1,4 @@
-addVocabulary({
+addVoc({
   '+':withIdentity(0,pervasive({
     // +4            ←→ 4
     // ++4           ←→ 4

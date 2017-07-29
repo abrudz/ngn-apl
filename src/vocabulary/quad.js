@@ -1,4 +1,4 @@
-addVocabulary({
+addVoc({
   'get_⎕':cps((_,_1,_2,callback)=>{
     if(typeof window!=='undefined'&&typeof window.prompt==='function'){
       setTimeout(_=>{callback(exec(prompt('⎕:')||''))},0)
@@ -31,7 +31,7 @@ addVocabulary({
   // ⎕IO←0 ←→ 0
   // ⎕IO←1 !!!
   'get_⎕IO':_=>A.zero,
-  'set_⎕IO':x=>{if(match(x,A.zero)){return x}else{domainError('The index origin (⎕IO) is fixed at 0')}},
+  'set_⎕IO':x=>{if(match(x,A.zero)){return x}else{domErr('The index origin (⎕IO) is fixed at 0')}},
   '⎕DL':cps((om,al,_,callback)=>{
     var t0=+new Date;setTimeout(_=>{callback(new A([new Date-t0]))},om.unwrap())
   }),
@@ -40,7 +40,7 @@ addVocabulary({
   // 'a(b'   ⎕RE'c'           !!! DOMAIN ERROR
   '⎕RE':(om,al)=>{
     var x=al.toSimpleString(),y=om.toSimpleString()
-    try{var re=RegExp(x)}catch(e){domainError(e.toString())}
+    try{var re=RegExp(x)}catch(e){domErr(e.toString())}
     var m=re.exec(y)
     if(!m)return A.zilde
     var r=[m.index];for(var i=0;i<m.length;i++)r.push(new A(m[i]||''))
@@ -50,10 +50,10 @@ addVocabulary({
   // ⎕UCS'ab' ←→ 97 98
   // ⎕UCS 2 2⍴97+⍳4 ←→ 2 2⍴'abcd'
   '⎕UCS':(om,al)=>{
-    al&&nonceError()
+    al&&nyiErr()
     return om.map(x=>
-      isInt(x,0,0x10000)?String.fromCharCode(x):typeof x==='string'?x.charCodeAt(0):domainError()
+      isInt(x,0,0x10000)?String.fromCharCode(x):typeof x==='string'?x.charCodeAt(0):domErr()
     )
   },
-  'get_⎕OFF':_=>{typeof process==='undefined'&&nonceError();process.exit(0)}
+  'get_⎕OFF':_=>{typeof process==='undefined'&&nyiErr();process.exit(0)}
 })

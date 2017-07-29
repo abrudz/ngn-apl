@@ -1,5 +1,5 @@
 var scanOrExpand
-addVocabulary({
+addVoc({
   '⍀':adverb((om,al,axis)=>scanOrExpand(om,al,axis||A.zero)),
 
   // +\20 10 ¯5 7               ←→ 20 30 25 32
@@ -28,10 +28,10 @@ addVocabulary({
   // 1 0 1\[1]2 2⍴'ABCD' ←→ 2 3⍴'A BC D'
   '\\':scanOrExpand=adverb((om,al,axis)=>{
     if(typeof om==='function'){
-      assert(typeof al==='undefined')
+      asrt(typeof al==='undefined')
       var f=om
       return(om,al)=>{
-        assert(al==null)
+        asrt(al==null)
         if(!om.shape.length)return om
         axis=axis?axis.toInt(0,om.shape.length):om.shape.length-1
         return om.map((x,indices,p)=>{
@@ -47,12 +47,12 @@ addVocabulary({
         })
       }
     }else{
-      om.shape.length||nonceError('Expand of scalar not implemented')
+      om.shape.length||nyiErr('Expand of scalar not implemented')
       axis=axis?axis.toInt(0,om.shape.length):om.shape.length-1
-      al.shape.length>1&&rankError()
+      al.shape.length>1&&rnkErr()
       var a=al.toArray(),b=[],i=0,shape=om.shape.slice(0);shape[axis]=a.length
-      for(var j=0;j<a.length;j++){isInt(a[j],0,2)||domainError();b.push(a[j]>0?i++:null)}
-      i===om.shape[axis]||lengthError()
+      for(var j=0;j<a.length;j++){isInt(a[j],0,2)||domErr();b.push(a[j]>0?i++:null)}
+      i===om.shape[axis]||lenErr()
       var data=[]
       if(shape[axis]&&!om.empty()){
         var filler=om.getPrototype(),p=om.offset,indices=repeat([0],shape.length)

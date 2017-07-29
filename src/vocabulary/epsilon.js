@@ -1,4 +1,4 @@
-addVocabulary({
+addVoc({
   '∊':(om,al)=>{
     if(al){
       // 2 3 4 5 6∊1 2 3 5 8 13 21 ←→ 1 1 0 1 0

@@ -1,4 +1,4 @@
-addVocabulary({
+addVoc({
   '⌊':withIdentity(Infinity,pervasive({
     // ⌊123   ←→ 123
     // ⌊12.3  ←→ 12

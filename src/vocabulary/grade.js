@@ -1,4 +1,4 @@
-addVocabulary({
+addVoc({
   // ⍋13 8 122 4                  ←→ 3 1 0 2
   // a←13 8 122 4 ⋄ a[⍋a]         ←→ 4 8 13 122
   // ⍋"ZAMBIA"                    ←→ 1 5 3 4 2 0
@@ -48,10 +48,10 @@ addVocabulary({
 const grade=(om,al,direction)=>{
   var h={} // maps a character to its index in the collation
   if(al){
-    al.shape.length||rankError()
-    each(al,(x,indices)=>{typeof x==='string'||domainError();h[x]=indices[indices.length-1]})
+    al.shape.length||rnkErr()
+    each(al,(x,indices)=>{typeof x==='string'||domErr();h[x]=indices[indices.length-1]})
   }
-  om.shape.length||rankError()
+  om.shape.length||rnkErr()
   var r=[];for(var i=0;i<om.shape[0];i++)r.push(i)
   return new A(r.sort((i,j)=>{
     var p=om.offset,indices=repeat([0],om.shape.length)

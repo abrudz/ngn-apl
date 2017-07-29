@@ -1,4 +1,4 @@
-addVocabulary({
+addVoc({
   '⍉':(om,al)=>{
     if(al){
       // (2 2⍴⍳4)⍉2 2 2 2⍴⍳16 !!! RANK ERROR
@@ -13,15 +13,15 @@ addVocabulary({
       // 0 0⍉2 3⍴⍳9 ←→ 0 4
       // 0 0 0⍉3 3 3⍴⍳27 ←→ 0 13 26
       // 0 1 0⍉3 3 3⍴⍳27 ←→ 3 3⍴0 3 6 10 13 16 20 23 26
-      al.shape.length<=1||rankError()
+      al.shape.length<=1||rnkErr()
       al.shape.length||(al=new A([al.unwrap()]))
       var n=om.shape.length
-      al.shape[0]===n||lengthError()
+      al.shape[0]===n||lenErr()
       var shape=[],stride=[],a=al.toArray()
       for(var i=0;i<a.length;i++){
         var x=a[i]
-        isInt(x,0)||domainError()
-        x<n||rankError()
+        isInt(x,0)||domErr()
+        x<n||rnkErr()
         if(shape[x]==null){
           shape[x]=om.shape[i]
           stride[x]=om.stride[i]
@@ -30,7 +30,7 @@ addVocabulary({
           stride[x]+=om.stride[i]
         }
       }
-      for(var i=0;i<shape.length;i++)shape[i]!=null||rankError()
+      for(var i=0;i<shape.length;i++)shape[i]!=null||rnkErr()
       return new A(om.data,shape,stride,om.offset)
     }else{
       // ⍉2 3⍴1 2 3 6 7 8  ←→ 3 2⍴1 6 2 7 3 8

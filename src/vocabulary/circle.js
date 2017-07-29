@@ -1,4 +1,4 @@
-addVocabulary({
+addVoc({
   '○':pervasive({
     // ○2     ←→ 6.283185307179586
     // ○2J2   ←→ 6.283185307179586J6.283185307179586
@@ -97,7 +97,7 @@ addVocabulary({
           case 10:return Math.abs(x)
           case 11:return 0
           case 12:return 0
-          default:domainError('Unknown circular or hyperbolic function:'+i)
+          default:domErr('Unknown circular or hyperbolic function:'+i)
         }
       }else if(x instanceof Z){
         switch(i){
@@ -128,10 +128,10 @@ addVocabulary({
           case  10:return Z.magnitude(x)
           case  11:return x.im
           case  12:return Z.direction(x)
-          default:domainError('Unknown circular or hyperbolic function:'+i)
+          default:domErr('Unknown circular or hyperbolic function:'+i)
         }
       }else{
-        domainError()
+        domErr()
       }
     }
   })

@@ -1,5 +1,5 @@
 var reduce
-addVocabulary({
+addVoc({
   '⌿':adverb((om,al,axis)=>reduce(om,al,axis||A.zero)),
   '/':reduce=adverb((om,al,axis)=>{
     if(typeof om==='function'){
@@ -18,13 +18,13 @@ addVocabulary({
       // 2-/3 4 9 7  ←→ ¯1 ¯5 2
       // ¯2-/3 4 9 7 ←→ 1 5 ¯2
       var f=om,g=al,axis0=axis
-      assert(typeof f==='function')
-      assert(typeof g==='undefined')
-      assert(typeof axis0==='undefined'||axis0 instanceof A)
+      asrt(typeof f==='function')
+      asrt(typeof g==='undefined')
+      asrt(typeof axis0==='undefined'||axis0 instanceof A)
       return(om,al)=>{
         if(!om.shape.length)om=new A([om.unwrap()])
         axis=axis0?axis0.toInt():om.shape.length-1
-        0<=axis&&axis<om.shape.length||rankError()
+        0<=axis&&axis<om.shape.length||rnkErr()
         var n,isNWise,isBackwards
         if(al){isNWise=1;n=al.toInt();if(n<0){isBackwards=1;n=-n}}else{n=om.shape[axis]}
 
@@ -32,13 +32,13 @@ addVocabulary({
         var rShape=shape
         if(isNWise){
           if(!shape[axis])return new A([],rShape)
-          shape[axis]>=0||lengthError()
+          shape[axis]>=0||lenErr()
         }else{
           rShape=rShape.slice(0);rShape.splice(axis,1)
         }
 
         if(om.empty()){
-          var z=f.identity;z!=null||domainError();assert(!z.shape.length)
+          var z=f.identity;z!=null||domErr();asrt(!z.shape.length)
           return new A(z.data,rShape,repeat([0],rShape.length),z.offset)
         }
 
@@ -90,16 +90,16 @@ addVocabulary({
       // 2 ¯2 2/7                  ←→ 7 7 0 0 7 7
       om.shape.length||(om=new A([om.unwrap()]))
       axis=axis?axis.toInt(0,om.shape.length):om.shape.length-1
-      al.shape.length<=1||rankError()
+      al.shape.length<=1||rnkErr()
       var a=al.toArray(),n=om.shape[axis]
       if(a.length===1)a=repeat(a,n)
-      if(n!==1&&n!==a.length)lengthError()
+      if(n!==1&&n!==a.length)lenErr()
 
       var shape=om.shape.slice(0);shape[axis]=0
       var b=[]
       for(var i=0;i<a.length;i++){
         var x=a[i]
-        isInt(x)||domainError()
+        isInt(x)||domErr()
         shape[axis]+=Math.abs(x)
         var nj=Math.abs(x);for(var j=0;j<nj;j++)b.push(x>0?i:null)
       }

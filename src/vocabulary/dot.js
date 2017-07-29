@@ -1,4 +1,4 @@
-addVocabulary({
+addVoc({
   '.':conjunction((g,f)=>f===vocabulary['∘']?outerProduct(g):innerProduct(g,f))
 })
 // 2 3 4∘.×1 2 3 4 ←→ (3 4⍴2 4  6  8
@@ -25,9 +25,9 @@ addVocabulary({
 // 2 3∘ . ×4 5    ←→ 2 2⍴8 10 12 15
 // 2 3∘.{⍺×⍵}4 5  ←→ 2 2⍴8 10 12 15
 const outerProduct=f=>{
-  assert(typeof f==='function')
+  asrt(typeof f==='function')
   return(om,al)=>{
-    al||syntaxError('Adverb ∘. (Outer product) can be applied to dyadic verbs only')
+    al||synErr('Adverb ∘. (Outer product) can be applied to dyadic verbs only')
     var a=al.toArray(),b=om.toArray(),data=[]
     for(var i=0;i<a.length;i++)for(var j=0;j<b.length;j++){
       var x=a[i],y=b[j]

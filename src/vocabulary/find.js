@@ -1,6 +1,6 @@
-addVocabulary({
+addVoc({
   '⍷':(om,al)=>{
-    al||nonceError()
+    al||nyiErr()
     // "AN"⍷"BANANA"                        ←→ 0 1 0 1 0 0
     // "BIRDS" "NEST"⍷"BIRDS" "NEST" "SOUP" ←→ 1 0 0
     // "ME"⍷"HOME AGAIN"                    ←→ 0 0 1 0 0 0 0 0 0 0

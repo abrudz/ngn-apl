@@ -1,4 +1,4 @@
-addVocabulary({
+addVoc({
   '?':(om,al)=>al?deal(om,al):roll(om)
 })
 
@@ -9,7 +9,7 @@ addVocabulary({
 // ?'a' !!! DOMAIN ERROR
 // ?1j2 !!! DOMAIN ERROR
 // ?∞   !!! DOMAIN ERROR
-var roll=pervasive({monad:om=>{isInt(om,1)||domainError();return Math.floor(Math.random()*om)}})
+var roll=pervasive({monad:om=>{isInt(om,1)||domErr();return Math.floor(Math.random()*om)}})
 
 // n←100 ⋄ (+/n?n)=(+/⍳n) ←→ 1 # a permutation (an "n?n" dealing) contains all 0...n
 // n←100 ⋄ A←(n÷2)?n ⋄ ∧/(0≤A),A<n ←→ 1 # any number x in a dealing is 0 <= x < n
@@ -21,7 +21,7 @@ var roll=pervasive({monad:om=>{isInt(om,1)||domainError();return Math.floor(Math
 // ¯1?3  !!! DOMAIN ERROR
 const deal=(om,al)=>{
   al=al.unwrap();om=om.unwrap()
-  isInt(om,0)&&isInt(al,0,om+1)||domainError()
+  isInt(om,0)&&isInt(al,0,om+1)||domErr()
   var r=Array(om);for(var i=0;i<om;i++)r[i]=i
   for(var i=0;i<al;i++){var j=i+Math.floor(Math.random()*(om-i));h=r[i];r[i]=r[j];r[j]=h}
   return new A(r.slice(0,al))

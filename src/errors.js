@@ -1,4 +1,4 @@
-const aplError=(name,m,o)=>{ // m:message, o:options
+const err=(name,m,o)=>{ // m:message, o:options
   m=m||''
   if(o&&o.aplCode&&o.offset!=null){
     var a=o.aplCode.slice(0,o.offset).split('\n')
@@ -8,10 +8,10 @@ const aplError=(name,m,o)=>{ // m:message, o:options
   var e=Error(m);e.name=name;for(var k in o)e[k]=o[k]
   throw e
 }
-,syntaxError=(m,o)=>{aplError('SYNTAX ERROR',m,o)}
-,domainError=(m,o)=>{aplError('DOMAIN ERROR',m,o)}
-,lengthError=(m,o)=>{aplError('LENGTH ERROR',m,o)}
-,  rankError=(m,o)=>{aplError(  'RANK ERROR',m,o)}
-, indexError=(m,o)=>{aplError( 'INDEX ERROR',m,o)}
-, nonceError=(m,o)=>{aplError( 'NONCE ERROR',m,o)}
-, valueError=(m,o)=>{aplError( 'VALUE ERROR',m,o)}
+,synErr=(m,o)=>err('SYNTAX ERROR',m,o)
+,domErr=(m,o)=>err('DOMAIN ERROR',m,o)
+,lenErr=(m,o)=>err('LENGTH ERROR',m,o)
+,rnkErr=(m,o)=>err(  'RANK ERROR',m,o)
+,idxErr=(m,o)=>err( 'INDEX ERROR',m,o)
+,nyiErr=(m,o)=>err( 'NONCE ERROR',m,o)
+,valErr=(m,o)=>err( 'VALUE ERROR',m,o)

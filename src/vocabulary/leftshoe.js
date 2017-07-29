@@ -1,4 +1,4 @@
-addVocabulary({
+addVoc({
   // ⍴⊂2 3⍴⍳6      ←→ ⍬
   // ⍴⍴⊂2 3⍴⍳6     ←→ ,0
   // ⊂[0]2 3⍴⍳6    ←→ (0 3)(1 4)(2 5)
@@ -9,7 +9,7 @@ addVocabulary({
   // ⍴⊂[1 0]2 3⍴⍳6 ←→ ⍬
   // ⍴⊃⊂⊂1 2 3     ←→ ⍬
   '⊂':(om,al,axes)=>{
-    assert(!al)
+    asrt(!al)
     if(axes==null){
       axes=[];for(var i=0;i<om.shape.length;i++)axes.push(i)
     }else{

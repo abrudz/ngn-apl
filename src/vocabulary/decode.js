@@ -1,4 +1,4 @@
-addVocabulary({
+addVoc({
   // 10⊥3 2 6 9                        ←→ 3269
   // 8⊥3 1                             ←→ 25
   // 1760 3 12⊥1 2 8                   ←→ 68
@@ -40,11 +40,11 @@ addVocabulary({
   // 2j3⊤4j5 6j7 8j9 ←→ 2j2 2j1 ¯1j2
   // 10⊥3 4.5j1 ←→ 34.5j1
   '⊥':(om,al)=>{
-    assert(al)
+    asrt(al)
     if(!al.shape.length)al=new A([al.unwrap()])
     if(!om.shape.length)om=new A([om.unwrap()])
     var lastDimA=al.shape[al.shape.length-1],firstDimB=om.shape[0]
-    if(lastDimA!==1&&firstDimB!==1&&lastDimA!==firstDimB)lengthError()
+    if(lastDimA!==1&&firstDimB!==1&&lastDimA!==firstDimB)lenErr()
     var a=al.toArray(),b=om.toArray(),data=[],ni=a.length/lastDimA,nj=b.length/firstDimB
     for(var i=0;i<ni;i++)for(var j=0;j<nj;j++){
       var x=a.slice(i*lastDimA,(i+1)*lastDimA)

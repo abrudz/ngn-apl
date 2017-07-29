@@ -1,5 +1,5 @@
 var Beta
-addVocabulary({
+addVoc({
 
   '!':withIdentity(1,pervasive({
 
@@ -13,7 +13,7 @@ addVocabulary({
     // !¯1   !!! DOMAIN ERROR
     // !¯200 !!! DOMAIN ERROR
     monad:real(x=>
-      !isInt(x)?Γ(x+1):x<0?domainError():x<smallFactorials.length?smallFactorials[x]:Math.round(Γ(x+1))
+      !isInt(x)?Γ(x+1):x<0?domErr():x<smallFactorials.length?smallFactorials[x]:Math.round(Γ(x+1))
     ),
 
     // 2!4       ←→ 6
@@ -44,10 +44,10 @@ addVocabulary({
       switch(256*negInt(k)+16*negInt(n)+negInt(n-k)){
         case 0x000:r=Math.exp(lnΓ(n+1)-lnΓ(k+1)-lnΓ(n-k+1))            ;break
         case 0x001:r=0                                                 ;break
-        case 0x010:r=domainError()                                     ;break
+        case 0x010:r=domErr()                                     ;break
         case 0x011:r=Math.pow(-1,k)*Beta(k-n-1,k)                      ;break
         case 0x100:r=0                                                 ;break
-        case 0x101:assert(0)                                           ;break
+        case 0x101:asrt(0)                                           ;break
         case 0x110:r=Math.pow(-1,n-k)*Beta(Math.abs(k+1),Math.abs(n+1));break
         case 0x111:r=0                                                 ;break
       }

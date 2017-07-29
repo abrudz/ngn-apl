@@ -1,4 +1,4 @@
-addVocabulary({
+addVoc({
   // ({⍵+1}⍣5) 3 ←→ 8
   // ({⍵+1}⍣0) 3 ←→ 3
   // (⍴⍣3)2 2⍴⍳4 ←→ ,1
@@ -6,7 +6,7 @@ addVocabulary({
   // 1{⍺+÷⍵}⍣=1 ←→ 1.618033988749895
   // c←0 ⋄ 5⍣{c←c+1}0 ⋄ c ←→ 5
   '⍣':conjunction((g,f)=>{
-    if(f instanceof A&&typeof g==='function'){var h=f;f=g;g=h}else{assert(typeof f==='function')}
+    if(f instanceof A&&typeof g==='function'){var h=f;f=g;g=h}else{asrt(typeof f==='function')}
     if(typeof g==='function'){
       return(om,al)=>{
         while(1){

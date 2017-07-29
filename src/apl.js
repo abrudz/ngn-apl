@@ -1,9 +1,9 @@
-var apl=this.apl=(aplCode,opts)=>apl.ws(opts)(aplCode)
+var apl=this.apl=(s,o)=>apl.ws(o)(s) // s:apl code; o:options
 extend(apl,{format:format,approx:approx,parse:parse,compileAST:compileAST,repr:repr})
 apl.ws=opts=>{
   opts=opts||{}
   ctx=Object.create(vocabulary)
-  if(opts.in )ctx['get_⎕']=ctx['get_⍞']=_=>{var s=opts.in();assert(typeof s==='string');return new A(s)}
+  if(opts.in )ctx['get_⎕']=ctx['get_⍞']=_=>{var s=opts.in();asrt(typeof s==='string');return new A(s)}
   if(opts.out)ctx['set_⎕']=ctx['set_⍞']=x=>{opts.out(format(x).join('\n')+'\n')}
   return aplCode=>exec(aplCode,{ctx:ctx})
 }

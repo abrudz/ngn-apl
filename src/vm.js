@@ -6,7 +6,7 @@ Proc.prototype.toFunction=function(){return(x,y)=>vm({code:this.code,env:this.en
 
 const vm=o=>{
   var code=o.code,env=o.env,stack=o.stack,pc=o.pc
-  assert(code instanceof Array);assert(env instanceof Array);for(var i=0;i<env.length;i++)assert(env[i]instanceof Array)
+  asrt(code instanceof Array);asrt(env instanceof Array);for(var i=0;i<env.length;i++)asrt(env[i]instanceof Array)
   stack=stack||[];pc=pc||0
   while(1){
     switch(code[pc++]){
@@ -16,7 +16,7 @@ const vm=o=>{
         for(var i=0;i<a.length;i++)if(a[i].isSimple())a[i]=a[i].unwrap()
         stack.push(new A(a))
         break
-      case GET:var r=env[code[pc++]][code[pc++]];r!=null||valueError();stack.push(r);break
+      case GET:var r=env[code[pc++]][code[pc++]];r!=null||valErr();stack.push(r);break
       case SET:env[code[pc++]][code[pc++]]=stack[stack.length-1];break
       case MON:
         var wf=stack.splice(-2),w=wf[0],f=wf[1]
@@ -57,7 +57,7 @@ const vm=o=>{
         var n=code[pc++]
         var a=stack[stack.length-1].toArray().reverse()
         for(var i=0;i<a.length;i++)if(!(a[i]instanceof A))a[i]=new A([a[i]],[])
-        if(a.length===1){a=repeat(a,n)}else if(a.length!==n){lengthError()}
+        if(a.length===1){a=repeat(a,n)}else if(a.length!==n){lenErr()}
         stack.push.apply(stack,a)
         break
       case JEQ:var n=code[pc++];stack[stack.length-1].toBool()||(pc+=n);break
@@ -71,11 +71,11 @@ const vm=o=>{
             stack:stack.slice(0,frame[3]),
             pc:frame[1].addr+frame[1].size-1
           }
-          assert(code[cont.pc] === RET)
+          asrt(code[cont.pc] === RET)
           stack.push(r=>{code=cont.code;env=cont.env;stack=cont.stack;pc=cont.pc;stack.push(r)})
         })()
         break
-      default:aplError('Unrecognized instruction:'+code[pc-1]+',pc:'+pc)
+      default:err('Unrecognized instruction:'+code[pc-1]+',pc:'+pc)
     }
   }
 }

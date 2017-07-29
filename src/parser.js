@@ -18,7 +18,7 @@ const parse=(s,o)=>{ // s:APL source code, o:options
   while(i<ns){
     var m,t,v,s1=s.slice(i) // m:match object, t:type, v:value, s1:remainder of source code
     for(var j=0;j<TD.length;j++)if(m=s1.match(TD[j][1])){v=m[0];t=TD[j][0];t==='.'&&(t=v);break}
-    t||syntaxError('Unrecognized token',{file:o?o.file:null,o:i,s:s})
+    t||synErr('Unrecognized token',{file:o?o.file:null,o:i,s:s})
     if(t!=='-'){
       if('([{'.includes(t)){stk.push(t)}else if(')]}'.includes(t)){stk.pop()}
       if(t!=='L'||stk[stk.length-1]==='{')tokens.push({t:t,v:v[0]==='⎕'?v.toUpperCase():v,o:i,s:s})
@@ -55,7 +55,7 @@ const parse=(s,o)=>{ // s:APL source code, o:options
   // demand() is like consume() but intolerant to a mismatch.
   const demand=x=>{token.t===x?(token=tokens[i++]):parserError('Expected token of type '+x+' but got '+token.t)}
 
-  const parserError=x=>{syntaxError(x,{file:o.file,offset:token.o,aplCode:s})}
+  const parserError=x=>{synErr(x,{file:o.file,offset:token.o,aplCode:s})}
 
   const body=_=>{ // parse a body
     var r=['B']
