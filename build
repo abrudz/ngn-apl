@@ -26,48 +26,7 @@ if [ ! -e $f -o "$(find src -newer $f 2>/dev/null | wc -l)" -ne 0 ]; then
     var vars={};for(var k in ast.vars)vars[k]=ast.vars[k] //flatten prototype chain
     process.stdout.write('var prelude='+old.repr({code:code,nSlots:ast.nSlots,vars:vars})+';\\n')
 .
-  cat                    \
-    src/z.js             \
-    src/vm.js            \
-    src/prs.js           \
-    src/voc/vhelpers.js  \
-    src/voc/arith.js     \
-    src/voc/backslash.js \
-    src/voc/circle.js    \
-    src/voc/comma.js     \
-    src/voc/cmp.js       \
-    src/voc/compose.js   \
-    src/voc/cupcap.js    \
-    src/voc/decode.js    \
-    src/voc/dot.js       \
-    src/voc/each.js      \
-    src/voc/encode.js    \
-    src/voc/epsilon.js   \
-    src/voc/shriek.js    \
-    src/voc/execute.js   \
-    src/voc/find.js      \
-    src/voc/floorceil.js \
-    src/voc/fork.js      \
-    src/voc/format.js    \
-    src/voc/grade.js     \
-    src/voc/identity.js  \
-    src/voc/iota.js      \
-    src/voc/leftshoe.js  \
-    src/voc/logic.js     \
-    src/voc/powop.js     \
-    src/voc/quad.js      \
-    src/voc/question.js  \
-    src/voc/raise.js     \
-    src/voc/rho.js       \
-    src/voc/rotate.js    \
-    src/voc/slash.js     \
-    src/voc/squish.js    \
-    src/voc/take.js      \
-    src/voc/transpose.js \
-    src/voc/variant.js   \
-    src/compiler.js      \
-    src/apl.js           \
-    >>$f
+  cat src/{z,vm,prs,voc,compiler,apl}.js >>$f
   chmod +x $f
 fi
 
