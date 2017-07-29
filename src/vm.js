@@ -60,7 +60,7 @@ const vm=o=>{
         if(a.length===1){a=repeat(a,n)}else if(a.length!==n){lenErr()}
         stack.push.apply(stack,a)
         break
-      case JEQ:var n=code[pc++];stack[stack.length-1].toBool()||(pc+=n);break
+      case JEQ:var n=code[pc++];stack[stack.length-1].toInt(0,2)||(pc+=n);break
       case EMB:var frame=env[env.length-1];stack.push(code[pc++](frame[0],frame[2]));break
       case CON:
         var frame=env[env.length-1]

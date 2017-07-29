@@ -49,7 +49,6 @@ extend(A.prototype,{
   map2:function(a,f){var r=[];each2(this,a,function(x,y,i){r.push(f(x,y,i))});return new A(r,this.shape)},
   toArray:function(){var r=[];each(this,function(x){r.push(x)});return r},
   toInt:function(m,M){var r=this.unwrap();if(r!==r|0||m!=null&&r<m||M!=null&&M<=r)domErr();return r},
-  toBool:function(){return this.toInt(0,2)},
   toSimpleString:function(){
     if(this.shape.length>1)rnkErr()
     if(typeof this.data==='string'){

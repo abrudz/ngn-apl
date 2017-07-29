@@ -1448,7 +1448,7 @@ voc['⍣']=conjunction((g,f)=>{
     return(om,al)=>{
       while(1){
         var om1=f(om,al)
-        if(g(om,om1).toBool())return om
+        if(g(om,om1).toInt(0,2))return om
         om=om1
       }
     }
