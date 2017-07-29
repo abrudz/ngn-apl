@@ -434,10 +434,8 @@ const parse=(s,o)=>{ // s:APL source code, o:options
   // 'hello'} !!! SYNTAX ERROR
   var r=body();demand('$');return r
 }
-//  cat voc/vhelpers.js  voc/arith.js     voc/backslash.js voc/circle.js    voc/comma.js     voc/cmp.js       voc/compose.js   voc/cupcap.js    voc/decode.js    voc/dot.js       voc/each.js      voc/encode.js    voc/epsilon.js   voc/shriek.js    voc/execute.js   voc/find.js      voc/floorceil.js voc/fork.js      voc/format.js    voc/grade.js     voc/identity.js  voc/iota.js      voc/leftshoe.js  voc/logic.js     voc/powop.js     voc/quad.js      voc/question.js  voc/raise.js     voc/rho.js       voc/rotate.js    voc/slash.js     voc/squish.js    voc/take.js      voc/transpose.js voc/variant.js   
-
-var vocabulary={}
-const addVoc=h=>{for(var k in h)vocabulary[k]=h[k]}
+var voc={}
+const addVoc=h=>{for(var k in h)voc[k]=h[k]}
 
 // pervasive() is a higher-order function
 //
@@ -1144,7 +1142,7 @@ addVoc({
   }
 })
 addVoc({
-  '.':conjunction((g,f)=>f===vocabulary['∘']?outerProduct(g):innerProduct(g,f))
+  '.':conjunction((g,f)=>f===voc['∘']?outerProduct(g):innerProduct(g,f))
 })
 // 2 3 4∘.×1 2 3 4 ←→ (3 4⍴2 4  6  8
 // ...                     3 6  9 12
@@ -1199,13 +1197,13 @@ const outerProduct=f=>{
 // 7+.=7               ←→ 1
 // (3 2⍴5 ¯3 ¯2 4 ¯1 0)+.×2 2⍴6 ¯3 5 7 ←→ 3 2⍴15 ¯36 8 34 ¯6 3
 const innerProduct=(g,f)=>{
-  var F=vocabulary['¨'](reduce(f)),G=outerProduct(g)
+  var F=voc['¨'](reduce(f)),G=outerProduct(g)
   return(om,al)=>{
     if(!al.shape.length)al=new A([al.unwrap()])
     if(!om.shape.length)om=new A([om.unwrap()])
     return F(G(
-      vocabulary['⊂'](om,undefined,new A([0])),
-      vocabulary['⊂'](al,undefined,new A([al.shape.length-1]))
+      voc['⊂'](om,undefined,new A([0])),
+      voc['⊂'](al,undefined,new A([al.shape.length-1]))
     ))
   }
 }
@@ -2356,7 +2354,7 @@ addVoc({
       axes=[];for(var i=0;i<a.length;i++)a.push(i)
     }
 
-    var subs=squish(vocabulary['⍳'](new A(om.shape)),al,new A(axes))
+    var subs=squish(voc['⍳'](new A(om.shape)),al,new A(axes))
     if(value.isSingleton())value=new A([value],subs.shape,repeat([0],subs.shape.length))
     var data=om.toArray(),stride=strideForShape(om.shape)
     each2(subs,value,(u,v)=>{
@@ -2554,7 +2552,7 @@ const compileAST=(ast,o)=>{
   ast.scopeDepth=0
   ast.nSlots=prelude.nSlots
   ast.vars=Object.create(prelude.vars)
-  o.ctx=o.ctx||Object.create(vocabulary)
+  o.ctx=o.ctx||Object.create(voc)
   for(var key in o.ctx)if(!ast.vars[key]){
     const value=o.ctx[key]
     const varInfo=ast.vars[key]={category:NOUN,slot:ast.nSlots++,scopeDepth:ast.scopeDepth}
@@ -2858,9 +2856,9 @@ const compileAST=(ast,o)=>{
 }
 ;(_=>{
   var env=prelude.env=[[]]
-  for(var k in prelude.vars)env[0][prelude.vars[k].slot]=vocabulary[k]
+  for(var k in prelude.vars)env[0][prelude.vars[k].slot]=voc[k]
   vm({code:prelude.code,env:env})
-  for(var k in prelude.vars)vocabulary[k]=env[0][prelude.vars[k].slot]
+  for(var k in prelude.vars)voc[k]=env[0][prelude.vars[k].slot]
 })()
 const aplify=x=>{
   if(typeof x==='string')return x.length===1?A.scalar(x):new A(x)
@@ -2873,7 +2871,7 @@ var apl=this.apl=(s,o)=>apl.ws(o)(s) // s:apl code; o:options
 extend(apl,{format:format,approx:approx,parse:parse,compileAST:compileAST,repr:repr})
 apl.ws=opts=>{
   opts=opts||{}
-  ctx=Object.create(vocabulary)
+  ctx=Object.create(voc)
   if(opts.in )ctx['get_⎕']=ctx['get_⍞']=_=>{var s=opts.in();asrt(typeof s==='string');return new A(s)}
   if(opts.out)ctx['set_⎕']=ctx['set_⍞']=x=>{opts.out(format(x).join('\n')+'\n')}
   return aplCode=>exec(aplCode,{ctx:ctx})

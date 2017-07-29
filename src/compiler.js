@@ -21,7 +21,7 @@ const compileAST=(ast,o)=>{
   ast.scopeDepth=0
   ast.nSlots=prelude.nSlots
   ast.vars=Object.create(prelude.vars)
-  o.ctx=o.ctx||Object.create(vocabulary)
+  o.ctx=o.ctx||Object.create(voc)
   for(var key in o.ctx)if(!ast.vars[key]){
     const value=o.ctx[key]
     const varInfo=ast.vars[key]={category:NOUN,slot:ast.nSlots++,scopeDepth:ast.scopeDepth}
@@ -325,9 +325,9 @@ const compileAST=(ast,o)=>{
 }
 ;(_=>{
   var env=prelude.env=[[]]
-  for(var k in prelude.vars)env[0][prelude.vars[k].slot]=vocabulary[k]
+  for(var k in prelude.vars)env[0][prelude.vars[k].slot]=voc[k]
   vm({code:prelude.code,env:env})
-  for(var k in prelude.vars)vocabulary[k]=env[0][prelude.vars[k].slot]
+  for(var k in prelude.vars)voc[k]=env[0][prelude.vars[k].slot]
 })()
 const aplify=x=>{
   if(typeof x==='string')return x.length===1?A.scalar(x):new A(x)

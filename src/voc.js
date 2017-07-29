@@ -1,5 +1,5 @@
-var vocabulary={}
-const addVoc=h=>{for(var k in h)vocabulary[k]=h[k]}
+var voc={}
+const addVoc=h=>{for(var k in h)voc[k]=h[k]}
 
 // pervasive() is a higher-order function
 //
@@ -706,7 +706,7 @@ addVoc({
   }
 })
 addVoc({
-  '.':conjunction((g,f)=>f===vocabulary['∘']?outerProduct(g):innerProduct(g,f))
+  '.':conjunction((g,f)=>f===voc['∘']?outerProduct(g):innerProduct(g,f))
 })
 // 2 3 4∘.×1 2 3 4 ←→ (3 4⍴2 4  6  8
 // ...                     3 6  9 12
@@ -761,13 +761,13 @@ const outerProduct=f=>{
 // 7+.=7               ←→ 1
 // (3 2⍴5 ¯3 ¯2 4 ¯1 0)+.×2 2⍴6 ¯3 5 7 ←→ 3 2⍴15 ¯36 8 34 ¯6 3
 const innerProduct=(g,f)=>{
-  var F=vocabulary['¨'](reduce(f)),G=outerProduct(g)
+  var F=voc['¨'](reduce(f)),G=outerProduct(g)
   return(om,al)=>{
     if(!al.shape.length)al=new A([al.unwrap()])
     if(!om.shape.length)om=new A([om.unwrap()])
     return F(G(
-      vocabulary['⊂'](om,undefined,new A([0])),
-      vocabulary['⊂'](al,undefined,new A([al.shape.length-1]))
+      voc['⊂'](om,undefined,new A([0])),
+      voc['⊂'](al,undefined,new A([al.shape.length-1]))
     ))
   }
 }
@@ -1918,7 +1918,7 @@ addVoc({
       axes=[];for(var i=0;i<a.length;i++)a.push(i)
     }
 
-    var subs=squish(vocabulary['⍳'](new A(om.shape)),al,new A(axes))
+    var subs=squish(voc['⍳'](new A(om.shape)),al,new A(axes))
     if(value.isSingleton())value=new A([value],subs.shape,repeat([0],subs.shape.length))
     var data=om.toArray(),stride=strideForShape(om.shape)
     each2(subs,value,(u,v)=>{
