@@ -1,10 +1,10 @@
 #!/usr/bin/env node
-var fs=require('fs')
-function trim(x){return x.replace(/(^ +| +$)/g,'')}
+const fs=require('fs')
+const trim=x=>x.replace(/(^ +| +$)/g,'')
 var t=[] //tests
-function visit(d){
+const visit=d=>{
   fs.readdirSync(d).forEach(f=>{
-    var df=d+'/'+f;if(fs.lstatSync(df).isDirectory()){visit(df);return}
+    const df=d+'/'+f;if(fs.lstatSync(df).isDirectory()){visit(df);return}
     if(!/^(\w|\.)+$/.test(f))return
     var a=fs.readFileSync(df,'utf8').split('\n'),i=0
     while(i<a.length){
