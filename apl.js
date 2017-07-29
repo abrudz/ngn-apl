@@ -144,7 +144,7 @@ A.one  =new A([1],[])
 A.zilde=new A([],[0])
 A.scalar=x=>new A([x],[])
 A.bool=[A.zero,A.one]
-var prelude={"code":[1,new A([],[0],[1],0),4,0,73,9,1,new A("ABCDEFGHIJKLMNOPQRSTUVWXYZ",[26],[1],0),4,0,84,9,1,new A("ÁÂÃÇÈÊËÌÍÎÏÐÒÓÔÕÙÚÛÝþãìðòõ",[26],[1],0),4,0,85,9,1,new A("0123456789",[10],[1],0),4,0,86,9,7,22,3,1,2,3,0,65,3,1,0,3,0,29,3,1,2,6,3,0,44,5,6,8,3,0,72,3,0,44,6,4,0,44,9,7,36,7,15,3,2,0,3,1,0,3,2,2,6,3,1,2,5,8,3,0,72,7,12,3,2,0,3,1,0,5,3,1,2,5,8,6,8,4,0,74,9,7,173,3,1,2,3,0,62,5,3,0,62,5,3,0,16,1,new A([1],[],[],0),6,11,8,9,1,new A("RANK ERROR",[10],[1],0),3,0,61,5,8,9,3,1,0,4,1,4,9,3,1,2,7,123,3,2,0,3,0,62,5,3,0,62,5,3,0,16,1,new A([1],[],[],0),6,11,8,9,1,new A("RANK ERROR",[10],[1],0),3,0,61,5,8,9,3,2,0,3,0,13,5,4,2,0,9,3,1,4,3,0,62,5,3,0,62,5,3,0,15,3,2,0,3,0,62,5,6,11,8,9,1,new A("RANK ERROR",[10],[1],0),3,0,61,5,8,9,3,1,4,3,0,62,5,3,0,19,3,2,0,6,3,0,45,3,0,65,5,5,11,8,9,1,new A("INDEX ERROR",[11],[1],0),3,0,61,5,8,9,3,1,4,3,0,67,3,2,0,6,3,0,75,5,4,1,4,8,3,0,27,5,5,9,3,1,4,8,3,0,72,7,229,3,1,0,3,0,62,5,3,0,62,5,3,0,14,1,new A([0],[],[],0),6,11,9,9,3,1,0,3,0,70,5,8,9,3,1,0,3,0,62,5,3,0,3,3,0,65,5,5,3,0,14,1,new A([0],[],[],0),6,11,5,9,3,1,0,8,9,3,1,0,3,0,62,5,4,1,4,9,3,1,0,3,0,13,5,4,1,0,9,3,1,0,3,0,62,3,0,27,5,5,4,1,5,3,0,79,3,0,27,5,5,3,0,35,3,0,65,5,5,4,1,6,9,3,1,5,3,0,13,3,0,21,1,new A([1],[],[],0),3,0,62,3,1,6,6,6,3,0,36,3,0,26,6,3,0,37,3,0,62,6,3,0,27,5,5,4,1,5,3,0,35,3,0,65,5,5,3,0,70,5,4,1,7,9,3,1,0,7,18,3,2,0,3,0,62,3,2,2,6,3,0,70,3,1,7,6,8,3,0,27,5,3,1,5,6,3,0,76,3,0,65,5,5,3,0,70,5,3,0,62,3,1,7,3,0,13,3,1,4,6,6,8,6,4,0,75,9,7,335,3,1,2,3,0,62,5,3,0,62,5,3,0,16,1,new A([1],[],[],0),6,11,8,9,1,new A("RANK ERROR",[10],[1],0),3,0,61,5,8,9,3,1,0,3,0,62,5,3,0,62,5,3,0,15,1,new A([1],[],[],0),6,11,8,9,1,new A("NONCE ERROR",[11],[1],0),3,0,61,5,8,9,1,new A([0],[],[],0),3,0,14,3,1,2,6,3,0,13,5,4,1,2,9,3,1,2,3,0,33,1,new A([1,1],[2],[1],0),6,3,0,44,5,4,1,4,9,3,1,2,3,0,65,3,1,4,6,4,1,5,9,3,1,0,3,0,65,3,1,4,6,4,1,6,9,3,0,73,7,52,3,1,5,3,0,70,1,new A([1],[],[],0),6,3,0,14,1,new A([1],[],[],0),6,11,34,9,3,0,73,7,26,3,1,5,3,0,26,1,new A([1],[],[],0),6,4,1,5,9,3,1,6,3,0,26,1,new A([1],[],[],0),6,4,1,6,8,5,8,8,5,9,3,0,73,7,52,3,1,5,3,0,70,1,new A([-1],[],[],0),6,3,0,14,1,new A([1],[],[],0),6,11,34,9,3,0,73,7,26,3,1,5,3,0,26,1,new A([-1],[],[],0),6,4,1,5,9,3,1,6,3,0,26,1,new A([-1],[],[],0),6,4,1,6,8,5,8,8,5,9,3,1,5,3,0,62,5,3,0,42,5,3,0,65,3,1,5,6,3,0,13,3,0,81,5,3,1,5,3,0,62,5,6,4,1,5,9,1,new A([0],[],[],0),4,1,7,9,3,1,6,3,0,43,5,7,38,3,2,0,3,0,70,3,2,2,6,3,0,26,3,1,7,6,4,2,4,9,1,new A([1],[],[],0),3,0,0,3,2,2,6,4,1,7,9,3,2,4,8,3,0,27,5,3,1,5,6,8,3,0,72,3,0,43,6,4,0,43,9,7,235,3,1,2,3,0,62,5,3,0,62,5,3,0,16,1,new A([1],[],[],0),6,11,8,9,1,new A("RANK ERROR",[10],[1],0),3,0,61,5,8,9,3,1,2,3,0,13,5,4,1,4,9,3,1,0,7,46,3,2,0,3,0,62,5,3,0,62,5,3,0,14,1,new A([0],[],[],0),6,11,22,9,3,2,0,3,0,62,1,new A([1],[],[],0),3,0,62,3,1,4,3,0,62,5,6,6,8,9,3,2,0,8,5,4,1,0,9,3,1,0,3,0,62,5,3,0,62,5,3,0,17,3,1,4,3,0,62,5,6,11,8,9,1,new A("RANK ERROR",[10],[1],0),3,0,61,5,8,9,3,1,4,3,0,70,3,1,0,3,0,62,5,3,0,62,5,6,4,1,4,9,3,1,0,3,0,62,5,3,0,0,3,1,4,6,3,0,35,1,new A([0],[],[],0),6,3,0,3,1,new A([0],[],[],0),3,0,18,3,1,4,6,6,3,0,0,3,1,0,3,0,62,5,3,0,1,3,1,4,6,3,0,34,1,new A([0],[],[],0),6,3,0,3,1,new A([0],[],[],0),3,0,17,3,1,4,6,6,6,4,1,4,9,3,1,0,3,0,70,3,1,4,6,8,3,0,72,7,60,3,1,0,3,0,62,5,3,0,62,5,3,0,14,1,new A([0],[],[],0),6,11,5,9,3,1,0,8,9,3,1,0,3,1,0,3,0,62,5,3,0,62,5,3,0,0,1,new A([-1],[],[],0),6,2,1,1,new A([0],[1],[1],0),2,2,3,0,68,3,0,43,6,5,8,6,4,0,26,9,7,23,3,1,0,1,new A([0],[],[],0),2,1,1,new A([0],[1],[1],0),2,2,3,0,68,3,0,13,6,3,1,2,6,8,3,0,72,7,38,3,1,0,3,0,62,3,1,0,3,0,79,5,3,1,0,3,0,62,5,3,0,26,1,new A([1],[],[],0),6,3,0,3,3,0,65,5,5,2,2,6,8,6,4,0,76,9,7,4,3,1,0,8,4,0,77,9,7,4,3,1,2,8,3,0,72,7,4,3,1,0,8,6,4,0,78,9,7,15,3,1,0,3,0,20,3,1,2,6,3,0,44,5,8,3,0,72,7,21,1,new A([1],[],[],0),3,0,13,3,1,0,3,0,62,5,6,3,0,62,3,0,73,6,8,6,4,0,79,9,3,0,13,3,0,72,7,23,3,1,0,3,0,62,3,1,0,3,0,62,5,3,0,3,3,0,65,5,5,6,8,6,4,0,13,9,7,22,3,1,2,3,0,3,3,0,25,3,0,0,6,3,1,0,3,0,80,5,6,8,3,0,72,7,724,7,28,1,new A([0.5],[],[],0),3,0,5,3,2,0,3,0,0,5,3,0,3,3,0,25,3,0,0,6,3,2,0,6,6,8,4,1,4,9,7,290,1,new A([1],[],[],0),2,1,1,new A([0],[1],[1],0),2,2,3,0,68,3,2,0,3,0,62,5,6,4,2,4,9,3,2,4,3,0,19,1,new A([1],[],[],0),6,11,43,9,3,2,0,7,35,3,3,0,3,0,13,5,3,1,4,5,4,3,4,9,3,3,4,3,0,4,3,3,0,6,3,3,4,3,0,76,5,2,2,8,5,8,9,1,new A([2],[],[],0),3,0,4,3,2,4,6,3,0,35,5,4,2,5,9,3,2,0,3,0,70,3,2,5,3,0,13,3,2,0,3,0,62,5,3,0,70,1,new A([1],[],[],0),6,6,6,4,2,6,9,3,2,0,3,0,26,3,2,5,3,0,13,1,new A([0],[],[],0),6,6,4,2,7,9,3,2,6,3,2,1,5,10,2,4,2,8,9,4,2,9,9,9,3,2,7,3,0,3,3,0,25,3,0,0,6,3,2,8,3,0,71,5,3,0,0,5,6,4,2,10,9,3,2,10,3,0,3,3,0,25,3,0,0,6,3,2,8,6,3,0,1,3,2,7,6,3,2,1,5,10,2,4,2,11,9,4,2,12,9,9,3,2,11,3,0,13,3,2,8,6,3,2,12,3,0,70,3,2,4,3,0,1,5,3,0,13,1,new A([2],[],[],0),3,0,4,3,2,4,6,3,0,34,5,6,6,3,0,76,3,2,10,3,0,13,3,2,9,6,6,2,2,8,4,1,5,9,7,214,3,2,0,3,0,62,5,3,0,70,1,new A([1],[],[],0),6,4,2,4,3,0,14,1,new A([1],[],[],0),6,11,9,9,3,2,0,3,0,4,5,8,9,1,new A([2],[],[],0),3,0,4,3,2,4,6,3,0,35,5,4,2,5,9,3,2,0,3,0,70,3,2,5,3,0,13,3,2,5,6,6,3,2,1,5,4,2,6,9,3,2,0,3,0,26,3,2,5,3,0,13,3,2,5,6,6,3,2,1,5,4,2,7,9,3,2,0,3,0,70,3,2,4,3,0,1,3,2,5,6,3,0,13,3,2,5,6,6,4,2,8,9,3,2,7,3,0,3,3,0,25,3,0,0,6,3,2,8,6,3,0,3,3,0,25,3,0,0,6,3,2,6,6,3,0,1,5,4,2,9,9,3,2,7,3,0,70,3,2,4,3,0,1,5,3,0,13,1,new A([2],[],[],0),3,0,4,3,2,4,6,3,0,34,5,6,6,3,0,76,3,2,9,3,0,13,3,2,6,6,6,8,4,1,6,9,3,1,0,3,0,62,5,3,0,62,5,3,0,14,1,new A([0],[],[],0),6,11,9,9,3,1,0,3,0,4,5,8,9,3,1,0,3,0,62,5,3,0,62,5,3,0,14,1,new A([1],[],[],0),6,11,17,9,3,1,0,3,0,76,5,3,1,1,5,3,0,13,5,8,9,3,1,0,3,0,62,5,3,0,62,5,3,0,15,1,new A([2],[],[],0),6,11,8,9,1,new A("RANK ERROR",[10],[1],0),3,0,61,5,8,9,3,1,0,3,0,62,5,3,0,19,3,0,65,5,5,3,0,29,1,new A([0],[],[],0),6,11,8,9,1,new A("LENGTH ERROR",[12],[1],0),3,0,61,5,8,9,3,1,0,3,1,5,5,10,2,4,1,7,9,4,1,8,9,9,3,1,7,3,0,71,5,3,0,0,5,3,0,3,3,0,25,3,0,0,6,3,1,8,3,1,6,5,6,8,6,4,0,80,9,7,31,7,11,3,2,2,3,1,0,3,2,0,6,8,3,0,72,7,11,3,2,0,3,1,0,3,2,0,6,8,6,8,4,0,81,9,3,0,1,4,0,2,9,3,0,5,4,0,6,9,3,0,8,4,0,9,9,3,0,46,4,0,47,9,3,0,29,4,0,30,8],"nSlots":87,"vars":{"⎕D":{"scopeDepth":0,"slot":86,"category":1},"get_⎕OFF":{"category":2,"slot":83,"scopeDepth":0},"⎕OFF":{"category":1},"⎕A":{"scopeDepth":0,"slot":84,"category":1},"⎕Á":{"scopeDepth":0,"slot":85,"category":1},"⎕a":{"scopeDepth":0,"slot":82,"category":1},"+":{"category":2,"slot":0,"scopeDepth":0},"-":{"category":2,"slot":1,"scopeDepth":0},"−":{"category":2,"slot":2,"scopeDepth":0},"×":{"category":2,"slot":3,"scopeDepth":0},"÷":{"category":2,"slot":4,"scopeDepth":0},"*":{"category":2,"slot":5,"scopeDepth":0},"⋆":{"category":2,"slot":6,"scopeDepth":0},"⍟":{"category":2,"slot":7,"scopeDepth":0},"|":{"category":2,"slot":8,"scopeDepth":0},"∣":{"category":2,"slot":9,"scopeDepth":0},"\\":{"category":3,"slot":10,"scopeDepth":0},"⍀":{"category":3,"slot":11,"scopeDepth":0},"○":{"category":2,"slot":12,"scopeDepth":0},",":{"category":2,"slot":13,"scopeDepth":0},"=":{"category":2,"slot":14,"scopeDepth":0},"≠":{"category":2,"slot":15,"scopeDepth":0},"<":{"category":2,"slot":16,"scopeDepth":0},">":{"category":2,"slot":17,"scopeDepth":0},"≤":{"category":2,"slot":18,"scopeDepth":0},"≥":{"category":2,"slot":19,"scopeDepth":0},"≡":{"category":2,"slot":20,"scopeDepth":0},"∘":{"category":4,"slot":21,"scopeDepth":0},"∪":{"category":2,"slot":22,"scopeDepth":0},"∩":{"category":2,"slot":23,"scopeDepth":0},"⊥":{"category":2,"slot":24,"scopeDepth":0},".":{"category":4,"slot":25,"scopeDepth":0},"↓":{"category":2,"slot":26,"scopeDepth":0},"¨":{"category":3,"slot":27,"scopeDepth":0},"⊤":{"category":2,"slot":28,"scopeDepth":0},"∊":{"category":2,"slot":29,"scopeDepth":0},"∈":{"category":2,"slot":30,"scopeDepth":0},"!":{"category":2,"slot":31,"scopeDepth":0},"⍎":{"category":2,"slot":32,"scopeDepth":0},"⍷":{"category":2,"slot":33,"scopeDepth":0},"⌊":{"category":2,"slot":34,"scopeDepth":0},"⌈":{"category":2,"slot":35,"scopeDepth":0},"_fork1":{"category":2,"slot":36,"scopeDepth":0},"_fork2":{"category":2,"slot":37,"scopeDepth":0},"⍕":{"category":2,"slot":38,"scopeDepth":0},"⍋":{"category":2,"slot":39,"scopeDepth":0},"⍒":{"category":2,"slot":40,"scopeDepth":0},"⍁":{"category":4,"slot":41,"scopeDepth":0},"⍳":{"category":2,"slot":42,"scopeDepth":0},"⊂":{"category":2,"slot":43,"scopeDepth":0},"~":{"category":2,"slot":44,"scopeDepth":0},"∨":{"category":2,"slot":45,"scopeDepth":0},"∧":{"category":2,"slot":46,"scopeDepth":0},"^":{"category":2,"slot":47,"scopeDepth":0},"⍱":{"category":2,"slot":48,"scopeDepth":0},"⍲":{"category":2,"slot":49,"scopeDepth":0},"⍣":{"category":4,"slot":50,"scopeDepth":0},"get_⎕":{"category":2,"slot":51,"scopeDepth":0},"⎕":{"category":1},"set_⎕":{"category":2,"slot":52,"scopeDepth":0},"get_⍞":{"category":2,"slot":53,"scopeDepth":0},"⍞":{"category":1},"set_⍞":{"category":2,"slot":54,"scopeDepth":0},"get_⎕IO":{"category":2,"slot":55,"scopeDepth":0},"⎕IO":{"category":1},"set_⎕IO":{"category":2,"slot":56,"scopeDepth":0},"⎕DL":{"category":2,"slot":57,"scopeDepth":0},"⎕RE":{"category":2,"slot":58,"scopeDepth":0},"⎕UCS":{"category":2,"slot":59,"scopeDepth":0},"?":{"category":2,"slot":60,"scopeDepth":0},"↗":{"category":2,"slot":61,"scopeDepth":0},"⍴":{"category":2,"slot":62,"scopeDepth":0},"⌽":{"category":2,"slot":63,"scopeDepth":0},"⊖":{"category":2,"slot":64,"scopeDepth":0},"/":{"category":3,"slot":65,"scopeDepth":0},"⌿":{"category":3,"slot":66,"scopeDepth":0},"⌷":{"category":2,"slot":67,"scopeDepth":0},"_index":{"category":2,"slot":68,"scopeDepth":0},"_substitute":{"category":2,"slot":69,"scopeDepth":0},"↑":{"category":2,"slot":70,"scopeDepth":0},"⍉":{"category":2,"slot":71,"scopeDepth":0},"⍠":{"category":4,"slot":72,"scopeDepth":0},"⍬":{"scopeDepth":0,"slot":73,"category":1},"_atop":{"scopeDepth":0,"slot":74,"category":4},"⊃":{"scopeDepth":0,"slot":75,"category":2},"⍪":{"scopeDepth":0,"slot":76,"category":2},"⊢":{"scopeDepth":0,"slot":77,"category":2},"⊣":{"scopeDepth":0,"slot":78,"category":2},"≢":{"scopeDepth":0,"slot":79,"category":2},"⌹":{"scopeDepth":0,"slot":80,"category":2},"⍨":{"scopeDepth":0,"slot":81,"category":3}}};
+var prelude={"code":[1,new A([],[0],[1],0),4,0,73,9,1,new A("ABCDEFGHIJKLMNOPQRSTUVWXYZ",[26],[1],0),4,0,84,9,1,new A("ÁÂÃÇÈÊËÌÍÎÏÐÒÓÔÕÙÚÛÝþãìðòõ",[26],[1],0),4,0,85,9,1,new A("0123456789",[10],[1],0),4,0,86,9,7,22,3,1,2,3,0,65,3,1,0,3,0,29,3,1,2,6,3,0,44,5,6,8,3,0,72,3,0,44,6,4,0,44,9,7,36,7,15,3,2,0,3,1,0,3,2,2,6,3,1,2,5,8,3,0,72,7,12,3,2,0,3,1,0,5,3,1,2,5,8,6,8,4,0,74,9,7,173,3,1,2,3,0,62,5,3,0,62,5,3,0,16,1,new A([1],[],[],0),6,11,8,9,1,new A("RANK ERROR",[10],[1],0),3,0,61,5,8,9,3,1,0,4,1,4,9,3,1,2,7,123,3,2,0,3,0,62,5,3,0,62,5,3,0,16,1,new A([1],[],[],0),6,11,8,9,1,new A("RANK ERROR",[10],[1],0),3,0,61,5,8,9,3,2,0,3,0,13,5,4,2,0,9,3,1,4,3,0,62,5,3,0,62,5,3,0,15,3,2,0,3,0,62,5,6,11,8,9,1,new A("RANK ERROR",[10],[1],0),3,0,61,5,8,9,3,1,4,3,0,62,5,3,0,19,3,2,0,6,3,0,45,3,0,65,5,5,11,8,9,1,new A("INDEX ERROR",[11],[1],0),3,0,61,5,8,9,3,1,4,3,0,67,3,2,0,6,3,0,75,5,4,1,4,8,3,0,27,5,5,9,3,1,4,8,3,0,72,7,229,3,1,0,3,0,62,5,3,0,62,5,3,0,14,1,new A([0],[],[],0),6,11,9,9,3,1,0,3,0,70,5,8,9,3,1,0,3,0,62,5,3,0,3,3,0,65,5,5,3,0,14,1,new A([0],[],[],0),6,11,5,9,3,1,0,8,9,3,1,0,3,0,62,5,4,1,4,9,3,1,0,3,0,13,5,4,1,0,9,3,1,0,3,0,62,3,0,27,5,5,4,1,5,3,0,79,3,0,27,5,5,3,0,35,3,0,65,5,5,4,1,6,9,3,1,5,3,0,13,3,0,21,1,new A([1],[],[],0),3,0,62,3,1,6,6,6,3,0,36,3,0,26,6,3,0,37,3,0,62,6,3,0,27,5,5,4,1,5,3,0,35,3,0,65,5,5,3,0,70,5,4,1,7,9,3,1,0,7,18,3,2,0,3,0,62,3,2,2,6,3,0,70,3,1,7,6,8,3,0,27,5,3,1,5,6,3,0,76,3,0,65,5,5,3,0,70,5,3,0,62,3,1,7,3,0,13,3,1,4,6,6,8,6,4,0,75,9,7,335,3,1,2,3,0,62,5,3,0,62,5,3,0,16,1,new A([1],[],[],0),6,11,8,9,1,new A("RANK ERROR",[10],[1],0),3,0,61,5,8,9,3,1,0,3,0,62,5,3,0,62,5,3,0,15,1,new A([1],[],[],0),6,11,8,9,1,new A("NONCE ERROR",[11],[1],0),3,0,61,5,8,9,1,new A([0],[],[],0),3,0,14,3,1,2,6,3,0,13,5,4,1,2,9,3,1,2,3,0,33,1,new A([1,1],[2],[1],0),6,3,0,44,5,4,1,4,9,3,1,2,3,0,65,3,1,4,6,4,1,5,9,3,1,0,3,0,65,3,1,4,6,4,1,6,9,3,0,73,7,52,3,1,5,3,0,70,1,new A([1],[],[],0),6,3,0,14,1,new A([1],[],[],0),6,11,34,9,3,0,73,7,26,3,1,5,3,0,26,1,new A([1],[],[],0),6,4,1,5,9,3,1,6,3,0,26,1,new A([1],[],[],0),6,4,1,6,8,5,8,8,5,9,3,0,73,7,52,3,1,5,3,0,70,1,new A([-1],[],[],0),6,3,0,14,1,new A([1],[],[],0),6,11,34,9,3,0,73,7,26,3,1,5,3,0,26,1,new A([-1],[],[],0),6,4,1,5,9,3,1,6,3,0,26,1,new A([-1],[],[],0),6,4,1,6,8,5,8,8,5,9,3,1,5,3,0,62,5,3,0,42,5,3,0,65,3,1,5,6,3,0,13,3,0,81,5,3,1,5,3,0,62,5,6,4,1,5,9,1,new A([0],[],[],0),4,1,7,9,3,1,6,3,0,43,5,7,38,3,2,0,3,0,70,3,2,2,6,3,0,26,3,1,7,6,4,2,4,9,1,new A([1],[],[],0),3,0,0,3,2,2,6,4,1,7,9,3,2,4,8,3,0,27,5,3,1,5,6,8,3,0,72,3,0,43,6,4,0,43,9,7,235,3,1,2,3,0,62,5,3,0,62,5,3,0,16,1,new A([1],[],[],0),6,11,8,9,1,new A("RANK ERROR",[10],[1],0),3,0,61,5,8,9,3,1,2,3,0,13,5,4,1,4,9,3,1,0,7,46,3,2,0,3,0,62,5,3,0,62,5,3,0,14,1,new A([0],[],[],0),6,11,22,9,3,2,0,3,0,62,1,new A([1],[],[],0),3,0,62,3,1,4,3,0,62,5,6,6,8,9,3,2,0,8,5,4,1,0,9,3,1,0,3,0,62,5,3,0,62,5,3,0,17,3,1,4,3,0,62,5,6,11,8,9,1,new A("RANK ERROR",[10],[1],0),3,0,61,5,8,9,3,1,4,3,0,70,3,1,0,3,0,62,5,3,0,62,5,6,4,1,4,9,3,1,0,3,0,62,5,3,0,0,3,1,4,6,3,0,35,1,new A([0],[],[],0),6,3,0,3,1,new A([0],[],[],0),3,0,18,3,1,4,6,6,3,0,0,3,1,0,3,0,62,5,3,0,1,3,1,4,6,3,0,34,1,new A([0],[],[],0),6,3,0,3,1,new A([0],[],[],0),3,0,17,3,1,4,6,6,6,4,1,4,9,3,1,0,3,0,70,3,1,4,6,8,3,0,72,7,60,3,1,0,3,0,62,5,3,0,62,5,3,0,14,1,new A([0],[],[],0),6,11,5,9,3,1,0,8,9,3,1,0,3,1,0,3,0,62,5,3,0,62,5,3,0,0,1,new A([-1],[],[],0),6,2,1,1,new A([0],[1],[1],0),2,2,3,0,68,3,0,43,6,5,8,6,4,0,26,9,7,23,3,1,0,1,new A([0],[],[],0),2,1,1,new A([0],[1],[1],0),2,2,3,0,68,3,0,13,6,3,1,2,6,8,3,0,72,7,38,3,1,0,3,0,62,3,1,0,3,0,79,5,3,1,0,3,0,62,5,3,0,26,1,new A([1],[],[],0),6,3,0,3,3,0,65,5,5,2,2,6,8,6,4,0,76,9,7,4,3,1,0,8,4,0,77,9,7,4,3,1,2,8,3,0,72,7,4,3,1,0,8,6,4,0,78,9,7,15,3,1,0,3,0,20,3,1,2,6,3,0,44,5,8,3,0,72,7,21,1,new A([1],[],[],0),3,0,13,3,1,0,3,0,62,5,6,3,0,62,3,0,73,6,8,6,4,0,79,9,3,0,13,3,0,72,7,23,3,1,0,3,0,62,3,1,0,3,0,62,5,3,0,3,3,0,65,5,5,6,8,6,4,0,13,9,7,22,3,1,2,3,0,3,3,0,25,3,0,0,6,3,1,0,3,0,80,5,6,8,3,0,72,7,724,7,28,1,new A([0.5],[],[],0),3,0,5,3,2,0,3,0,0,5,3,0,3,3,0,25,3,0,0,6,3,2,0,6,6,8,4,1,4,9,7,290,1,new A([1],[],[],0),2,1,1,new A([0],[1],[1],0),2,2,3,0,68,3,2,0,3,0,62,5,6,4,2,4,9,3,2,4,3,0,19,1,new A([1],[],[],0),6,11,43,9,3,2,0,7,35,3,3,0,3,0,13,5,3,1,4,5,4,3,4,9,3,3,4,3,0,4,3,3,0,6,3,3,4,3,0,76,5,2,2,8,5,8,9,1,new A([2],[],[],0),3,0,4,3,2,4,6,3,0,35,5,4,2,5,9,3,2,0,3,0,70,3,2,5,3,0,13,3,2,0,3,0,62,5,3,0,70,1,new A([1],[],[],0),6,6,6,4,2,6,9,3,2,0,3,0,26,3,2,5,3,0,13,1,new A([0],[],[],0),6,6,4,2,7,9,3,2,6,3,2,1,5,10,2,4,2,8,9,4,2,9,9,9,3,2,7,3,0,3,3,0,25,3,0,0,6,3,2,8,3,0,71,5,3,0,0,5,6,4,2,10,9,3,2,10,3,0,3,3,0,25,3,0,0,6,3,2,8,6,3,0,1,3,2,7,6,3,2,1,5,10,2,4,2,11,9,4,2,12,9,9,3,2,11,3,0,13,3,2,8,6,3,2,12,3,0,70,3,2,4,3,0,1,5,3,0,13,1,new A([2],[],[],0),3,0,4,3,2,4,6,3,0,34,5,6,6,3,0,76,3,2,10,3,0,13,3,2,9,6,6,2,2,8,4,1,5,9,7,214,3,2,0,3,0,62,5,3,0,70,1,new A([1],[],[],0),6,4,2,4,3,0,14,1,new A([1],[],[],0),6,11,9,9,3,2,0,3,0,4,5,8,9,1,new A([2],[],[],0),3,0,4,3,2,4,6,3,0,35,5,4,2,5,9,3,2,0,3,0,70,3,2,5,3,0,13,3,2,5,6,6,3,2,1,5,4,2,6,9,3,2,0,3,0,26,3,2,5,3,0,13,3,2,5,6,6,3,2,1,5,4,2,7,9,3,2,0,3,0,70,3,2,4,3,0,1,3,2,5,6,3,0,13,3,2,5,6,6,4,2,8,9,3,2,7,3,0,3,3,0,25,3,0,0,6,3,2,8,6,3,0,3,3,0,25,3,0,0,6,3,2,6,6,3,0,1,5,4,2,9,9,3,2,7,3,0,70,3,2,4,3,0,1,5,3,0,13,1,new A([2],[],[],0),3,0,4,3,2,4,6,3,0,34,5,6,6,3,0,76,3,2,9,3,0,13,3,2,6,6,6,8,4,1,6,9,3,1,0,3,0,62,5,3,0,62,5,3,0,14,1,new A([0],[],[],0),6,11,9,9,3,1,0,3,0,4,5,8,9,3,1,0,3,0,62,5,3,0,62,5,3,0,14,1,new A([1],[],[],0),6,11,17,9,3,1,0,3,0,76,5,3,1,1,5,3,0,13,5,8,9,3,1,0,3,0,62,5,3,0,62,5,3,0,15,1,new A([2],[],[],0),6,11,8,9,1,new A("RANK ERROR",[10],[1],0),3,0,61,5,8,9,3,1,0,3,0,62,5,3,0,19,3,0,65,5,5,3,0,29,1,new A([0],[],[],0),6,11,8,9,1,new A("LENGTH ERROR",[12],[1],0),3,0,61,5,8,9,3,1,0,3,1,5,5,10,2,4,1,7,9,4,1,8,9,9,3,1,7,3,0,71,5,3,0,0,5,3,0,3,3,0,25,3,0,0,6,3,1,8,3,1,6,5,6,8,6,4,0,80,9,7,31,7,11,3,2,2,3,1,0,3,2,0,6,8,3,0,72,7,11,3,2,0,3,1,0,3,2,0,6,8,6,8,4,0,81,9,3,0,1,4,0,2,9,3,0,5,4,0,6,9,3,0,8,4,0,9,9,3,0,46,4,0,47,9,3,0,29,4,0,30,8],"nSlots":87,"vars":{"⎕D":{"scopeDepth":0,"slot":86,"ctg":1},"get_⎕OFF":{"ctg":2,"slot":83,"scopeDepth":0},"⎕OFF":{"ctg":1},"⎕A":{"scopeDepth":0,"slot":84,"ctg":1},"⎕Á":{"scopeDepth":0,"slot":85,"ctg":1},"⎕a":{"scopeDepth":0,"slot":82,"ctg":1},"+":{"ctg":2,"slot":0,"scopeDepth":0},"-":{"ctg":2,"slot":1,"scopeDepth":0},"−":{"ctg":2,"slot":2,"scopeDepth":0},"×":{"ctg":2,"slot":3,"scopeDepth":0},"÷":{"ctg":2,"slot":4,"scopeDepth":0},"*":{"ctg":2,"slot":5,"scopeDepth":0},"⋆":{"ctg":2,"slot":6,"scopeDepth":0},"⍟":{"ctg":2,"slot":7,"scopeDepth":0},"|":{"ctg":2,"slot":8,"scopeDepth":0},"∣":{"ctg":2,"slot":9,"scopeDepth":0},"\\":{"ctg":3,"slot":10,"scopeDepth":0},"⍀":{"ctg":3,"slot":11,"scopeDepth":0},"○":{"ctg":2,"slot":12,"scopeDepth":0},",":{"ctg":2,"slot":13,"scopeDepth":0},"=":{"ctg":2,"slot":14,"scopeDepth":0},"≠":{"ctg":2,"slot":15,"scopeDepth":0},"<":{"ctg":2,"slot":16,"scopeDepth":0},">":{"ctg":2,"slot":17,"scopeDepth":0},"≤":{"ctg":2,"slot":18,"scopeDepth":0},"≥":{"ctg":2,"slot":19,"scopeDepth":0},"≡":{"ctg":2,"slot":20,"scopeDepth":0},"∘":{"ctg":4,"slot":21,"scopeDepth":0},"∪":{"ctg":2,"slot":22,"scopeDepth":0},"∩":{"ctg":2,"slot":23,"scopeDepth":0},"⊥":{"ctg":2,"slot":24,"scopeDepth":0},".":{"ctg":4,"slot":25,"scopeDepth":0},"↓":{"ctg":2,"slot":26,"scopeDepth":0},"¨":{"ctg":3,"slot":27,"scopeDepth":0},"⊤":{"ctg":2,"slot":28,"scopeDepth":0},"∊":{"ctg":2,"slot":29,"scopeDepth":0},"∈":{"ctg":2,"slot":30,"scopeDepth":0},"!":{"ctg":2,"slot":31,"scopeDepth":0},"⍎":{"ctg":2,"slot":32,"scopeDepth":0},"⍷":{"ctg":2,"slot":33,"scopeDepth":0},"⌊":{"ctg":2,"slot":34,"scopeDepth":0},"⌈":{"ctg":2,"slot":35,"scopeDepth":0},"_fork1":{"ctg":2,"slot":36,"scopeDepth":0},"_fork2":{"ctg":2,"slot":37,"scopeDepth":0},"⍕":{"ctg":2,"slot":38,"scopeDepth":0},"⍋":{"ctg":2,"slot":39,"scopeDepth":0},"⍒":{"ctg":2,"slot":40,"scopeDepth":0},"⍁":{"ctg":4,"slot":41,"scopeDepth":0},"⍳":{"ctg":2,"slot":42,"scopeDepth":0},"⊂":{"ctg":2,"slot":43,"scopeDepth":0},"~":{"ctg":2,"slot":44,"scopeDepth":0},"∨":{"ctg":2,"slot":45,"scopeDepth":0},"∧":{"ctg":2,"slot":46,"scopeDepth":0},"^":{"ctg":2,"slot":47,"scopeDepth":0},"⍱":{"ctg":2,"slot":48,"scopeDepth":0},"⍲":{"ctg":2,"slot":49,"scopeDepth":0},"⍣":{"ctg":4,"slot":50,"scopeDepth":0},"get_⎕":{"ctg":2,"slot":51,"scopeDepth":0},"⎕":{"ctg":1},"set_⎕":{"ctg":2,"slot":52,"scopeDepth":0},"get_⍞":{"ctg":2,"slot":53,"scopeDepth":0},"⍞":{"ctg":1},"set_⍞":{"ctg":2,"slot":54,"scopeDepth":0},"get_⎕IO":{"ctg":2,"slot":55,"scopeDepth":0},"⎕IO":{"ctg":1},"set_⎕IO":{"ctg":2,"slot":56,"scopeDepth":0},"⎕DL":{"ctg":2,"slot":57,"scopeDepth":0},"⎕RE":{"ctg":2,"slot":58,"scopeDepth":0},"⎕UCS":{"ctg":2,"slot":59,"scopeDepth":0},"?":{"ctg":2,"slot":60,"scopeDepth":0},"↗":{"ctg":2,"slot":61,"scopeDepth":0},"⍴":{"ctg":2,"slot":62,"scopeDepth":0},"⌽":{"ctg":2,"slot":63,"scopeDepth":0},"⊖":{"ctg":2,"slot":64,"scopeDepth":0},"/":{"ctg":3,"slot":65,"scopeDepth":0},"⌿":{"ctg":3,"slot":66,"scopeDepth":0},"⌷":{"ctg":2,"slot":67,"scopeDepth":0},"_index":{"ctg":2,"slot":68,"scopeDepth":0},"_substitute":{"ctg":2,"slot":69,"scopeDepth":0},"↑":{"ctg":2,"slot":70,"scopeDepth":0},"⍉":{"ctg":2,"slot":71,"scopeDepth":0},"⍠":{"ctg":4,"slot":72,"scopeDepth":0},"⍬":{"scopeDepth":0,"slot":73,"ctg":1},"_atop":{"scopeDepth":0,"slot":74,"ctg":4},"⊃":{"scopeDepth":0,"slot":75,"ctg":2},"⍪":{"scopeDepth":0,"slot":76,"ctg":2},"⊢":{"scopeDepth":0,"slot":77,"ctg":2},"⊣":{"scopeDepth":0,"slot":78,"ctg":2},"≢":{"scopeDepth":0,"slot":79,"ctg":2},"⌹":{"scopeDepth":0,"slot":80,"ctg":2},"⍨":{"scopeDepth":0,"slot":81,"ctg":3}}};
 // Zify(x) - complexify
 // * if x is real, it's converted to a complex instance with imaginary part 0
 // * if x is already complex, it's preserved
@@ -2537,8 +2537,8 @@ const exec=(s,o)=>{ // s:APL code, o:options
   var r=vm({code:code,env:env})
   for(var k in ast.vars){
     var v=ast.vars[k],x=o.ctx[k]=env[0][v.slot]
-    if(v.category===ADV)x.adv=1
-    if(v.category===CONJ)x.conj=1
+    if(v.ctg===ADV)x.adv=1
+    if(v.ctg===CONJ)x.conj=1
   }
   return r
 }
@@ -2555,10 +2555,10 @@ const compileAST=(ast,o)=>{
   o.ctx=o.ctx||Object.create(voc)
   for(var key in o.ctx)if(!ast.vars[key]){
     const value=o.ctx[key]
-    const varInfo=ast.vars[key]={category:NOUN,slot:ast.nSlots++,scopeDepth:ast.scopeDepth}
+    const varInfo=ast.vars[key]={ctg:NOUN,slot:ast.nSlots++,scopeDepth:ast.scopeDepth}
     if(typeof value==='function'||value instanceof Proc){
-      varInfo.category=value.adv?ADV:value.conj?CONJ:VERB
-      if(/^[gs]et_.*/.test(key))ast.vars[key.slice(4)]={category:NOUN}
+      varInfo.ctg=value.adv?ADV:value.conj?CONJ:VERB
+      if(/^[gs]et_.*/.test(key))ast.vars[key.slice(4)]={ctg:NOUN}
     }
   }
   const err=(node,message)=>{synErr({message:message,file:o.file,offset:node.offset,aplCode:o.aplCode})}
@@ -2567,7 +2567,7 @@ const compileAST=(ast,o)=>{
     switch(node[0]){
       case'B':case':':case'←':case'[':case'{':case'.':case'⍬':
         var r=VERB;for(var i=1;i<node.length;i++)if(node[i])r=Math.max(r,categorizeLambdas(node[i]))
-        if(node[0]==='{'){node.category=r;return VERB}else{return r}
+        if(node[0]==='{'){node.ctg=r;return VERB}else{return r}
       case'S':case'N':case'J':return 0
       case'X':var s=node[1];return s==='⍺⍺'||s==='⍶'||s==='∇∇'?ADV:s==='⍵⍵'||s==='⍹'?CONJ:VERB
       default:asrt(0)
@@ -2584,11 +2584,11 @@ const compileAST=(ast,o)=>{
         case'←':return visitLHS(node[1],visit(node[2]))
         case'X':
           var name=node[1],v=vars['get_'+name],r
-          if(v&&v.category===VERB){
+          if(v&&v.ctg===VERB){
             return NOUN
           }else{
             // x ⋄ x←0 !!! VALUE ERROR
-            return vars[name]&&vars[name].category||
+            return vars[name]&&vars[name].ctg||
               valErr('Symbol '+name+' is referenced before assignment.',
                 {file:o.file,offset:node.offset,aplCode:o.aplCode})
           }
@@ -2597,26 +2597,26 @@ const compileAST=(ast,o)=>{
             var d,v
             queue.push(extend(node[i],{
               scopeNode:scopeNode,
-              scopeDepth:d=scopeNode.scopeDepth+1+(node.category!==VERB),
+              scopeDepth:d=scopeNode.scopeDepth+1+(node.ctg!==VERB),
               nSlots:4,
               vars:v=extend(Object.create(vars),{
-                '⍵':{slot:0,scopeDepth:d,category:NOUN},
-                '∇':{slot:1,scopeDepth:d,category:VERB},
-                '⍺':{slot:2,scopeDepth:d,category:NOUN},
+                '⍵':{slot:0,scopeDepth:d,ctg:NOUN},
+                '∇':{slot:1,scopeDepth:d,ctg:VERB},
+                '⍺':{slot:2,scopeDepth:d,ctg:NOUN},
                 // slot 3 is reserved for a "base pointer"
-                '⍫':{       scopeDepth:d,category:VERB}
+                '⍫':{       scopeDepth:d,ctg:VERB}
               })
             }))
-            if(node.category===CONJ){
-              v['⍵⍵']=v['⍹']={slot:0,scopeDepth:d-1,category:VERB}
-              v['∇∇']=       {slot:1,scopeDepth:d-1,category:CONJ}
-              v['⍺⍺']=v['⍶']={slot:2,scopeDepth:d-1,category:VERB}
-            }else if(node.category===ADV){
-              v['⍺⍺']=v['⍶']={slot:0,scopeDepth:d-1,category:VERB}
-              v['∇∇']=       {slot:1,scopeDepth:d-1,category:ADV}
+            if(node.ctg===CONJ){
+              v['⍵⍵']=v['⍹']={slot:0,scopeDepth:d-1,ctg:VERB}
+              v['∇∇']=       {slot:1,scopeDepth:d-1,ctg:CONJ}
+              v['⍺⍺']=v['⍶']={slot:2,scopeDepth:d-1,ctg:VERB}
+            }else if(node.ctg===ADV){
+              v['⍺⍺']=v['⍶']={slot:0,scopeDepth:d-1,ctg:VERB}
+              v['∇∇']=       {slot:1,scopeDepth:d-1,ctg:ADV}
             }
           }
-          return node.category||VERB
+          return node.ctg||VERB
         case'S':case'N':case'J':case'⍬':return NOUN
         case'[':
           for(var i=2;i<node.length;i++)if(node[i]&&visit(node[i])!==NOUN)err(node,'Indices must be nouns.')
@@ -2680,11 +2680,11 @@ const compileAST=(ast,o)=>{
         case'X':
           var name=node[1];if(name==='∇'||name==='⍫')err(node,'Assignment to '+name+' is not allowed.')
           if(vars[name]){
-            if(vars[name].category!==rhsCategory){
+            if(vars[name].ctg!==rhsCategory){
               err(node,'Inconsistent usage of symbol '+name+', it is assigned both nouns and verbs.')
             }
           }else{
-            vars[name]={scopeDepth:scopeNode.scopeDepth,slot:scopeNode.nSlots++,category:rhsCategory}
+            vars[name]={scopeDepth:scopeNode.scopeDepth,slot:scopeNode.nSlots++,ctg:rhsCategory}
           }
           break
         case'.':
@@ -2730,7 +2730,7 @@ const compileAST=(ast,o)=>{
         // c←{} ⋄ x←{c←⍫⋄1}⍬ ⋄ {x=1:c 2⋄x}⍬ ←→ 2
         var s=node[1],vars=node.scopeNode.vars,v
         return s==='⍫'?[CON]:
-               (v=vars['get_'+s])&&v.category===VERB?[LDC,A.zero,GET,v.scopeDepth,v.slot,MON]:
+               (v=vars['get_'+s])&&v.ctg===VERB?[LDC,A.zero,GET,v.scopeDepth,v.slot,MON]:
                  [GET, vars[s].scopeDepth, vars[s].slot]
       case'{':
         // {1 + 1} 1                    ←→ 2
@@ -2760,7 +2760,7 @@ const compileAST=(ast,o)=>{
         }else{
           err(node)
         }
-        return node.category===VERB?f:[LAM,f.length+1].concat(f,RET)
+        return node.ctg===VERB?f:[LAM,f.length+1].concat(f,RET)
       case'S':
         // ⍴''     ←→ ,0
         // ⍴'x'    ←→ ⍬
@@ -2829,7 +2829,7 @@ const compileAST=(ast,o)=>{
     switch(node[0]){
       case'X':
         var name=node[1],vars=node.scopeNode.vars,v=vars['set_'+name]
-        return v&&v.category===VERB?[GET,v.scopeDepth,v.slot,MON]:[SET,vars[name].scopeDepth,vars[name].slot]
+        return v&&v.ctg===VERB?[GET,v.scopeDepth,v.slot,MON]:[SET,vars[name].scopeDepth,vars[name].slot]
       case'.': // strand assignment
         // (a b) ← 1 2 ⋄ a           ←→ 1
         // (a b) ← 1 2 ⋄ b           ←→ 2

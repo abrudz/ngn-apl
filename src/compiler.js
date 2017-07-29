@@ -1,22 +1,20 @@
 const NOUN=1,VERB=2,ADV=3,CONJ=4
-const exec=(s,o)=>{ // s:APL code, o:options
+,exec=(s,o)=>{ // s:APL code, o:options
   o=o||{}
   var ast=parse(s,o),code=compileAST(ast,o),env=[prelude.env[0].slice(0)]
   for(var k in ast.vars)env[0][ast.vars[k].slot]=o.ctx[k]
   var r=vm({code:code,env:env})
   for(var k in ast.vars){
     var v=ast.vars[k],x=o.ctx[k]=env[0][v.slot]
-    if(v.category===ADV)x.adv=1
-    if(v.category===CONJ)x.conj=1
+    if(v.ctg===ADV)x.adv=1
+    if(v.ctg===CONJ)x.conj=1
   }
   return r
 }
-const repr=x=>
-  x===null||['string','number','boolean'].indexOf(typeof x)>=0?JSON.stringify(x):
-  x instanceof Array?'['+x.map(repr).join(',')+']':
-  x.repr?x.repr():
-  '{'+Object.keys(x).map(k=>repr(k)+':'+repr(x[k])).join(',')+'}'
-const compileAST=(ast,o)=>{
+,repr=x=>x===null||['string','number','boolean'].indexOf(typeof x)>=0?JSON.stringify(x):
+         x instanceof Array?'['+x.map(repr).join(',')+']':
+         x.repr?x.repr():'{'+Object.keys(x).map(k=>repr(k)+':'+repr(x[k])).join(',')+'}'
+,compileAST=(ast,o)=>{
   o=o||{}
   ast.scopeDepth=0
   ast.nSlots=prelude.nSlots
@@ -24,25 +22,25 @@ const compileAST=(ast,o)=>{
   o.ctx=o.ctx||Object.create(voc)
   for(var key in o.ctx)if(!ast.vars[key]){
     const value=o.ctx[key]
-    const varInfo=ast.vars[key]={category:NOUN,slot:ast.nSlots++,scopeDepth:ast.scopeDepth}
+    const varInfo=ast.vars[key]={ctg:NOUN,slot:ast.nSlots++,scopeDepth:ast.scopeDepth}
     if(typeof value==='function'||value instanceof Proc){
-      varInfo.category=value.adv?ADV:value.conj?CONJ:VERB
-      if(/^[gs]et_.*/.test(key))ast.vars[key.slice(4)]={category:NOUN}
+      varInfo.ctg=value.adv?ADV:value.conj?CONJ:VERB
+      if(/^[gs]et_.*/.test(key))ast.vars[key.slice(4)]={ctg:NOUN}
     }
   }
   const err=(node,message)=>{synErr({message:message,file:o.file,offset:node.offset,aplCode:o.aplCode})}
   asrt(VERB<ADV&&ADV<CONJ)//we are relying on this ordering below
-  const categorizeLambdas=node=>{
+  const ctgriseLambdas=node=>{
     switch(node[0]){
       case'B':case':':case'←':case'[':case'{':case'.':case'⍬':
-        var r=VERB;for(var i=1;i<node.length;i++)if(node[i])r=Math.max(r,categorizeLambdas(node[i]))
-        if(node[0]==='{'){node.category=r;return VERB}else{return r}
+        var r=VERB;for(var i=1;i<node.length;i++)if(node[i])r=Math.max(r,ctgriseLambdas(node[i]))
+        if(node[0]==='{'){node.ctg=r;return VERB}else{return r}
       case'S':case'N':case'J':return 0
       case'X':var s=node[1];return s==='⍺⍺'||s==='⍶'||s==='∇∇'?ADV:s==='⍵⍵'||s==='⍹'?CONJ:VERB
       default:asrt(0)
     }
   }
-  categorizeLambdas(ast)
+  ctgriseLambdas(ast)
   var queue=[ast] // accumulates"body"nodes we encounter on the way
   while(queue.length){
     var scopeNode=queue.shift(),vars=scopeNode.vars
@@ -53,11 +51,11 @@ const compileAST=(ast,o)=>{
         case'←':return visitLHS(node[1],visit(node[2]))
         case'X':
           var name=node[1],v=vars['get_'+name],r
-          if(v&&v.category===VERB){
+          if(v&&v.ctg===VERB){
             return NOUN
           }else{
             // x ⋄ x←0 !!! VALUE ERROR
-            return vars[name]&&vars[name].category||
+            return vars[name]&&vars[name].ctg||
               valErr('Symbol '+name+' is referenced before assignment.',
                 {file:o.file,offset:node.offset,aplCode:o.aplCode})
           }
@@ -66,26 +64,26 @@ const compileAST=(ast,o)=>{
             var d,v
             queue.push(extend(node[i],{
               scopeNode:scopeNode,
-              scopeDepth:d=scopeNode.scopeDepth+1+(node.category!==VERB),
+              scopeDepth:d=scopeNode.scopeDepth+1+(node.ctg!==VERB),
               nSlots:4,
               vars:v=extend(Object.create(vars),{
-                '⍵':{slot:0,scopeDepth:d,category:NOUN},
-                '∇':{slot:1,scopeDepth:d,category:VERB},
-                '⍺':{slot:2,scopeDepth:d,category:NOUN},
+                '⍵':{slot:0,scopeDepth:d,ctg:NOUN},
+                '∇':{slot:1,scopeDepth:d,ctg:VERB},
+                '⍺':{slot:2,scopeDepth:d,ctg:NOUN},
                 // slot 3 is reserved for a "base pointer"
-                '⍫':{       scopeDepth:d,category:VERB}
+                '⍫':{       scopeDepth:d,ctg:VERB}
               })
             }))
-            if(node.category===CONJ){
-              v['⍵⍵']=v['⍹']={slot:0,scopeDepth:d-1,category:VERB}
-              v['∇∇']=       {slot:1,scopeDepth:d-1,category:CONJ}
-              v['⍺⍺']=v['⍶']={slot:2,scopeDepth:d-1,category:VERB}
-            }else if(node.category===ADV){
-              v['⍺⍺']=v['⍶']={slot:0,scopeDepth:d-1,category:VERB}
-              v['∇∇']=       {slot:1,scopeDepth:d-1,category:ADV}
+            if(node.ctg===CONJ){
+              v['⍵⍵']=v['⍹']={slot:0,scopeDepth:d-1,ctg:VERB}
+              v['∇∇']=       {slot:1,scopeDepth:d-1,ctg:CONJ}
+              v['⍺⍺']=v['⍶']={slot:2,scopeDepth:d-1,ctg:VERB}
+            }else if(node.ctg===ADV){
+              v['⍺⍺']=v['⍶']={slot:0,scopeDepth:d-1,ctg:VERB}
+              v['∇∇']=       {slot:1,scopeDepth:d-1,ctg:ADV}
             }
           }
-          return node.category||VERB
+          return node.ctg||VERB
         case'S':case'N':case'J':case'⍬':return NOUN
         case'[':
           for(var i=2;i<node.length;i++)if(node[i]&&visit(node[i])!==NOUN)err(node,'Indices must be nouns.')
@@ -143,31 +141,31 @@ const compileAST=(ast,o)=>{
       }
       asrt(0)
     }
-    const visitLHS=(node,rhsCategory)=>{
+    const visitLHS=(node,rhsCtg)=>{
       node.scopeNode=scopeNode
       switch(node[0]){
         case'X':
           var name=node[1];if(name==='∇'||name==='⍫')err(node,'Assignment to '+name+' is not allowed.')
           if(vars[name]){
-            if(vars[name].category!==rhsCategory){
+            if(vars[name].ctg!==rhsCtg){
               err(node,'Inconsistent usage of symbol '+name+', it is assigned both nouns and verbs.')
             }
           }else{
-            vars[name]={scopeDepth:scopeNode.scopeDepth,slot:scopeNode.nSlots++,category:rhsCategory}
+            vars[name]={scopeDepth:scopeNode.scopeDepth,slot:scopeNode.nSlots++,ctg:rhsCtg}
           }
           break
         case'.':
-          rhsCategory===NOUN||err(node,'Strand assignment can be used only for nouns.')
-          for(var i=1;i<node.length;i++)visitLHS(node[i],rhsCategory)
+          rhsCtg===NOUN||err(node,'Strand assignment can be used only for nouns.')
+          for(var i=1;i<node.length;i++)visitLHS(node[i],rhsCtg)
           break
         case'[':
-          rhsCategory===NOUN||err(node,'Indexed assignment can be used only for nouns.')
-          visitLHS(node[1],rhsCategory);for(var i=2;i<node.length;i++)node[i]&&visit(node[i])
+          rhsCtg===NOUN||err(node,'Indexed assignment can be used only for nouns.')
+          visitLHS(node[1],rhsCtg);for(var i=2;i<node.length;i++)node[i]&&visit(node[i])
           break
         default:
           err(node,'Invalid LHS node type: '+JSON.stringify(node[0]))
       }
-      return rhsCategory
+      return rhsCtg
     }
     for(var i=1;i<scopeNode.length;i++)visit(scopeNode[i])
   }
@@ -195,7 +193,7 @@ const compileAST=(ast,o)=>{
         // c←{} ⋄ x←{c←⍫⋄1}⍬ ⋄ {x=1:c 2⋄x}⍬ ←→ 2
         var s=node[1],vars=node.scopeNode.vars,v
         return s==='⍫'?[CON]:
-               (v=vars['get_'+s])&&v.category===VERB?[LDC,A.zero,GET,v.scopeDepth,v.slot,MON]:
+               (v=vars['get_'+s])&&v.ctg===VERB?[LDC,A.zero,GET,v.scopeDepth,v.slot,MON]:
                  [GET, vars[s].scopeDepth, vars[s].slot]
       case'{':
         // {1 + 1} 1                    ←→ 2
@@ -225,7 +223,7 @@ const compileAST=(ast,o)=>{
         }else{
           err(node)
         }
-        return node.category===VERB?f:[LAM,f.length+1].concat(f,RET)
+        return node.ctg===VERB?f:[LAM,f.length+1].concat(f,RET)
       case'S':
         // ⍴''     ←→ ,0
         // ⍴'x'    ←→ ⍬
@@ -294,7 +292,7 @@ const compileAST=(ast,o)=>{
     switch(node[0]){
       case'X':
         var name=node[1],vars=node.scopeNode.vars,v=vars['set_'+name]
-        return v&&v.category===VERB?[GET,v.scopeDepth,v.slot,MON]:[SET,vars[name].scopeDepth,vars[name].slot]
+        return v&&v.ctg===VERB?[GET,v.scopeDepth,v.slot,MON]:[SET,vars[name].scopeDepth,vars[name].slot]
       case'.': // strand assignment
         // (a b) ← 1 2 ⋄ a           ←→ 1
         // (a b) ← 1 2 ⋄ b           ←→ 2
@@ -319,16 +317,16 @@ const compileAST=(ast,o)=>{
   }
   return render(ast)
 }
-;(_=>{
-  var env=prelude.env=[[]]
-  for(var k in prelude.vars)env[0][prelude.vars[k].slot]=voc[k]
-  vm({code:prelude.code,env:env})
-  for(var k in prelude.vars)voc[k]=env[0][prelude.vars[k].slot]
-})()
-const aplify=x=>{
+,aplify=x=>{
   if(typeof x==='string')return x.length===1?A.scalar(x):new A(x)
   if(typeof x==='number')return A.scalar(x)
   if(x instanceof Array)return new A(x.map(y=>{y=aplify(y);return y.shape.length?y:y.unwrap()}))
   if(x instanceof A)return x
   err('Cannot aplify object:'+x)
 }
+;(_=>{
+  var env=prelude.env=[[]]
+  for(var k in prelude.vars)env[0][prelude.vars[k].slot]=voc[k]
+  vm({code:prelude.code,env:env})
+  for(var k in prelude.vars)voc[k]=env[0][prelude.vars[k].slot]
+})()
