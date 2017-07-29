@@ -1,5 +1,5 @@
 addVocabulary({
-  '⍷':function(om,al){
+  '⍷':(om,al)=>{
     al||nonceError()
     // "AN"⍷"BANANA"                        ←→ 0 1 0 1 0 0
     // "BIRDS" "NEST"⍷"BIRDS" "NEST" "SOUP" ←→ 1 0 0

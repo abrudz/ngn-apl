@@ -1,12 +1,10 @@
-var LDC=1,VEC=2,GET=3,SET=4,MON=5,DYA=6,LAM=7,RET=8,POP=9,SPL=10,JEQ=11,EMB=12,CON=13
+const LDC=1,VEC=2,GET=3,SET=4,MON=5,DYA=6,LAM=7,RET=8,POP=9,SPL=10,JEQ=11,EMB=12,CON=13
 
-function Proc(code,addr,size,env){this.code=code;this.addr=addr;this.size=size;this.env=env}
-Proc.prototype.toString=function(){return'#procedure'}
-Proc.prototype.toFunction=function(){
-  var p=this;return function(x,y){return vm({code:p.code,env:p.env.concat([[x,p,y,null]]),pc:p.addr})}
-}
+const Proc=function(code,addr,size,env){this.code=code;this.addr=addr;this.size=size;this.env=env}
+Proc.prototype.toString=_=>'#procedure'
+Proc.prototype.toFunction=function(){return(x,y)=>vm({code:this.code,env:this.env.concat([[x,this,y,null]]),pc:this.addr})}
 
-function vm(o){
+const vm=o=>{
   var code=o.code,env=o.env,stack=o.stack,pc=o.pc
   assert(code instanceof Array);assert(env instanceof Array);for(var i=0;i<env.length;i++)assert(env[i]instanceof Array)
   stack=stack||[];pc=pc||0
@@ -25,7 +23,7 @@ function vm(o){
         if(typeof f==='function'){
           if(w instanceof Proc)w=w.toFunction()
           if(f.cps){
-            f(w,undefined,undefined,function(r){stack.push(r);vm({code:code,env:env,stack:stack,pc:pc})})
+            f(w,undefined,undefined,r=>{stack.push(r);vm({code:code,env:env,stack:stack,pc:pc})})
             return
           }else{
             stack.push(f(w))
@@ -40,7 +38,7 @@ function vm(o){
           if(w instanceof Proc)w=w.toFunction()
           if(a instanceof Proc)a=a.toFunction()
           if(f.cps){
-            f(w,a,undefined,function(r){stack.push(r);vm({code:code,env:env,stack:stack,pc:pc})})
+            f(w,a,undefined,r=>{stack.push(r);vm({code:code,env:env,stack:stack,pc:pc})})
             return
           }else{
             stack.push(f(w,a))
@@ -49,7 +47,7 @@ function vm(o){
           var bp=stack.length;stack.push(code,pc,env);code=f.code;pc=f.addr;env=f.env.concat([[w,f,a,bp]])
         }
         break
-      case LAM:size=code[pc++];stack.push(new Proc(code,pc,size,env));pc+=size;break
+      case LAM:var size=code[pc++];stack.push(new Proc(code,pc,size,env));pc+=size;break
       case RET:
         if(stack.length===1)return stack[0]
         var u=stack.splice(-4,3);code=u[0];pc=u[1];env=u[2]
@@ -65,17 +63,17 @@ function vm(o){
       case JEQ:var n=code[pc++];stack[stack.length-1].toBool()||(pc+=n);break
       case EMB:var frame=env[env.length-1];stack.push(code[pc++](frame[0],frame[2]));break
       case CON:
-        var frame = env[env.length - 1]
-        ;(function(){
+        var frame=env[env.length-1]
+        ;(_=>{
           var cont={
             code:code,
-            env:env.map(function(x){x.slice(0)}),
+            env:env.map(x=>x.slice(0)),
             stack:stack.slice(0,frame[3]),
             pc:frame[1].addr+frame[1].size-1
           }
           assert(code[cont.pc] === RET)
-          stack.push(function(r){code=cont.code;env=cont.env;stack=cont.stack;pc=cont.pc;stack.push(r)})
-        }())
+          stack.push(r=>{code=cont.code;env=cont.env;stack=cont.stack;pc=cont.pc;stack.push(r)})
+        })()
         break
       default:aplError('Unrecognized instruction:'+code[pc-1]+',pc:'+pc)
     }

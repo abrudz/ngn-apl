@@ -11,17 +11,17 @@ addVocabulary({
   // 2 3⍴¨1 2                       ←→ (1 1)(2 2 2)
   // 4 5⍴¨"THE" "CAT"               ←→ 'THET' 'CATCA'
   // {1+⍵*2}¨2 3⍴⍳6                 ←→ 2 3⍴1 2 5 10 17 26
-  '¨':adverb(function(f,g){
+  '¨':adverb((f,g)=>{
     assert(typeof f==='function');assert(g==null)
-    return function(om,al){
+    return(om,al)=>{
       if(!al){
-        return om.map(function(x){
+        return om.map(x=>{
           x instanceof A||(x=new A([x],[]))
           var r=f(x);assert(r instanceof A)
           return r.shape.length?r:r.unwrap()
         })
       }else if(arrayEquals(al.shape,om.shape)){
-        return om.map2(al, function(x, y) {
+        return om.map2(al,(x,y)=>{
           x instanceof A||(x=new A([x],[]))
           y instanceof A||(y=new A([y],[]))
           var r=f(x,y);assert(r instanceof A)
@@ -29,14 +29,14 @@ addVocabulary({
         })
       }else if(al.isSingleton()){
         var y=al.data[0]instanceof A?al.unwrap():al
-        return om.map(function(x){
+        return om.map(x=>{
           x instanceof A||(x=new A([x],[]))
           var r=f(x,y);assert(r instanceof A)
           return r.shape.length?r:r.unwrap()
         })
       }else if(om.isSingleton()){
         var x=om.data[0]instanceof A?om.unwrap():om
-        return al.map(function(y){
+        return al.map(y=>{
           y instanceof A||(y=new A([y],[]))
           var r=f(x,y);assert(r instanceof A)
           return r.shape.length?r:r.unwrap()

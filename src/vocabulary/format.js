@@ -23,11 +23,11 @@ addVocabulary({
   // ⍕¯∞             ←→ 1 2⍴'¯∞'
   // ⍕¯1             ←→ 1 2⍴'¯1'
   // ⍕¯1e¯100J¯2e¯99 ←→ 1 14⍴'¯1e¯100J¯2e¯99'
-  '⍕':function(om,al){al&&nonceError();var t=format(om);return new A(t.join(''),[t.length,t[0].length])}
+  '⍕':(om,al)=>{al&&nonceError();var t=format(om);return new A(t.join(''),[t.length,t[0].length])}
 })
 
 // Format an APL object as an array of strings
-function format(a){
+const format=a=>{
   var t=typeof a
   if(a===null)return['null']
   if(t==='undefined')return['undefined']

@@ -1,6 +1,6 @@
 var scanOrExpand
 addVocabulary({
-  '⍀':adverb(function(om,al,axis){return scanOrExpand(om,al,axis||A.zero)}),
+  '⍀':adverb((om,al,axis)=>scanOrExpand(om,al,axis||A.zero)),
 
   // +\20 10 ¯5 7               ←→ 20 30 25 32
   // ,\"AB" "CD" "EF"           ←→ 'AB' 'ABCD' 'ABCDEF'
@@ -26,15 +26,15 @@ addVocabulary({
   // 1 0 1⍀2 2⍴'ABCD'    ←→ 3 2⍴'AB  CD'
   // 1 0 1\[0]2 2⍴'ABCD' ←→ 3 2⍴'AB  CD'
   // 1 0 1\[1]2 2⍴'ABCD' ←→ 2 3⍴'A BC D'
-  '\\':scanOrExpand=adverb(function(om,al,axis){
+  '\\':scanOrExpand=adverb((om,al,axis)=>{
     if(typeof om==='function'){
       assert(typeof al==='undefined')
       var f=om
-      return function(om,al){
+      return(om,al)=>{
         assert(al==null)
         if(!om.shape.length)return om
         axis=axis?axis.toInt(0,om.shape.length):om.shape.length-1
-        return om.map(function(x,indices,p){
+        return om.map((x,indices,p)=>{
           x instanceof A||(x=A.scalar(x))
           for(var j=0,nj=indices[axis];j<nj;j++){
             p-=om.stride[axis]

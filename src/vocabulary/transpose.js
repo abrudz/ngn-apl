@@ -1,5 +1,5 @@
 addVocabulary({
-  '⍉':function(om,al){
+  '⍉':(om,al)=>{
     if(al){
       // (2 2⍴⍳4)⍉2 2 2 2⍴⍳16 !!! RANK ERROR
       // 0⍉3 5 8 ←→ 3 5 8

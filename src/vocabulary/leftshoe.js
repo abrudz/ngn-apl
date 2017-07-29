@@ -8,7 +8,7 @@ addVocabulary({
   // ⊃⊂[1 0]2 3⍴⍳6 ←→ 3 2⍴0 3 1 4 2 5
   // ⍴⊂[1 0]2 3⍴⍳6 ←→ ⍬
   // ⍴⊃⊂⊂1 2 3     ←→ ⍬
-  '⊂':function(om,al,axes){
+  '⊂':(om,al,axes)=>{
     assert(!al)
     if(axes==null){
       axes=[];for(var i=0;i<om.shape.length;i++)axes.push(i)
@@ -16,13 +16,13 @@ addVocabulary({
       axes=getAxisList(axes,om.shape.length)
     }
     if(om.isSimple())return om
-    var unitShape =axes.map(function(k){return om.shape [k]})
-    var unitStride=axes.map(function(k){return om.stride[k]})
+    var unitShape =axes.map(k=>om.shape [k])
+    var unitStride=axes.map(k=>om.stride[k])
     var resultAxes=[];for(var k=0;k<om.shape.length;k++)axes.indexOf(k)<0&&resultAxes.push(k)
-    var shape =resultAxes.map(function(k){return om.shape [k]})
-    var stride=resultAxes.map(function(k){return om.stride[k]})
+    var shape =resultAxes.map(k=>om.shape [k])
+    var stride=resultAxes.map(k=>om.stride[k])
     var data=[]
-    each(new A(om.data,shape,stride,om.offset),function(x,indices,p){data.push(new A(om.data,unitShape,unitStride,p))})
+    each(new A(om.data,shape,stride,om.offset),(x,indices,p)=>{data.push(new A(om.data,unitShape,unitStride,p))})
     return new A(data,shape)
   }
 })

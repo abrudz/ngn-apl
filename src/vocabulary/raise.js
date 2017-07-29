@@ -1,4 +1,4 @@
 addVocabulary({
   // ↗'CUSTOM ERROR' !!! CUSTOM ERROR
-  '↗':function(om){aplError(om.toString())}
+  '↗':om=>aplError(om.toString())
 })

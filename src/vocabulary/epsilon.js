@@ -1,10 +1,10 @@
 addVocabulary({
-  '∊':function(om,al){
+  '∊':(om,al)=>{
     if(al){
       // 2 3 4 5 6∊1 2 3 5 8 13 21 ←→ 1 1 0 1 0
       // 5∊1 2 3 5 8 13 21         ←→ 1
       var b=om.toArray()
-      return al.map(function(x){
+      return al.map(x=>{
         for(var i=0;i<b.length;i++)if(match(x,b[i]))return 1
         return 0
       })
@@ -16,4 +16,4 @@ addVocabulary({
     }
   }
 })
-function enlist(x,r){x instanceof A?each(x,function(y){enlist(y,r)}):r.push(x)}
+const enlist=(x,r)=>{x instanceof A?each(x,y=>enlist(y,r)):r.push(x)}

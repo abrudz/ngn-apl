@@ -16,8 +16,8 @@ addVocabulary({
   // (1 2)0⌷3 4⍴11 12 13 14 21 22 23 24 31 32 33 34 ←→ 21 31
   // a←2 2⍴0 ⋄ a[;0]←1 ⋄ a ←→ 2 2⍴1 0 1 0
   // a←2 3⍴0 ⋄ a[1;0 2]←1 ⋄ a ←→ 2 3⍴0 0 0 1 0 1
-  '⌷':squish=function(om,al,axes){
-    if(typeof om==='function')return function(x,y){return om(x,y,al)}
+  '⌷':squish=(om,al,axes)=>{
+    if(typeof om==='function')return(x,y)=>om(x,y,al)
     al||nonceError()
     al.shape.length>1&&rankError()
     var a=al.toArray();a.length>om.shape.length&&lengthError()
@@ -67,7 +67,7 @@ addVocabulary({
   // " X"[(3 3⍴⍳9)∊1 3 6 7 8] ←→ 3 3⍴(' X ',
   // ...                              'X  ',
   // ...                              'XXX')
-  _index:function(alphaAndAxes,om){
+  _index:(alphaAndAxes,om)=>{
     var h=alphaAndAxes.toArray(),al=h[0],axes=h[1]
     return squish(om,al,axes)
   },
@@ -88,8 +88,8 @@ addVocabulary({
   // a←1 2 3 ⋄ a[⍬]←4 ⋄ a ←→ 1 2 3
   // a←3 3⍴⍳9 ⋄ a[⍬;1 2]←789 ⋄ a ←→ 3 3⍴⍳9
   // a←1 2 3 ⋄ a[]←4 5 6 ⋄ a ←→ 4 5 6
-  _substitute:function(args){
-    var h=args.toArray().map(function(x){return x instanceof A?x:new A([x],[])})
+  _substitute:args=>{
+    var h=args.toArray().map(x=>x instanceof A?x:new A([x],[]))
     var value=h[0],al=h[1],om=h[2],axes=h[3]
 
     al.shape.length>1&&rankError()
@@ -106,7 +106,7 @@ addVocabulary({
     var subs=squish(vocabulary['⍳'](new A(om.shape)),al,new A(axes))
     if(value.isSingleton())value=new A([value],subs.shape,repeat([0],subs.shape.length))
     var data=om.toArray(),stride=strideForShape(om.shape)
-    each2(subs,value,function(u,v){
+    each2(subs,value,(u,v)=>{
       if(v instanceof A&&!v.shape.length)v=v.unwrap()
       if(u instanceof A){
         var p=0,ua=u.toArray()
@@ -120,7 +120,7 @@ addVocabulary({
   }
 })
 
-function indexAtSingleAxis(om,sub,ax){
+const indexAtSingleAxis=(om,sub,ax)=>{
   assert(om instanceof A&&sub instanceof A&&isInt(ax)&&0<=ax&&ax<om.shape.length)
   var u=sub.toArray(),n=om.shape[ax]
   for(var i=0;i<u.length;i++){isInt(u[i])||domainError();0<=u[i]&&u[i]<n||indexError()}
@@ -138,7 +138,7 @@ function indexAtSingleAxis(om,sub,ax){
     var shape1=om.shape.slice(0);shape1.splice(ax,1)
     var stride1=om.stride.slice(0);stride1.splice(ax,1)
     var data=[]
-    each(sub,function(x){
+    each(sub,x=>{
       var chunk=new A(om.data,shape1,stride1,om.offset+x*om.stride[ax])
       data.push.apply(data,chunk.toArray())
     })

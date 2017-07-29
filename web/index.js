@@ -1,4 +1,4 @@
-$(function($){
+$($=>{
   // Bookmarkable source code
   var hashParams={}
   if(location.hash){
@@ -6,11 +6,11 @@ $(function($){
     for(var i=0;i<a.length;i++){var b=a[i].split('=');hashParams[b[0]]=unescape(b[1])}
   }
   $('#code').text(hashParams.code||'').focus()
-  $('#permalink').tipsy({gravity:'e',opacity:1,delayIn:1000}).bind('mouseover focus',function(){
+  $('#permalink').tipsy({gravity:'e',opacity:1,delayIn:1000}).bind('mouseover focus',_=>{
     $(this).attr('href','#code='+escape($('#code').val()));return false
   })
 
-  function execute(){ // "Execute" button
+  const execute=_=>{ // "Execute" button
     try{
       var s=$('#code').val()
       if(s===')t'){
@@ -25,7 +25,7 @@ $(function($){
     }
   }
 
-  $('#go').tipsy({gravity:'e',opacity:1,delayIn:1000}).closest('form').submit(function(){execute();return false})
+  $('#go').tipsy({gravity:'e',opacity:1,delayIn:1000}).closest('form').submit(_=>{execute();return false})
 
   if(hashParams.run)$('#go').click()
 
@@ -153,17 +153,17 @@ $(function($){
 
   $('textarea').addTyping().focus()
 
-  $('#code').keydown(function(e){if(e.keyCode===13&&e.ctrlKey){$('#go').click();return false}})
+  $('#code').keydown(e=>{if(e.keyCode===13&&e.ctrlKey){$('#go').click();return false}})
 
-  var tipsyOpts={gravity:'s',delayIn:1000,opacity:1,title:function(){return hSymbolDefs[$(this).text()]||''}}
-  $('.ui-keyboard').on('mouseover', '.ui-keyboard-button', function(event) {
-    var $b = $(event.target).closest('.ui-keyboard-button')
+  var tipsyOpts={gravity:'s',delayIn:1000,opacity:1,title:_=>hSymbolDefs[$(this).text()]||''}
+  $('.ui-keyboard').on('mouseover','.ui-keyboard-button',event=>{
+    var $b=$(event.target).closest('.ui-keyboard-button')
     if(!$b.data('tipsyInitialised'))$b.data('tipsyInitialised',1).tipsy(tipsyOpts).tipsy('show')
     return false
   })
 
   // Tests
-  function runDocTests(){
+  const runDocTests=_=>{
     $('#result').removeClass('error').html('')
     var nExecuted=0,nFailed=0,t0=+new Date
     for(var i=0;i<aplTests.length;i++){

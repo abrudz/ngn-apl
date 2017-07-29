@@ -1,5 +1,5 @@
-var NOUN=1,VERB=2,ADV=3,CONJ=4
-function exec(s,o){ // s:APL code, o:options
+const NOUN=1,VERB=2,ADV=3,CONJ=4
+const exec=(s,o)=>{ // s:APL code, o:options
   o=o||{}
   var ast=parse(s,o),code=compileAST(ast,o),env=[prelude.env[0].slice(0)]
   for(var k in ast.vars)env[0][ast.vars[k].slot]=o.ctx[k]
@@ -11,29 +11,28 @@ function exec(s,o){ // s:APL code, o:options
   }
   return r
 }
-function repr(x){
-  return x===null||['string','number','boolean'].indexOf(typeof x)>=0?JSON.stringify(x):
-         x instanceof Array?'['+x.map(repr).join(',')+']':
-         x.repr?x.repr():
-         '{'+Object.keys(x).map(function(k){return repr(k)+':'+repr(x[k])}).join(',')+'}'
-}
-function compileAST(ast,o){
+const repr=x=>
+  x===null||['string','number','boolean'].indexOf(typeof x)>=0?JSON.stringify(x):
+  x instanceof Array?'['+x.map(repr).join(',')+']':
+  x.repr?x.repr():
+  '{'+Object.keys(x).map(k=>repr(k)+':'+repr(x[k])).join(',')+'}'
+const compileAST=(ast,o)=>{
   o=o||{}
   ast.scopeDepth=0
   ast.nSlots=prelude.nSlots
   ast.vars=Object.create(prelude.vars)
   o.ctx=o.ctx||Object.create(vocabulary)
   for(var key in o.ctx)if(!ast.vars[key]){
-    var value=o.ctx[key]
-    var varInfo=ast.vars[key]={category:NOUN,slot:ast.nSlots++,scopeDepth:ast.scopeDepth}
+    const value=o.ctx[key]
+    const varInfo=ast.vars[key]={category:NOUN,slot:ast.nSlots++,scopeDepth:ast.scopeDepth}
     if(typeof value==='function'||value instanceof Proc){
       varInfo.category=value.adv?ADV:value.conj?CONJ:VERB
       if(/^[gs]et_.*/.test(key))ast.vars[key.slice(4)]={category:NOUN}
     }
   }
-  function err(node,message){syntaxError({message:message,file:o.file,offset:node.offset,aplCode:o.aplCode})}
+  const err=(node,message)=>{syntaxError({message:message,file:o.file,offset:node.offset,aplCode:o.aplCode})}
   assert(VERB<ADV&&ADV<CONJ)//we are relying on this ordering below
-  function categorizeLambdas(node){
+  const categorizeLambdas=node=>{
     switch(node[0]){
       case'B':case':':case'←':case'[':case'{':case'.':case'⍬':
         var r=VERB;for(var i=1;i<node.length;i++)if(node[i])r=Math.max(r,categorizeLambdas(node[i]))
@@ -47,7 +46,7 @@ function compileAST(ast,o){
   var queue=[ast] // accumulates"body"nodes we encounter on the way
   while(queue.length){
     var scopeNode=queue.shift(),vars=scopeNode.vars
-    function visit(node){
+    const visit=node=>{
       node.scopeNode=scopeNode
       switch(node[0]){
         case':':var r=visit(node[1]);visit(node[2]);return r
@@ -144,7 +143,7 @@ function compileAST(ast,o){
       }
       assert(0)
     }
-    function visitLHS(node,rhsCategory){
+    const visitLHS=(node,rhsCategory)=>{
       node.scopeNode=scopeNode
       switch(node[0]){
         case'X':
@@ -172,7 +171,7 @@ function compileAST(ast,o){
     }
     for(var i=1;i<scopeNode.length;i++)visit(scopeNode[i])
   }
-  function render(node){
+  const render=node=>{
     switch(node[0]){
       case'B':
         if(node.length===1){
@@ -252,15 +251,15 @@ function compileAST(ast,o){
         // ¯∞j¯∞ ←→ ¯¯j¯¯
         // ∞∞ ←→ ¯ ¯
         // ∞¯ ←→ ¯ ¯
-        var a=node[1].replace(/[¯∞]/g,'-').split(/j/i).map(function(x){
-          return x==='-'?Infinity:x==='--'?-Infinity:x.match(/^-?0x/i)?parseInt(x,16):parseFloat(x)
-        })
+        var a=node[1].replace(/[¯∞]/g,'-').split(/j/i).map(x=>
+          x==='-'?Infinity:x==='--'?-Infinity:x.match(/^-?0x/i)?parseInt(x,16):parseFloat(x)
+        )
         var v=a[1]?new Z(a[0],a[1]):a[0]
         return[LDC,new A([v],[])]
       case'J':
         // 123 + «456 + 789» ←→ 1368
-        var f=Function('return function(_w,_a){return('+node[1].replace(/^«|»$/g,'')+')}')()
-        return[EMB,function(_w,_a){return aplify(f(_w,_a))}]
+        var f=Function('return(_w,_a)=>('+node[1].replace(/^«|»$/g,'')+')')()
+        return[EMB,(_w,_a)=>aplify(f(_w,_a))]
       case'[':
         // ⍴ x[⍋x←6?40] ←→ ,6
         var v=node.scopeNode.vars._index,axes=[],a=[],c
@@ -274,7 +273,7 @@ function compileAST(ast,o){
         for(var i=1;i<node.length;i++){
           var f=render(node[i]);fragments.push(f);if(f.length!==2||f[0]!==LDC)areAllConst=0
         }
-        return areAllConst?[LDC,new A(fragments.map(function(f){return f[1].isSimple()?f[1].unwrap():f[1]}))]
+        return areAllConst?[LDC,new A(fragments.map(f=>f[1].isSimple()?f[1].unwrap():f[1]))]
                          :[].concat.apply([],fragments).concat([VEC,node.length-1])
       case'⍬':return[LDC,A.zilde]
       case'M':return render(node[2]).concat(render(node[1]),MON)
@@ -295,7 +294,7 @@ function compileAST(ast,o){
       default:assert(0)
     }
   }
-  function renderLHS(node){
+  const renderLHS=node=>{
     switch(node[0]){
       case'X':
         var name=node[1],vars=node.scopeNode.vars,v=vars['set_'+name]
@@ -324,16 +323,16 @@ function compileAST(ast,o){
   }
   return render(ast)
 }
-;(function(){
+;(_=>{
   var env=prelude.env=[[]]
   for(var k in prelude.vars)env[0][prelude.vars[k].slot]=vocabulary[k]
   vm({code:prelude.code,env:env})
   for(var k in prelude.vars)vocabulary[k]=env[0][prelude.vars[k].slot]
-}())
-function aplify(x){
+})()
+const aplify=x=>{
   if(typeof x==='string')return x.length===1?A.scalar(x):new A(x)
   if(typeof x==='number')return A.scalar(x)
-  if(x instanceof Array)return new A(x.map(function(y){y=aplify(y);return y.shape.length?y:y.unwrap()}))
+  if(x instanceof Array)return new A(x.map(y=>{y=aplify(y);return y.shape.length?y:y.unwrap()}))
   if(x instanceof A)return x
   aplError('Cannot aplify object:'+x)
 }

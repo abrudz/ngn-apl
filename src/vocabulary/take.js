@@ -1,5 +1,5 @@
 addVocabulary({
-  '↑':function(om,al){return al?take(om,al):first(om)}
+  '↑':(om,al)=>al?take(om,al):first(om)
 })
 
 // 5↑'ABCDEFGH'     ←→ 'ABCDE'
@@ -25,7 +25,7 @@ addVocabulary({
 // ¯2↑3 3⍴⍳9        ←→ 2 3⍴3+⍳6
 // 4↑3 3⍴⍳9         ←→ 4 3⍴(⍳9),0 0 0
 // ⍬↑3 3⍴⍳9         ←→ 3 3⍴⍳9
-function take(om,al){
+const take=(om,al)=>{
   al.shape.length<=1||rankError()
   if(!om.shape.length)om=new A([om.unwrap()],al.shape.length?repeat([1],al.shape[0]):[1])
   var a=al.toArray()

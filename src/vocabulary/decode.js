@@ -39,7 +39,7 @@ addVocabulary({
   // ...             0 1 10 11 100 101 110 111)
   // 2j3⊤4j5 6j7 8j9 ←→ 2j2 2j1 ¯1j2
   // 10⊥3 4.5j1 ←→ 34.5j1
-  '⊥':function(om,al){
+  '⊥':(om,al)=>{
     assert(al)
     if(!al.shape.length)al=new A([al.unwrap()])
     if(!om.shape.length)om=new A([om.unwrap()])

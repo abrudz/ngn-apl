@@ -1,4 +1,4 @@
-function each(a,f){ // iterates through the elements of an APL array in ravel order.
+const each=(a,f)=>{ // iterates through the elements of an APL array in ravel order.
   if(a.empty())return
   var data=a.data,shape=a.shape,stride=a.stride,lastAxis=shape.length-1,p=a.offset,i=[],axis=shape.length
   while(--axis>=0)i.push(0)
@@ -13,7 +13,7 @@ function each(a,f){ // iterates through the elements of an APL array in ravel or
     p+=stride[axis]
   }
 }
-function each2(a,b,f){ // like each() but iterates over two APL array in parallel
+const each2=(a,b,f)=>{ // like each() but iterates over two APL array in parallel
   var data =a.data,shape =a.shape,stride =a.stride
   var data1=b.data,shape1=b.shape,stride1=b.stride
   shape.length!==shape1.length&&rankError()
@@ -44,7 +44,7 @@ function A(data,shape,stride,offset){ // APL array constructor
   if(this.data.length)for(var i=0;i<this.stride.length;i++)assert(isInt(this.stride[i],-this.data.length,this.data.length+1))
 }
 extend(A.prototype,{
-  empty: function(){var shape=this.shape;for(var i=0;i<shape.length;i++)if(!shape[i])return 1;return 0},
+  empty:function(){var shape=this.shape;for(var i=0;i<shape.length;i++)if(!shape[i])return 1;return 0},
   map:function(f){var r=[];each(this,function(x,i,p){r.push(f(x,i,p))});return new A(r,this.shape)},
   map2:function(a,f){var r=[];each2(this,a,function(x,y,i){r.push(f(x,y,i))});return new A(r,this.shape)},
   toArray:function(){var r=[];each(this,function(x){r.push(x)});return r},
@@ -70,7 +70,7 @@ extend(A.prototype,{
   toString:function(){return format(this).join('\n')},
   repr:function(){return'new A('+repr(this.data)+','+repr(this.shape)+','+repr(this.stride)+','+repr(this.offset)+')'}
 })
-function strideForShape(shape){
+const strideForShape=shape=>{
   assert(shape.length!=null)
   if(!shape.length)return[]
   var r=Array(shape.length)
@@ -84,5 +84,5 @@ function strideForShape(shape){
 A.zero =new A([0],[])
 A.one  =new A([1],[])
 A.zilde=new A([],[0])
-A.scalar=function(x){return new A([x],[])}
+A.scalar=x=>new A([x],[])
 A.bool=[A.zero,A.one]

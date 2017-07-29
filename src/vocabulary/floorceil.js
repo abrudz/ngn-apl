@@ -14,7 +14,7 @@ addVocabulary({
     monad:Z.floor,
     // 3⌊5 ←→ 3
     // ⌊/⍬ ←→ ¯
-    dyad:real(function(y,x){return Math.min(y,x)})
+    dyad:real((y,x)=>Math.min(y,x))
   })),
   '⌈':withIdentity(-Infinity,pervasive({
     // ⌈123   ←→ 123
@@ -31,6 +31,6 @@ addVocabulary({
     monad:Z.ceil,
     // 3⌈5 ←→ 5
     // ⌈/⍬ ←→ ¯¯
-    dyad:real(function(y,x){return Math.max(y,x)})
+    dyad:real((y,x)=>Math.max(y,x))
   }))
 })

@@ -1,5 +1,5 @@
 addVocabulary({
-  '⍳':function(om,al){
+  '⍳':(om,al)=>{
     if(al){
       // 2 5 9 14 20⍳9                           ←→ 2
       // 2 5 9 14 20⍳6                           ←→ 5
@@ -15,9 +15,9 @@ addVocabulary({
       // ⍬⍳123 234                               ←→ 0 0
       // 123 234⍳⍬                               ←→ ⍬
       al.shape.length===1||rankError()
-      return om.map(function(x){
+      return om.map(x=>{
         var rank=al.shape
-        try{each(al,function(y,indices){if(match(x,y)){rank=indices;throw'break'}})}
+        try{each(al,(y,indices)=>{if(match(x,y)){rank=indices;throw'break'}})}
         catch(e){if(e!=='break')throw e}
         return rank.length===1?rank[0]:new A(rank)
       })

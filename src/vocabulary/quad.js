@@ -1,25 +1,25 @@
 addVocabulary({
-  'get_⎕':cps(function(_,_1,_2,callback){
+  'get_⎕':cps((_,_1,_2,callback)=>{
     if(typeof window!=='undefined'&&typeof window.prompt==='function'){
-      setTimeout(function(){callback(exec(prompt('⎕:')||''))},0)
+      setTimeout(_=>{callback(exec(prompt('⎕:')||''))},0)
     }else{
       process.stdout.write('⎕:\n')
-      readline('      ',function(line){callback(exec(new A(line).toSimpleString()))})
+      readline('      ',line=>{callback(exec(new A(line).toSimpleString()))})
     }
   }),
-  'set_⎕': function(x) {
+  'set_⎕':x=>{
     var s=format(x).join('\n')+'\n'
     if(typeof window!=='undefined'&&typeof window.alert==='function'){window.alert(s)}else{process.stdout.write(s)}
     return x
   },
-  'get_⍞':cps(function(_,_1,_2,callback){
+  'get_⍞':cps((_,_1,_2,callback)=>{
     if(typeof window!=='undefined'&&typeof window.prompt==='function'){
-      setTimeout(function(){callback(new A(prompt('')||''))},0)
+      setTimeout(_=>{callback(new A(prompt('')||''))},0)
     }else{
-      readline('',function(line){callback(new A(line))})
+      readline('',line=>{callback(new A(line))})
     }
   }),
-  'set_⍞':function(x){
+  'set_⍞':x=>{
     var s=format(x).join('\n')
     if(typeof window!=='undefined'&&typeof window.alert==='function'){window.alert(s)}else{process.stdout.write(s)}
     return x
@@ -30,15 +30,15 @@ addVocabulary({
   // ⎕IO   ←→ 0
   // ⎕IO←0 ←→ 0
   // ⎕IO←1 !!!
-  'get_⎕IO':function(){return A.zero},
-  'set_⎕IO':function(x){if(match(x,A.zero)){return x}else{domainError('The index origin (⎕IO) is fixed at 0')}},
-  '⎕DL':cps(function(om,al,_,callback){
-    var t0=+new Date;setTimeout(function(){callback(new A([new Date-t0]))},om.unwrap())
+  'get_⎕IO':_=>A.zero,
+  'set_⎕IO':x=>{if(match(x,A.zero)){return x}else{domainError('The index origin (⎕IO) is fixed at 0')}},
+  '⎕DL':cps((om,al,_,callback)=>{
+    var t0=+new Date;setTimeout(_=>{callback(new A([new Date-t0]))},om.unwrap())
   }),
   // 'b(c+)d'⎕RE'abcd' ←→ 1 'bcd' (,'c')
   // 'B(c+)d'⎕RE'abcd' ←→ ⍬
   // 'a(b'   ⎕RE'c'           !!! DOMAIN ERROR
-  '⎕RE':function(om,al){
+  '⎕RE':(om,al)=>{
     var x=al.toSimpleString(),y=om.toSimpleString()
     try{var re=RegExp(x)}catch(e){domainError(e.toString())}
     var m=re.exec(y)
@@ -49,11 +49,11 @@ addVocabulary({
   // ⎕UCS'a' ←→ 97
   // ⎕UCS'ab' ←→ 97 98
   // ⎕UCS 2 2⍴97+⍳4 ←→ 2 2⍴'abcd'
-  '⎕UCS':function(om,al){
+  '⎕UCS':(om,al)=>{
     al&&nonceError()
-    return om.map(function(x){
-      return isInt(x,0,0x10000)?String.fromCharCode(x):typeof x==='string'?x.charCodeAt(0):domainError()
-    })
+    return om.map(x=>
+      isInt(x,0,0x10000)?String.fromCharCode(x):typeof x==='string'?x.charCodeAt(0):domainError()
+    )
   },
-  'get_⎕OFF':function(){typeof process==='undefined'&&nonceError();process.exit(0)}
+  'get_⎕OFF':_=>{typeof process==='undefined'&&nonceError();process.exit(0)}
 })

@@ -10,14 +10,14 @@ addVocabulary({
   //
   // (+,-,×,÷)2  ←→ 2 ¯2 1 .5
   // 1(+,-,×,÷)2 ←→ 3 ¯1 2 .5
-  _fork1:function(h,g){
+  _fork1:(h,g)=>{
     assert(typeof h==='function')
     assert(typeof g==='function')
     return[h,g]
   },
-  _fork2:function(hg,f){
+  _fork2:(hg,f)=>{
     var h=hg[0],g=hg[1]
     assert(typeof h==='function')
-    return function(b,a){return g(h(b,a),f(b,a))}
+    return(b,a)=>g(h(b,a),f(b,a))
   }
 })

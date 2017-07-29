@@ -1,5 +1,5 @@
 addVocabulary({
-  ',':function(om,al,axis){
+  ',':(om,al,axis)=>{
     if(al){
       // 10,66               ←→ 10 66
       // '10 ','MAY ','1985' ←→ '10 MAY 1985'

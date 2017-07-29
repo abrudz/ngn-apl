@@ -2,7 +2,7 @@ addVocabulary({
   '~': pervasive({
     // ~0 1 ←→ 1 0
     // ~2   !!! DOMAIN ERROR
-    monad:function(x){return+!bool(x)}
+    monad:x=>+!bool(x)
   }),
   '∨':withIdentity(0,pervasive({
     // 1∨1               ←→ 1
@@ -26,7 +26,7 @@ addVocabulary({
     // 135j¯14∨155j34    ←→ 5j12
     // 2 3 4∨0j1 1j2 2j3 ←→ 1 1 1
     // 2j2 2j4∨5j5 4j4   ←→ 1j1 2
-    dyad:function(y,x){
+    dyad:(y,x)=>{
       if(!Z.isint(x)||!Z.isint(y))domainError('∨ is implemented only for Gaussian integers')
       return Z.gcd(x,y)
     }
@@ -56,7 +56,7 @@ addVocabulary({
     // 135j¯14∧155j34                 ←→ 805j¯1448
     // 2 3 4∧0j1 1j2 2j3              ←→ 0j2 3j6 8j12
     // 2j2 2j4∧5j5 4j4                ←→ 10j10 ¯4j12
-    dyad:function(y,x){
+    dyad:(y,x)=>{
       if(!Z.isint(x)||!Z.isint(y))domainError('∧ is implemented only for Gaussian integers')
       return Z.lcm(x,y)
     }
@@ -66,11 +66,11 @@ addVocabulary({
   // 1⍱0 ←→ 0
   // 1⍱1 ←→ 0
   // 0⍱2 !!! DOMAIN ERROR
-  '⍱':pervasive({dyad:real(function(y,x){return+!(bool(x)|bool(y))})}),
+  '⍱':pervasive({dyad:real((y,x)=>+!(bool(x)|bool(y)))}),
   // 0⍲0 ←→ 1
   // 0⍲1 ←→ 1
   // 1⍲0 ←→ 1
   // 1⍲1 ←→ 0
   // 0⍲2 !!! DOMAIN ERROR
-  '⍲':pervasive({dyad:real(function(y,x){return+!(bool(x)&bool(y))})})
+  '⍲':pervasive({dyad:real((y,x)=>+!(bool(x)&bool(y)))})
 })

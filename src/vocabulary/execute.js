@@ -5,5 +5,5 @@ addVocabulary({
   // ⍎'undefinedVariable' !!!
   // ⍎'1 2 (3'            !!!
   // ⍎123                 !!!
-  '⍎':function(om,al){return al?nonceError():exec(om.toSimpleString())}
+  '⍎':(om,al)=>al?nonceError():exec(om.toSimpleString())
 })

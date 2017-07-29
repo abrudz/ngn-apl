@@ -4,8 +4,8 @@ addVocabulary({
     // ○2J2   ←→ 6.283185307179586J6.283185307179586
     // ○'ABC' !!! DOMAIN ERROR
     monad:numeric(
-      function(x){return Math.PI*x},
-      function(x){return new Z(Math.PI*x.re,Math.PI*x.im)}
+      x=>Math.PI*x,
+      x=>new Z(Math.PI*x.re,Math.PI*x.im)
     ),
     // ¯12○2          ←→ ¯0.4161468365471J0.9092974268257
     // ¯12○2j3        ←→ ¯0.02071873100224J0.04527125315609
@@ -69,7 +69,7 @@ addVocabulary({
     // 1○'hello'      !!! DOMAIN ERROR
     // 99○1           !!! DOMAIN ERROR
     // 99○1j2         !!! DOMAIN ERROR
-    dyad:function(x,i){
+    dyad:(x,i)=>{
       if(typeof x==='number'){
         switch(i){
           case-12:return Z.exp(simplify(0,x))

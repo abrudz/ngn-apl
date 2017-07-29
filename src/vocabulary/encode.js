@@ -32,7 +32,7 @@ addVocabulary({
   // ...         1 1 4
   // ...         1 3 11)
   // 0j1 2j3 4j5⊤6j7 ←→ 0 ¯2j2 2j2
-  '⊤':function(om,al){
+  '⊤':(om,al)=>{
     assert(al)
     var a=al.toArray(),b=om.toArray(),shape=al.shape.concat(om.shape),data=Array(prod(shape))
     var n=al.shape.length?al.shape[0]:1,m=a.length/n

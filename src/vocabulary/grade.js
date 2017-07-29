@@ -38,22 +38,22 @@ addVocabulary({
   // ...   ←→ 6 4⍴'ABELABLEACESACREaBELaBLE'
   //
   // ⍋0 1 2 3 4 3 6 6 4 9 1 11 12 13 14 15 ←→ 0 1 10 2 3 5 4 8 6 7 9 11 12 13 14 15
-  '⍋':function(om,al){return grade(om,al,1)},
+  '⍋':(om,al)=>grade(om,al,1),
 
   // ⍒3 1 8 ←→ 2 0 1
-  '⍒':function(om,al){return grade(om,al,-1)}
+  '⍒':(om,al)=>grade(om,al,-1)
 })
 
 // Helper for ⍋ and ⍒
-function grade(om,al,direction){
+const grade=(om,al,direction)=>{
   var h={} // maps a character to its index in the collation
   if(al){
     al.shape.length||rankError()
-    each(al,function(x,indices){typeof x==='string'||domainError();h[x]=indices[indices.length-1]})
+    each(al,(x,indices)=>{typeof x==='string'||domainError();h[x]=indices[indices.length-1]})
   }
   om.shape.length||rankError()
   var r=[];for(var i=0;i<om.shape[0];i++)r.push(i)
-  return new A(r.sort(function(i,j){
+  return new A(r.sort((i,j)=>{
     var p=om.offset,indices=repeat([0],om.shape.length)
     while(1){
       var x=om.data[p+i*om.stride[0]],tx=typeof x

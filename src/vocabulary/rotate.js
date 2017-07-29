@@ -1,6 +1,6 @@
 var rotate
 addVocabulary({
-  '⌽': rotate = function(om, al, axis) {
+  '⌽':rotate=(om,al,axis)=>{
     assert(typeof axis==='undefined'||axis instanceof A)
     if(al){
       // 1⌽1 2 3 4 5 6             ←→ 2 3 4 5 6 1
@@ -55,5 +55,5 @@ addVocabulary({
   // ⊖    2 5⍴1 2 3 4 5 6 7 8 9 0 ←→ 2 5⍴6 7 8 9 0 1 2 3 4 5
   // ⊖[1] 2 5⍴1 2 3 4 5 6 7 8 9 0 ←→ 2 5⍴5 4 3 2 1 0 9 8 7 6
   // 1⊖3 3⍴⍳9 ←→ 3 3⍴3 4 5 6 7 8 0 1 2
-  '⊖':function(om,al,axis){return rotate(om,al,axis||A.zero)}
+  '⊖':(om,al,axis)=>rotate(om,al,axis||A.zero)
 })

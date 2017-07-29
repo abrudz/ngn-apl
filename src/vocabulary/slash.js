@@ -1,7 +1,7 @@
 var reduce
 addVocabulary({
-  '⌿':adverb(function(om,al,axis){return reduce(om,al,axis||A.zero)}),
-  '/':reduce=adverb(function(om,al,axis){
+  '⌿':adverb((om,al,axis)=>reduce(om,al,axis||A.zero)),
+  '/':reduce=adverb((om,al,axis)=>{
     if(typeof om==='function'){
       // +/3                    ←→ 3
       // +/3 5 8                ←→ 16
@@ -21,7 +21,7 @@ addVocabulary({
       assert(typeof f==='function')
       assert(typeof g==='undefined')
       assert(typeof axis0==='undefined'||axis0 instanceof A)
-      return function(om, al){
+      return(om,al)=>{
         if(!om.shape.length)om=new A([om.unwrap()])
         axis=axis0?axis0.toInt():om.shape.length-1
         0<=axis&&axis<om.shape.length||rankError()

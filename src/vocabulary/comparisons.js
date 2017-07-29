@@ -18,23 +18,23 @@ addVocabulary({
   // 123j0               ←→ 123
   // 2j¯3+¯2j3           ←→ 0
   // =/⍬                 ←→ 1
-  '=':withIdentity(1,pervasive({dyad:eq=function(y,x){
-    return+(x instanceof Z&&y instanceof Z?x.re===y.re&&x.im===y.im:x===y)
-  }})),
+  '=':withIdentity(1,pervasive({dyad:eq=(y,x)=>
+    +(x instanceof Z&&y instanceof Z?x.re===y.re&&x.im===y.im:x===y)
+  })),
 
   // 3≢5 ←→ 1
   // 8≠8 ←→ 0
   // ≠/⍬ ←→ 0
-  '≠':withIdentity(0,pervasive({dyad:function(y,x){return 1-eq(y,x)}})),
+  '≠':withIdentity(0,pervasive({dyad:(y,x)=>1-eq(y,x)})),
 
   // </⍬ ←→ 0
   // >/⍬ ←→ 0
   // ≤/⍬ ←→ 1
   // ≥/⍬ ←→ 1
-  '<':withIdentity(0,pervasive({dyad:real(function(y,x){return+(x< y)})})),
-  '>':withIdentity(0,pervasive({dyad:real(function(y,x){return+(x> y)})})),
-  '≤':withIdentity(1,pervasive({dyad:real(function(y,x){return+(x<=y)})})),
-  '≥':withIdentity(1,pervasive({dyad:real(function(y,x){return+(x>=y)})})),
+  '<':withIdentity(0,pervasive({dyad:real((y,x)=>+(x< y))})),
+  '>':withIdentity(0,pervasive({dyad:real((y,x)=>+(x> y))})),
+  '≤':withIdentity(1,pervasive({dyad:real((y,x)=>+(x<=y))})),
+  '≥':withIdentity(1,pervasive({dyad:real((y,x)=>+(x>=y))})),
 
   // 3≡3                    ←→ 1
   // 3≡,3                   ←→ 0
@@ -50,9 +50,9 @@ addVocabulary({
   // ≡2 2⍴⍳4                 ←→ 1
   // ≡"abc"1 2 3(23 55)      ←→ 2
   // ≡"abc"(2 4⍴"abc"2 3"k") ←→ 3
-  '≡':function(om,al){return al?A.bool[+match(om,al)]:new A([depthOf(om)],[])}
+  '≡':(om,al)=>al?A.bool[+match(om,al)]:new A([depthOf(om)],[])
 })
-function depthOf(x){
+const depthOf=x=>{
   if(!(x instanceof A)||!x.shape.length&&!(x.data[0]instanceof A))return 0
-  var r=0;each(x,function(y){r=Math.max(r,depthOf(y))});return r+1
+  var r=0;each(x,y=>{r=Math.max(r,depthOf(y))});return r+1
 }

@@ -1,5 +1,5 @@
 addVocabulary({
-  '⍴':function(om,al){
+  '⍴':(om,al)=>{
     if(al){
       // ⍴1 2 3⍴0  ←→ 1 2 3
       // ⍴⍴1 2 3⍴0 ←→ ,3
@@ -21,7 +21,7 @@ addVocabulary({
       }else{
         var data=[]
         try{
-          each(om,function(x){
+          each(om,x=>{
             if(data.length>=n)throw'break'
             data.push(x)
           })
