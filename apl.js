@@ -1,11 +1,11 @@
 //usr/bin/env node "$0" $@;exit $?
-function assert(x){if(!x)throw Error('assertion failed')}
-function isInt(x,start,end){return x===~~x&&(start==null||start<=x&&(end==null||x<end))}
-function prod(a){var r=1;for(var i=0;i<a.length;i++)r*=a[i];return r}
-function all(a){for(var i=0;i<a.length;i++)if(!a[i])return;return 1}
-function extend(x,y){for(var k in y)x[k]=y[k];return x}
-function formatNumber(x){return(''+x).replace('Infinity','∞').replace(/-/g,'¯')}
-function repeat(a,n){ // catenates "n" instances of a string or array "a"
+const assert=x=>{if(!x)throw Error('assertion failed')}
+,isInt=(x,start,end)=>x===~~x&&(start==null||start<=x&&(end==null||x<end))
+,prod=a=>{var r=1;for(var i=0;i<a.length;i++)r*=a[i];return r}
+,all=a=>{for(var i=0;i<a.length;i++)if(!a[i])return;return 1}
+,extend=(x,y)=>{for(var k in y)x[k]=y[k];return x}
+,formatNumber=x=>(''+x).replace('Infinity','∞').replace(/-/g,'¯')
+,repeat=(a,n)=>{ // catenates "n" instances of a string or array "a"
   assert(a.length!=null)
   assert(isInt(n,0))
   if(!n)return a.slice(0,0)
@@ -19,18 +19,18 @@ this.Int8Array  =this.Int8Array  ||Array
 this.Int16Array =this.Int16Array ||Array
 this.Int32Array =this.Int32Array ||Array
 Array.prototype.set=Array.prototype.set||function(a,i0){for(var i=0;i<a.length;i++)this[i0+i]=a[i]}
-function spread(a,i,m,n){ // repeat the pattern a[i...i+m] so it covers a[i...i+n]
+const spread=(a,i,m,n)=>{ // repeat the pattern a[i...i+m] so it covers a[i...i+n]
   if(a instanceof Array){for(var j=m;j<n;j++)a[i+j]=a[i+j%m]}
   else{a=a.subarray(i,i+n);while(2*m<n){a.set(a.subarray(0,m),m);m*=2};a.set(a.subarray(0,n-m),m)}
 }
-function arrayEquals(x,y){
+,arrayEquals=(x,y)=>{
   assert(x.length!=null)
   assert(y.length!=null)
   if(x.length!==y.length)return 0
   for(var i=0;i<x.length;i++)if(x[i]!==y[i])return 0
   return 1
 }
-function reversed(a){
+,reversed=a=>{
   if(a instanceof Array)return a.slice(0).reverse()
   var i=-1,j=a.length,b=new a.constructor(a.length);b.set(a)
   while(++i<--j){var h=b[i];b[i]=b[j];b[j]=h}
@@ -39,7 +39,7 @@ function reversed(a){
 String.prototype.includes=String.prototype.includes||function(){
   'use strict';return String.prototype.indexOf.apply(this,arguments)!==-1
 }
-function aplError(name,m,o){ // m:message, o:options
+const aplError=(name,m,o)=>{ // m:message, o:options
   m=m||''
   if(o&&o.aplCode&&o.offset!=null){
     var a=o.aplCode.slice(0,o.offset).split('\n')
@@ -49,14 +49,14 @@ function aplError(name,m,o){ // m:message, o:options
   var e=Error(m);e.name=name;for(var k in o)e[k]=o[k]
   throw e
 }
-function syntaxError(m,o){aplError('SYNTAX ERROR',m,o)}
-function domainError(m,o){aplError('DOMAIN ERROR',m,o)}
-function lengthError(m,o){aplError('LENGTH ERROR',m,o)}
-function   rankError(m,o){aplError(  'RANK ERROR',m,o)}
-function  indexError(m,o){aplError( 'INDEX ERROR',m,o)}
-function  nonceError(m,o){aplError( 'NONCE ERROR',m,o)}
-function  valueError(m,o){aplError( 'VALUE ERROR',m,o)}
-function each(a,f){ // iterates through the elements of an APL array in ravel order.
+,syntaxError=(m,o)=>{aplError('SYNTAX ERROR',m,o)}
+,domainError=(m,o)=>{aplError('DOMAIN ERROR',m,o)}
+,lengthError=(m,o)=>{aplError('LENGTH ERROR',m,o)}
+,  rankError=(m,o)=>{aplError(  'RANK ERROR',m,o)}
+, indexError=(m,o)=>{aplError( 'INDEX ERROR',m,o)}
+, nonceError=(m,o)=>{aplError( 'NONCE ERROR',m,o)}
+, valueError=(m,o)=>{aplError( 'VALUE ERROR',m,o)}
+const each=(a,f)=>{ // iterates through the elements of an APL array in ravel order.
   if(a.empty())return
   var data=a.data,shape=a.shape,stride=a.stride,lastAxis=shape.length-1,p=a.offset,i=[],axis=shape.length
   while(--axis>=0)i.push(0)
@@ -71,7 +71,7 @@ function each(a,f){ // iterates through the elements of an APL array in ravel or
     p+=stride[axis]
   }
 }
-function each2(a,b,f){ // like each() but iterates over two APL array in parallel
+const each2=(a,b,f)=>{ // like each() but iterates over two APL array in parallel
   var data =a.data,shape =a.shape,stride =a.stride
   var data1=b.data,shape1=b.shape,stride1=b.stride
   shape.length!==shape1.length&&rankError()
@@ -102,7 +102,7 @@ function A(data,shape,stride,offset){ // APL array constructor
   if(this.data.length)for(var i=0;i<this.stride.length;i++)assert(isInt(this.stride[i],-this.data.length,this.data.length+1))
 }
 extend(A.prototype,{
-  empty: function(){var shape=this.shape;for(var i=0;i<shape.length;i++)if(!shape[i])return 1;return 0},
+  empty:function(){var shape=this.shape;for(var i=0;i<shape.length;i++)if(!shape[i])return 1;return 0},
   map:function(f){var r=[];each(this,function(x,i,p){r.push(f(x,i,p))});return new A(r,this.shape)},
   map2:function(a,f){var r=[];each2(this,a,function(x,y,i){r.push(f(x,y,i))});return new A(r,this.shape)},
   toArray:function(){var r=[];each(this,function(x){r.push(x)});return r},
@@ -128,7 +128,7 @@ extend(A.prototype,{
   toString:function(){return format(this).join('\n')},
   repr:function(){return'new A('+repr(this.data)+','+repr(this.shape)+','+repr(this.stride)+','+repr(this.offset)+')'}
 })
-function strideForShape(shape){
+const strideForShape=shape=>{
   assert(shape.length!=null)
   if(!shape.length)return[]
   var r=Array(shape.length)
@@ -142,18 +142,18 @@ function strideForShape(shape){
 A.zero =new A([0],[])
 A.one  =new A([1],[])
 A.zilde=new A([],[0])
-A.scalar=function(x){return new A([x],[])}
+A.scalar=x=>new A([x],[])
 A.bool=[A.zero,A.one]
 var prelude={"code":[1,new A([],[0],[1],0),4,0,73,9,1,new A("ABCDEFGHIJKLMNOPQRSTUVWXYZ",[26],[1],0),4,0,84,9,1,new A("ÁÂÃÇÈÊËÌÍÎÏÐÒÓÔÕÙÚÛÝþãìðòõ",[26],[1],0),4,0,85,9,1,new A("0123456789",[10],[1],0),4,0,86,9,7,22,3,1,2,3,0,65,3,1,0,3,0,29,3,1,2,6,3,0,44,5,6,8,3,0,72,3,0,44,6,4,0,44,9,7,36,7,15,3,2,0,3,1,0,3,2,2,6,3,1,2,5,8,3,0,72,7,12,3,2,0,3,1,0,5,3,1,2,5,8,6,8,4,0,74,9,7,173,3,1,2,3,0,62,5,3,0,62,5,3,0,16,1,new A([1],[],[],0),6,11,8,9,1,new A("RANK ERROR",[10],[1],0),3,0,61,5,8,9,3,1,0,4,1,4,9,3,1,2,7,123,3,2,0,3,0,62,5,3,0,62,5,3,0,16,1,new A([1],[],[],0),6,11,8,9,1,new A("RANK ERROR",[10],[1],0),3,0,61,5,8,9,3,2,0,3,0,13,5,4,2,0,9,3,1,4,3,0,62,5,3,0,62,5,3,0,15,3,2,0,3,0,62,5,6,11,8,9,1,new A("RANK ERROR",[10],[1],0),3,0,61,5,8,9,3,1,4,3,0,62,5,3,0,19,3,2,0,6,3,0,45,3,0,65,5,5,11,8,9,1,new A("INDEX ERROR",[11],[1],0),3,0,61,5,8,9,3,1,4,3,0,67,3,2,0,6,3,0,75,5,4,1,4,8,3,0,27,5,5,9,3,1,4,8,3,0,72,7,229,3,1,0,3,0,62,5,3,0,62,5,3,0,14,1,new A([0],[],[],0),6,11,9,9,3,1,0,3,0,70,5,8,9,3,1,0,3,0,62,5,3,0,3,3,0,65,5,5,3,0,14,1,new A([0],[],[],0),6,11,5,9,3,1,0,8,9,3,1,0,3,0,62,5,4,1,4,9,3,1,0,3,0,13,5,4,1,0,9,3,1,0,3,0,62,3,0,27,5,5,4,1,5,3,0,79,3,0,27,5,5,3,0,35,3,0,65,5,5,4,1,6,9,3,1,5,3,0,13,3,0,21,1,new A([1],[],[],0),3,0,62,3,1,6,6,6,3,0,36,3,0,26,6,3,0,37,3,0,62,6,3,0,27,5,5,4,1,5,3,0,35,3,0,65,5,5,3,0,70,5,4,1,7,9,3,1,0,7,18,3,2,0,3,0,62,3,2,2,6,3,0,70,3,1,7,6,8,3,0,27,5,3,1,5,6,3,0,76,3,0,65,5,5,3,0,70,5,3,0,62,3,1,7,3,0,13,3,1,4,6,6,8,6,4,0,75,9,7,335,3,1,2,3,0,62,5,3,0,62,5,3,0,16,1,new A([1],[],[],0),6,11,8,9,1,new A("RANK ERROR",[10],[1],0),3,0,61,5,8,9,3,1,0,3,0,62,5,3,0,62,5,3,0,15,1,new A([1],[],[],0),6,11,8,9,1,new A("NONCE ERROR",[11],[1],0),3,0,61,5,8,9,1,new A([0],[],[],0),3,0,14,3,1,2,6,3,0,13,5,4,1,2,9,3,1,2,3,0,33,1,new A([1,1],[2],[1],0),6,3,0,44,5,4,1,4,9,3,1,2,3,0,65,3,1,4,6,4,1,5,9,3,1,0,3,0,65,3,1,4,6,4,1,6,9,3,0,73,7,52,3,1,5,3,0,70,1,new A([1],[],[],0),6,3,0,14,1,new A([1],[],[],0),6,11,34,9,3,0,73,7,26,3,1,5,3,0,26,1,new A([1],[],[],0),6,4,1,5,9,3,1,6,3,0,26,1,new A([1],[],[],0),6,4,1,6,8,5,8,8,5,9,3,0,73,7,52,3,1,5,3,0,70,1,new A([-1],[],[],0),6,3,0,14,1,new A([1],[],[],0),6,11,34,9,3,0,73,7,26,3,1,5,3,0,26,1,new A([-1],[],[],0),6,4,1,5,9,3,1,6,3,0,26,1,new A([-1],[],[],0),6,4,1,6,8,5,8,8,5,9,3,1,5,3,0,62,5,3,0,42,5,3,0,65,3,1,5,6,3,0,13,3,0,81,5,3,1,5,3,0,62,5,6,4,1,5,9,1,new A([0],[],[],0),4,1,7,9,3,1,6,3,0,43,5,7,38,3,2,0,3,0,70,3,2,2,6,3,0,26,3,1,7,6,4,2,4,9,1,new A([1],[],[],0),3,0,0,3,2,2,6,4,1,7,9,3,2,4,8,3,0,27,5,3,1,5,6,8,3,0,72,3,0,43,6,4,0,43,9,7,235,3,1,2,3,0,62,5,3,0,62,5,3,0,16,1,new A([1],[],[],0),6,11,8,9,1,new A("RANK ERROR",[10],[1],0),3,0,61,5,8,9,3,1,2,3,0,13,5,4,1,4,9,3,1,0,7,46,3,2,0,3,0,62,5,3,0,62,5,3,0,14,1,new A([0],[],[],0),6,11,22,9,3,2,0,3,0,62,1,new A([1],[],[],0),3,0,62,3,1,4,3,0,62,5,6,6,8,9,3,2,0,8,5,4,1,0,9,3,1,0,3,0,62,5,3,0,62,5,3,0,17,3,1,4,3,0,62,5,6,11,8,9,1,new A("RANK ERROR",[10],[1],0),3,0,61,5,8,9,3,1,4,3,0,70,3,1,0,3,0,62,5,3,0,62,5,6,4,1,4,9,3,1,0,3,0,62,5,3,0,0,3,1,4,6,3,0,35,1,new A([0],[],[],0),6,3,0,3,1,new A([0],[],[],0),3,0,18,3,1,4,6,6,3,0,0,3,1,0,3,0,62,5,3,0,1,3,1,4,6,3,0,34,1,new A([0],[],[],0),6,3,0,3,1,new A([0],[],[],0),3,0,17,3,1,4,6,6,6,4,1,4,9,3,1,0,3,0,70,3,1,4,6,8,3,0,72,7,60,3,1,0,3,0,62,5,3,0,62,5,3,0,14,1,new A([0],[],[],0),6,11,5,9,3,1,0,8,9,3,1,0,3,1,0,3,0,62,5,3,0,62,5,3,0,0,1,new A([-1],[],[],0),6,2,1,1,new A([0],[1],[1],0),2,2,3,0,68,3,0,43,6,5,8,6,4,0,26,9,7,23,3,1,0,1,new A([0],[],[],0),2,1,1,new A([0],[1],[1],0),2,2,3,0,68,3,0,13,6,3,1,2,6,8,3,0,72,7,38,3,1,0,3,0,62,3,1,0,3,0,79,5,3,1,0,3,0,62,5,3,0,26,1,new A([1],[],[],0),6,3,0,3,3,0,65,5,5,2,2,6,8,6,4,0,76,9,7,4,3,1,0,8,4,0,77,9,7,4,3,1,2,8,3,0,72,7,4,3,1,0,8,6,4,0,78,9,7,15,3,1,0,3,0,20,3,1,2,6,3,0,44,5,8,3,0,72,7,21,1,new A([1],[],[],0),3,0,13,3,1,0,3,0,62,5,6,3,0,62,3,0,73,6,8,6,4,0,79,9,3,0,13,3,0,72,7,23,3,1,0,3,0,62,3,1,0,3,0,62,5,3,0,3,3,0,65,5,5,6,8,6,4,0,13,9,7,22,3,1,2,3,0,3,3,0,25,3,0,0,6,3,1,0,3,0,80,5,6,8,3,0,72,7,724,7,28,1,new A([0.5],[],[],0),3,0,5,3,2,0,3,0,0,5,3,0,3,3,0,25,3,0,0,6,3,2,0,6,6,8,4,1,4,9,7,290,1,new A([1],[],[],0),2,1,1,new A([0],[1],[1],0),2,2,3,0,68,3,2,0,3,0,62,5,6,4,2,4,9,3,2,4,3,0,19,1,new A([1],[],[],0),6,11,43,9,3,2,0,7,35,3,3,0,3,0,13,5,3,1,4,5,4,3,4,9,3,3,4,3,0,4,3,3,0,6,3,3,4,3,0,76,5,2,2,8,5,8,9,1,new A([2],[],[],0),3,0,4,3,2,4,6,3,0,35,5,4,2,5,9,3,2,0,3,0,70,3,2,5,3,0,13,3,2,0,3,0,62,5,3,0,70,1,new A([1],[],[],0),6,6,6,4,2,6,9,3,2,0,3,0,26,3,2,5,3,0,13,1,new A([0],[],[],0),6,6,4,2,7,9,3,2,6,3,2,1,5,10,2,4,2,8,9,4,2,9,9,9,3,2,7,3,0,3,3,0,25,3,0,0,6,3,2,8,3,0,71,5,3,0,0,5,6,4,2,10,9,3,2,10,3,0,3,3,0,25,3,0,0,6,3,2,8,6,3,0,1,3,2,7,6,3,2,1,5,10,2,4,2,11,9,4,2,12,9,9,3,2,11,3,0,13,3,2,8,6,3,2,12,3,0,70,3,2,4,3,0,1,5,3,0,13,1,new A([2],[],[],0),3,0,4,3,2,4,6,3,0,34,5,6,6,3,0,76,3,2,10,3,0,13,3,2,9,6,6,2,2,8,4,1,5,9,7,214,3,2,0,3,0,62,5,3,0,70,1,new A([1],[],[],0),6,4,2,4,3,0,14,1,new A([1],[],[],0),6,11,9,9,3,2,0,3,0,4,5,8,9,1,new A([2],[],[],0),3,0,4,3,2,4,6,3,0,35,5,4,2,5,9,3,2,0,3,0,70,3,2,5,3,0,13,3,2,5,6,6,3,2,1,5,4,2,6,9,3,2,0,3,0,26,3,2,5,3,0,13,3,2,5,6,6,3,2,1,5,4,2,7,9,3,2,0,3,0,70,3,2,4,3,0,1,3,2,5,6,3,0,13,3,2,5,6,6,4,2,8,9,3,2,7,3,0,3,3,0,25,3,0,0,6,3,2,8,6,3,0,3,3,0,25,3,0,0,6,3,2,6,6,3,0,1,5,4,2,9,9,3,2,7,3,0,70,3,2,4,3,0,1,5,3,0,13,1,new A([2],[],[],0),3,0,4,3,2,4,6,3,0,34,5,6,6,3,0,76,3,2,9,3,0,13,3,2,6,6,6,8,4,1,6,9,3,1,0,3,0,62,5,3,0,62,5,3,0,14,1,new A([0],[],[],0),6,11,9,9,3,1,0,3,0,4,5,8,9,3,1,0,3,0,62,5,3,0,62,5,3,0,14,1,new A([1],[],[],0),6,11,17,9,3,1,0,3,0,76,5,3,1,1,5,3,0,13,5,8,9,3,1,0,3,0,62,5,3,0,62,5,3,0,15,1,new A([2],[],[],0),6,11,8,9,1,new A("RANK ERROR",[10],[1],0),3,0,61,5,8,9,3,1,0,3,0,62,5,3,0,19,3,0,65,5,5,3,0,29,1,new A([0],[],[],0),6,11,8,9,1,new A("LENGTH ERROR",[12],[1],0),3,0,61,5,8,9,3,1,0,3,1,5,5,10,2,4,1,7,9,4,1,8,9,9,3,1,7,3,0,71,5,3,0,0,5,3,0,3,3,0,25,3,0,0,6,3,1,8,3,1,6,5,6,8,6,4,0,80,9,7,31,7,11,3,2,2,3,1,0,3,2,0,6,8,3,0,72,7,11,3,2,0,3,1,0,3,2,0,6,8,6,8,4,0,81,9,3,0,1,4,0,2,9,3,0,5,4,0,6,9,3,0,8,4,0,9,9,3,0,46,4,0,47,9,3,0,29,4,0,30,8],"nSlots":87,"vars":{"⎕D":{"scopeDepth":0,"slot":86,"category":1},"get_⎕OFF":{"category":2,"slot":83,"scopeDepth":0},"⎕OFF":{"category":1},"⎕A":{"scopeDepth":0,"slot":84,"category":1},"⎕Á":{"scopeDepth":0,"slot":85,"category":1},"⎕a":{"scopeDepth":0,"slot":82,"category":1},"+":{"category":2,"slot":0,"scopeDepth":0},"-":{"category":2,"slot":1,"scopeDepth":0},"−":{"category":2,"slot":2,"scopeDepth":0},"×":{"category":2,"slot":3,"scopeDepth":0},"÷":{"category":2,"slot":4,"scopeDepth":0},"*":{"category":2,"slot":5,"scopeDepth":0},"⋆":{"category":2,"slot":6,"scopeDepth":0},"⍟":{"category":2,"slot":7,"scopeDepth":0},"|":{"category":2,"slot":8,"scopeDepth":0},"∣":{"category":2,"slot":9,"scopeDepth":0},"\\":{"category":3,"slot":10,"scopeDepth":0},"⍀":{"category":3,"slot":11,"scopeDepth":0},"○":{"category":2,"slot":12,"scopeDepth":0},",":{"category":2,"slot":13,"scopeDepth":0},"=":{"category":2,"slot":14,"scopeDepth":0},"≠":{"category":2,"slot":15,"scopeDepth":0},"<":{"category":2,"slot":16,"scopeDepth":0},">":{"category":2,"slot":17,"scopeDepth":0},"≤":{"category":2,"slot":18,"scopeDepth":0},"≥":{"category":2,"slot":19,"scopeDepth":0},"≡":{"category":2,"slot":20,"scopeDepth":0},"∘":{"category":4,"slot":21,"scopeDepth":0},"∪":{"category":2,"slot":22,"scopeDepth":0},"∩":{"category":2,"slot":23,"scopeDepth":0},"⊥":{"category":2,"slot":24,"scopeDepth":0},".":{"category":4,"slot":25,"scopeDepth":0},"↓":{"category":2,"slot":26,"scopeDepth":0},"¨":{"category":3,"slot":27,"scopeDepth":0},"⊤":{"category":2,"slot":28,"scopeDepth":0},"∊":{"category":2,"slot":29,"scopeDepth":0},"∈":{"category":2,"slot":30,"scopeDepth":0},"!":{"category":2,"slot":31,"scopeDepth":0},"⍎":{"category":2,"slot":32,"scopeDepth":0},"⍷":{"category":2,"slot":33,"scopeDepth":0},"⌊":{"category":2,"slot":34,"scopeDepth":0},"⌈":{"category":2,"slot":35,"scopeDepth":0},"_fork1":{"category":2,"slot":36,"scopeDepth":0},"_fork2":{"category":2,"slot":37,"scopeDepth":0},"⍕":{"category":2,"slot":38,"scopeDepth":0},"⍋":{"category":2,"slot":39,"scopeDepth":0},"⍒":{"category":2,"slot":40,"scopeDepth":0},"⍁":{"category":4,"slot":41,"scopeDepth":0},"⍳":{"category":2,"slot":42,"scopeDepth":0},"⊂":{"category":2,"slot":43,"scopeDepth":0},"~":{"category":2,"slot":44,"scopeDepth":0},"∨":{"category":2,"slot":45,"scopeDepth":0},"∧":{"category":2,"slot":46,"scopeDepth":0},"^":{"category":2,"slot":47,"scopeDepth":0},"⍱":{"category":2,"slot":48,"scopeDepth":0},"⍲":{"category":2,"slot":49,"scopeDepth":0},"⍣":{"category":4,"slot":50,"scopeDepth":0},"get_⎕":{"category":2,"slot":51,"scopeDepth":0},"⎕":{"category":1},"set_⎕":{"category":2,"slot":52,"scopeDepth":0},"get_⍞":{"category":2,"slot":53,"scopeDepth":0},"⍞":{"category":1},"set_⍞":{"category":2,"slot":54,"scopeDepth":0},"get_⎕IO":{"category":2,"slot":55,"scopeDepth":0},"⎕IO":{"category":1},"set_⎕IO":{"category":2,"slot":56,"scopeDepth":0},"⎕DL":{"category":2,"slot":57,"scopeDepth":0},"⎕RE":{"category":2,"slot":58,"scopeDepth":0},"⎕UCS":{"category":2,"slot":59,"scopeDepth":0},"?":{"category":2,"slot":60,"scopeDepth":0},"↗":{"category":2,"slot":61,"scopeDepth":0},"⍴":{"category":2,"slot":62,"scopeDepth":0},"⌽":{"category":2,"slot":63,"scopeDepth":0},"⊖":{"category":2,"slot":64,"scopeDepth":0},"/":{"category":3,"slot":65,"scopeDepth":0},"⌿":{"category":3,"slot":66,"scopeDepth":0},"⌷":{"category":2,"slot":67,"scopeDepth":0},"_index":{"category":2,"slot":68,"scopeDepth":0},"_substitute":{"category":2,"slot":69,"scopeDepth":0},"↑":{"category":2,"slot":70,"scopeDepth":0},"⍉":{"category":2,"slot":71,"scopeDepth":0},"⍠":{"category":4,"slot":72,"scopeDepth":0},"⍬":{"scopeDepth":0,"slot":73,"category":1},"_atop":{"scopeDepth":0,"slot":74,"category":4},"⊃":{"scopeDepth":0,"slot":75,"category":2},"⍪":{"scopeDepth":0,"slot":76,"category":2},"⊢":{"scopeDepth":0,"slot":77,"category":2},"⊣":{"scopeDepth":0,"slot":78,"category":2},"≢":{"scopeDepth":0,"slot":79,"category":2},"⌹":{"scopeDepth":0,"slot":80,"category":2},"⍨":{"scopeDepth":0,"slot":81,"category":3}}};
 // complexify(x)
 // * if x is real, it's converted to a complex instance with imaginary part 0
 // * if x is already complex, it's preserved
-function complexify(x){return typeof x==='number'?new Z(x,0):x instanceof Z?x:domainError()}
+const complexify=x=>typeof x==='number'?new Z(x,0):x instanceof Z?x:domainError()
 
 // simplify(re, im)
 // * if the imaginary part is 0, the real part is returned
 // * otherwise, a complex instance is created
-function simplify(re,im){return im===0?re:new Z(re,im)}
+const simplify=(re,im)=>im===0?re:new Z(re,im)
 
 function Z(re,im){ // complex number constructor
   assert(typeof re==='number')
@@ -164,72 +164,72 @@ function Z(re,im){ // complex number constructor
 Z.prototype.toString=function(){return formatNumber(this.re)+'J'+formatNumber(this.im)}
 Z.prototype.repr=function(){return'new Z('+repr(this.re)+','+repr(this.im)+')'}
 
-Z.exp=function(x){x=complexify(x);var r=Math.exp(x.re);return simplify(r*Math.cos(x.im),r*Math.sin(x.im))}
-Z.log=function(x){
+Z.exp=x=>{x=complexify(x);var r=Math.exp(x.re);return simplify(r*Math.cos(x.im),r*Math.sin(x.im))}
+Z.log=x=>{
   if(typeof x==='number'&&x>0){return Math.log(x)}
   else{x=complexify(x);return simplify(Math.log(Math.sqrt(x.re*x.re+x.im*x.im)),Z.direction(x))}
 }
-Z.conjugate=function(x){return new Z(x.re,-x.im)}
-Z.negate   =function(x){return new Z(-x.re,-x.im)}
-Z.itimes   =function(x){x=complexify(x);return simplify(-x.im,x.re)}
-Z.negitimes=function(x){x=complexify(x);return simplify(x.im,-x.re)}
-Z.add      =function(x,y){x=complexify(x);y=complexify(y);return simplify(x.re+y.re,x.im+y.im)}
-Z.subtract =function(x,y){x=complexify(x);y=complexify(y);return simplify(x.re-y.re,x.im-y.im)}
-Z.multiply =function(x,y){x=complexify(x);y=complexify(y);return simplify(x.re*y.re-x.im*y.im,x.re*y.im+x.im*y.re)}
-Z.divide   =function(x,y){x=complexify(x);y=complexify(y);var d=y.re*y.re+y.im*y.im
-                          return simplify((x.re*y.re+x.im*y.im)/d,(y.re*x.im-y.im*x.re)/d) }
+Z.conjugate=x=>new Z(x.re,-x.im)
+Z.negate   =x=>new Z(-x.re,-x.im)
+Z.itimes   =x=>{x=complexify(x);return simplify(-x.im,x.re)}
+Z.negitimes=x=>{x=complexify(x);return simplify(x.im,-x.re)}
+Z.add      =(x,y)=>{x=complexify(x);y=complexify(y);return simplify(x.re+y.re,x.im+y.im)}
+Z.subtract =(x,y)=>{x=complexify(x);y=complexify(y);return simplify(x.re-y.re,x.im-y.im)}
+Z.multiply =(x,y)=>{x=complexify(x);y=complexify(y);return simplify(x.re*y.re-x.im*y.im,x.re*y.im+x.im*y.re)}
+Z.divide   =(x,y)=>{x=complexify(x);y=complexify(y);const d=y.re*y.re+y.im*y.im
+                    return simplify((x.re*y.re+x.im*y.im)/d,(y.re*x.im-y.im*x.re)/d)}
 
 // ¯1 ¯2 ¯3 ¯4*2 ←→ 1 4 9 16
 // 0j1*2 ←→ ¯1
 // 1j2*3 ←→ ¯11j¯2
 // .5j1.5*5 ←→ 9.875j¯0.375
 // 9 4 0 ¯4 ¯9*.5 ←→ 3 2 0 0j2 0j3
-Z.pow=function(x,y){
+Z.pow=(x,y)=>{
   if(typeof x==='number'&&typeof y==='number'&&(x>=0||isInt(y)))return Math.pow(x,y)
   if(typeof y==='number'&&isInt(y,0)){var r=1;while(y){(y&1)&&(r=Z.multiply(r,x));x=Z.multiply(x,x);y>>=1};return r}
   if(typeof x==='number'&&y===.5)return x<0?new Z(0,Math.sqrt(-x)):Math.sqrt(x)
   return Z.exp(Z.multiply(y,Z.log(x)))
 }
-Z.sqrt=function(x){return Z.pow(x,.5)}
-Z.magnitude=function(x){return Math.sqrt(x.re*x.re+x.im*x.im)}
-Z.direction=function(x){return Math.atan2(x.im,x.re)}
-Z.sin=function(x){return Z.negitimes(Z.sinh(Z.itimes(x)))}
-Z.cos=function(x){return Z.cosh(Z.itimes(x))}
-Z.tan=function(x){return Z.negitimes(Z.tanh(Z.itimes(x)))}
+Z.sqrt=x=>Z.pow(x,.5)
+Z.magnitude=x=>Math.sqrt(x.re*x.re+x.im*x.im)
+Z.direction=x=>Math.atan2(x.im,x.re)
+Z.sin=x=>Z.negitimes(Z.sinh(Z.itimes(x)))
+Z.cos=x=>Z.cosh(Z.itimes(x))
+Z.tan=x=>Z.negitimes(Z.tanh(Z.itimes(x)))
 
 // arcsin x = -i ln(ix + sqrt(1 - x^2))
 // arccos x = -i ln(x + i sqrt(x^2 - 1))
 // arctan x = (i/2) (ln(1-ix) - ln(1+ix))
-Z.asin=function(x){x=complexify(x);return Z.negitimes(Z.log(Z.add(Z.itimes(x),Z.sqrt(Z.subtract(1,Z.pow(x,2))))))}
-Z.acos=function(x){
+Z.asin=x=>{x=complexify(x);return Z.negitimes(Z.log(Z.add(Z.itimes(x),Z.sqrt(Z.subtract(1,Z.pow(x,2))))))}
+Z.acos=x=>{
   x=complexify(x);r=Z.negitimes(Z.log(Z.add(x,Z.sqrt(Z.subtract(Z.pow(x,2),1)))))
   // TODO look up the algorithm for determining the sign of arccos; the following line is dubious
   return r instanceof Z&&(r.re<0||(r.re===0&&r.im<0))?Z.negate(r):r
 }
-Z.atan=function(x){
+Z.atan=x=>{
   x=complexify(x);ix=Z.itimes(x)
   return Z.multiply(new Z(0,.5),Z.subtract(Z.log(Z.subtract(1,ix)),Z.log(Z.add(1,ix))))
 }
 
-Z.sinh=function(x){var a=Z.exp(x);return Z.multiply(.5,Z.subtract(a,Z.divide(1,a)))}
-Z.cosh=function(x){var a=Z.exp(x);return Z.multiply(.5,Z.add(a,Z.divide(1,a)))}
-Z.tanh=function(x){var a=Z.exp(x),b=Z.divide(1,a);return Z.divide(Z.subtract(a,b),Z.add(a,b))}
+Z.sinh=x=>{var a=Z.exp(x);return Z.multiply(.5,Z.subtract(a,Z.divide(1,a)))}
+Z.cosh=x=>{var a=Z.exp(x);return Z.multiply(.5,Z.add(a,Z.divide(1,a)))}
+Z.tanh=x=>{var a=Z.exp(x),b=Z.divide(1,a);return Z.divide(Z.subtract(a,b),Z.add(a,b))}
 
 // arcsinh x =     i arcsin(-ix)
 // arccosh x = +/- i arccos(x)
 // arctanh x =     i arctan(-ix)
-Z.asinh=function(x){return Z.itimes(Z.asin(Z.negitimes(x)))}
-Z.acosh=function(x){x=complexify(x);var sign=x.im>0||(!x.im&&x.re<=1)?1:-1;return Z.multiply(new Z(0,sign),Z.acos(x))}
-Z.atanh=function(x){return Z.itimes(Z.atan(Z.negitimes(x)))}
+Z.asinh=x=>Z.itimes(Z.asin(Z.negitimes(x)))
+Z.acosh=x=>{x=complexify(x);var sign=x.im>0||(!x.im&&x.re<=1)?1:-1;return Z.multiply(new Z(0,sign),Z.acos(x))}
+Z.atanh=x=>Z.itimes(Z.atan(Z.negitimes(x)))
 
-Z.floor = function(x){
+Z.floor=x=>{
   if(typeof x==='number')return Math.floor(x)
   x=complexify(x)
   var re=Math.floor(x.re),im=Math.floor(x.im),r=x.re-re,i=x.im-im
   if(r+i>=1)r>=i?re++:im++
   return simplify(re,im)
 }
-Z.ceil=function(x){
+Z.ceil=x=>{
   if(typeof x==='number')return Math.ceil(x)
   x=complexify(x)
   var re=Math.ceil(x.re),im=Math.ceil(x.im),r=re-x.re,i=im-x.im
@@ -237,18 +237,16 @@ Z.ceil=function(x){
   return simplify(re,im)
 }
 
-function iszero(x){return!x||(x instanceof Z&&!x.re&&!x.im)}
+const iszero=x=>!x||(x instanceof Z&&!x.re&&!x.im)
+Z.residue=(x,y)=>typeof x==='number'&&typeof y==='number'?(x?y-x*Math.floor(y/x):y)
+                 :iszero(x)?y:Z.subtract(y,Z.multiply(x,Z.floor(Z.divide(y,x))))
+Z.isint=x=>typeof x==='number'?x===Math.floor(x):x.re===Math.floor(x.re)&&x.im===Math.floor(x.im)
 
-Z.residue=function(x,y){return(typeof x==='number'&&typeof y==='number'?(x?y-x*Math.floor(y/x):y)
-                                       :iszero(x)?y:Z.subtract(y,Z.multiply(x,Z.floor(Z.divide(y,x)))))}
-
-Z.isint=function(x){return typeof x==='number'?x===Math.floor(x):x.re===Math.floor(x.re)&&x.im===Math.floor(x.im)}
-
-function firstquadrant(x){ // rotate into first quadrant
+const firstquadrant=x=>{ // rotate into first quadrant
   if(typeof x==='number'){return Math.abs(x)}
   else{x.re<0&&(x=Z.negate(x));x.im<0&&(x=Z.itimes(x));return x.re?x:x.im}
 }
-Z.gcd=function(x,y){
+Z.gcd=(x,y)=>{
   if(typeof x==='number'&&typeof y==='number'){
     while(y){var z=y;y=x%y;x=z}
     return Math.abs(x)
@@ -257,16 +255,14 @@ Z.gcd=function(x,y){
     return firstquadrant(x)
   }
 }
-Z.lcm=function(x,y){var p=Z.multiply(x,y);return iszero(p)?p:Z.divide(p,Z.gcd(x,y))}
-var LDC=1,VEC=2,GET=3,SET=4,MON=5,DYA=6,LAM=7,RET=8,POP=9,SPL=10,JEQ=11,EMB=12,CON=13
+Z.lcm=(x,y)=>{var p=Z.multiply(x,y);return iszero(p)?p:Z.divide(p,Z.gcd(x,y))}
+const LDC=1,VEC=2,GET=3,SET=4,MON=5,DYA=6,LAM=7,RET=8,POP=9,SPL=10,JEQ=11,EMB=12,CON=13
 
-function Proc(code,addr,size,env){this.code=code;this.addr=addr;this.size=size;this.env=env}
-Proc.prototype.toString=function(){return'#procedure'}
-Proc.prototype.toFunction=function(){
-  var p=this;return function(x,y){return vm({code:p.code,env:p.env.concat([[x,p,y,null]]),pc:p.addr})}
-}
+const Proc=function(code,addr,size,env){this.code=code;this.addr=addr;this.size=size;this.env=env}
+Proc.prototype.toString=_=>'#procedure'
+Proc.prototype.toFunction=function(){return(x,y)=>vm({code:this.code,env:this.env.concat([[x,this,y,null]]),pc:this.addr})}
 
-function vm(o){
+const vm=o=>{
   var code=o.code,env=o.env,stack=o.stack,pc=o.pc
   assert(code instanceof Array);assert(env instanceof Array);for(var i=0;i<env.length;i++)assert(env[i]instanceof Array)
   stack=stack||[];pc=pc||0
@@ -285,7 +281,7 @@ function vm(o){
         if(typeof f==='function'){
           if(w instanceof Proc)w=w.toFunction()
           if(f.cps){
-            f(w,undefined,undefined,function(r){stack.push(r);vm({code:code,env:env,stack:stack,pc:pc})})
+            f(w,undefined,undefined,r=>{stack.push(r);vm({code:code,env:env,stack:stack,pc:pc})})
             return
           }else{
             stack.push(f(w))
@@ -300,7 +296,7 @@ function vm(o){
           if(w instanceof Proc)w=w.toFunction()
           if(a instanceof Proc)a=a.toFunction()
           if(f.cps){
-            f(w,a,undefined,function(r){stack.push(r);vm({code:code,env:env,stack:stack,pc:pc})})
+            f(w,a,undefined,r=>{stack.push(r);vm({code:code,env:env,stack:stack,pc:pc})})
             return
           }else{
             stack.push(f(w,a))
@@ -309,7 +305,7 @@ function vm(o){
           var bp=stack.length;stack.push(code,pc,env);code=f.code;pc=f.addr;env=f.env.concat([[w,f,a,bp]])
         }
         break
-      case LAM:size=code[pc++];stack.push(new Proc(code,pc,size,env));pc+=size;break
+      case LAM:var size=code[pc++];stack.push(new Proc(code,pc,size,env));pc+=size;break
       case RET:
         if(stack.length===1)return stack[0]
         var u=stack.splice(-4,3);code=u[0];pc=u[1];env=u[2]
@@ -325,24 +321,24 @@ function vm(o){
       case JEQ:var n=code[pc++];stack[stack.length-1].toBool()||(pc+=n);break
       case EMB:var frame=env[env.length-1];stack.push(code[pc++](frame[0],frame[2]));break
       case CON:
-        var frame = env[env.length - 1]
-        ;(function(){
+        var frame=env[env.length-1]
+        ;(_=>{
           var cont={
             code:code,
-            env:env.map(function(x){x.slice(0)}),
+            env:env.map(x=>x.slice(0)),
             stack:stack.slice(0,frame[3]),
             pc:frame[1].addr+frame[1].size-1
           }
           assert(code[cont.pc] === RET)
-          stack.push(function(r){code=cont.code;env=cont.env;stack=cont.stack;pc=cont.pc;stack.push(r)})
-        }())
+          stack.push(r=>{code=cont.code;env=cont.env;stack=cont.stack;pc=cont.pc;stack.push(r)})
+        })()
         break
       default:aplError('Unrecognized instruction:'+code[pc-1]+',pc:'+pc)
     }
   }
 }
-var rLetters='_A-Za-zªµºÀ-ÖØ-öø-ˁˆ-ˑˠ-ˤˬˮͰ-ʹͶ-ͷͺ-ͽΆΈ-ΊΌΎ-ΡΣ-ϵϷ-ҁҊ-ԧԱ-Ֆՙա-ևא-תװ-ײؠ-يٮ-ٯٱ-ۓەۥ-ۦۮ-ۯۺ-ۼۿܐܒ-ܯݍ-ޥޱߊ-ߪߴ-ߵߺࠀ-ࠕࠚࠤࠨࡀ-ࡘࢠࢢ-ࢬऄ-हऽॐक़-ॡॱ-ॷॹ-ॿঅ-ঌএ-ঐও-নপ-রলশ-হঽৎড়-ঢ়য়-ৡৰ-ৱਅ-ਊਏ-ਐਓ-ਨਪ-ਰਲ-ਲ਼ਵ-ਸ਼ਸ-ਹਖ਼-ੜਫ਼ੲ-ੴઅ-ઍએ-ઑઓ-નપ-રલ-ળવ-હઽૐૠ-ૡଅ-ଌଏ-ଐଓ-ନପ-ରଲ-ଳଵ-ହଽଡ଼-ଢ଼ୟ-ୡୱஃஅ-ஊஎ-ஐஒ-கங-சஜஞ-டண-தந-பம-ஹௐఅ-ఌఎ-ఐఒ-నప-ళవ-హఽౘ-ౙౠ-ౡಅ-ಌಎ-ಐಒ-ನಪ-ಳವ-ಹಽೞೠ-ೡೱ-ೲഅ-ഌഎ-ഐഒ-ഺഽൎൠ-ൡൺ-ൿඅ-ඖක-නඳ-රලව-ෆก-ะา-ำเ-ๆກ-ຂຄງ-ຈຊຍດ-ທນ-ຟມ-ຣລວສ-ຫອ-ະາ-ຳຽເ-ໄໆໜ-ໟༀཀ-ཇཉ-ཬྈ-ྌက-ဪဿၐ-ၕၚ-ၝၡၥ-ၦၮ-ၰၵ-ႁႎႠ-ჅჇჍა-ჺჼ-ቈቊ-ቍቐ-ቖቘቚ-ቝበ-ኈኊ-ኍነ-ኰኲ-ኵኸ-ኾዀዂ-ዅወ-ዖዘ-ጐጒ-ጕጘ-ፚᎀ-ᎏᎠ-Ᏼᐁ-ᙬᙯ-ᙿᚁ-ᚚᚠ-ᛪᜀ-ᜌᜎ-ᜑᜠ-ᜱᝀ-ᝑᝠ-ᝬᝮ-ᝰក-ឳៗៜᠠ-ᡷᢀ-ᢨᢪᢰ-ᣵᤀ-ᤜᥐ-ᥭᥰ-ᥴᦀ-ᦫᧁ-ᧇᨀ-ᨖᨠ-ᩔᪧᬅ-ᬳᭅ-ᭋᮃ-ᮠᮮ-ᮯᮺ-ᯥᰀ-ᰣᱍ-ᱏᱚ-ᱽᳩ-ᳬᳮ-ᳱᳵ-ᳶᴀ-ᶿḀ-ἕἘ-Ἕἠ-ὅὈ-Ὅὐ-ὗὙὛὝὟ-ώᾀ-ᾴᾶ-ᾼιῂ-ῄῆ-ῌῐ-ΐῖ-Ίῠ-Ῥῲ-ῴῶ-ῼⁱⁿₐ-ₜℂℇℊ-ℓℕℙ-ℝℤΩℨK-ℭℯ-ℹℼ-ℿⅅ-ⅉⅎↃ-ↄⰀ-Ⱞⰰ-ⱞⱠ-ⳤⳫ-ⳮⳲ-ⳳⴀ-ⴥⴧⴭⴰ-ⵧⵯⶀ-ⶖⶠ-ⶦⶨ-ⶮⶰ-ⶶⶸ-ⶾⷀ-ⷆⷈ-ⷎⷐ-ⷖⷘ-ⷞⸯ々-〆〱-〵〻-〼ぁ-ゖゝ-ゟァ-ヺー-ヿㄅ-ㄭㄱ-ㆎㆠ-ㆺㇰ-ㇿ㐀-䶵一-鿌ꀀ-ꒌꓐ-ꓽꔀ-ꘌꘐ-ꘟꘪ-ꘫꙀ-ꙮꙿ-ꚗꚠ-ꛥꜗ-ꜟꜢ-ꞈꞋ-ꞎꞐ-ꞓꞠ-Ɦꟸ-ꠁꠃ-ꠅꠇ-ꠊꠌ-ꠢꡀ-ꡳꢂ-ꢳꣲ-ꣷꣻꤊ-ꤥꤰ-ꥆꥠ-ꥼꦄ-ꦲꧏꨀ-ꨨꩀ-ꩂꩄ-ꩋꩠ-ꩶꩺꪀ-ꪯꪱꪵ-ꪶꪹ-ꪽꫀꫂꫛ-ꫝꫠ-ꫪꫲ-ꫴꬁ-ꬆꬉ-ꬎꬑ-ꬖꬠ-ꬦꬨ-ꬮꯀ-ꯢ가-힣ힰ-ퟆퟋ-ퟻ豈-舘並-龎ﬀ-ﬆﬓ-ﬗיִײַ-ﬨשׁ-זּטּ-לּמּנּ-סּףּ-פּצּ-ﮱﯓ-ﴽﵐ-ﶏﶒ-ﷇﷰ-ﷻﹰ-ﹴﹶ-ﻼＡ-Ｚａ-ｚｦ-ﾾￂ-ￇￊ-ￏￒ-ￗￚ-ￜ'
-var TD=[ // token definitions
+const rLetters='_A-Za-zªµºÀ-ÖØ-öø-ˁˆ-ˑˠ-ˤˬˮͰ-ʹͶ-ͷͺ-ͽΆΈ-ΊΌΎ-ΡΣ-ϵϷ-ҁҊ-ԧԱ-Ֆՙա-ևא-תװ-ײؠ-يٮ-ٯٱ-ۓەۥ-ۦۮ-ۯۺ-ۼۿܐܒ-ܯݍ-ޥޱߊ-ߪߴ-ߵߺࠀ-ࠕࠚࠤࠨࡀ-ࡘࢠࢢ-ࢬऄ-हऽॐक़-ॡॱ-ॷॹ-ॿঅ-ঌএ-ঐও-নপ-রলশ-হঽৎড়-ঢ়য়-ৡৰ-ৱਅ-ਊਏ-ਐਓ-ਨਪ-ਰਲ-ਲ਼ਵ-ਸ਼ਸ-ਹਖ਼-ੜਫ਼ੲ-ੴઅ-ઍએ-ઑઓ-નપ-રલ-ળવ-હઽૐૠ-ૡଅ-ଌଏ-ଐଓ-ନପ-ରଲ-ଳଵ-ହଽଡ଼-ଢ଼ୟ-ୡୱஃஅ-ஊஎ-ஐஒ-கங-சஜஞ-டண-தந-பம-ஹௐఅ-ఌఎ-ఐఒ-నప-ళవ-హఽౘ-ౙౠ-ౡಅ-ಌಎ-ಐಒ-ನಪ-ಳವ-ಹಽೞೠ-ೡೱ-ೲഅ-ഌഎ-ഐഒ-ഺഽൎൠ-ൡൺ-ൿඅ-ඖක-නඳ-රලව-ෆก-ะา-ำเ-ๆກ-ຂຄງ-ຈຊຍດ-ທນ-ຟມ-ຣລວສ-ຫອ-ະາ-ຳຽເ-ໄໆໜ-ໟༀཀ-ཇཉ-ཬྈ-ྌက-ဪဿၐ-ၕၚ-ၝၡၥ-ၦၮ-ၰၵ-ႁႎႠ-ჅჇჍა-ჺჼ-ቈቊ-ቍቐ-ቖቘቚ-ቝበ-ኈኊ-ኍነ-ኰኲ-ኵኸ-ኾዀዂ-ዅወ-ዖዘ-ጐጒ-ጕጘ-ፚᎀ-ᎏᎠ-Ᏼᐁ-ᙬᙯ-ᙿᚁ-ᚚᚠ-ᛪᜀ-ᜌᜎ-ᜑᜠ-ᜱᝀ-ᝑᝠ-ᝬᝮ-ᝰក-ឳៗៜᠠ-ᡷᢀ-ᢨᢪᢰ-ᣵᤀ-ᤜᥐ-ᥭᥰ-ᥴᦀ-ᦫᧁ-ᧇᨀ-ᨖᨠ-ᩔᪧᬅ-ᬳᭅ-ᭋᮃ-ᮠᮮ-ᮯᮺ-ᯥᰀ-ᰣᱍ-ᱏᱚ-ᱽᳩ-ᳬᳮ-ᳱᳵ-ᳶᴀ-ᶿḀ-ἕἘ-Ἕἠ-ὅὈ-Ὅὐ-ὗὙὛὝὟ-ώᾀ-ᾴᾶ-ᾼιῂ-ῄῆ-ῌῐ-ΐῖ-Ίῠ-Ῥῲ-ῴῶ-ῼⁱⁿₐ-ₜℂℇℊ-ℓℕℙ-ℝℤΩℨK-ℭℯ-ℹℼ-ℿⅅ-ⅉⅎↃ-ↄⰀ-Ⱞⰰ-ⱞⱠ-ⳤⳫ-ⳮⳲ-ⳳⴀ-ⴥⴧⴭⴰ-ⵧⵯⶀ-ⶖⶠ-ⶦⶨ-ⶮⶰ-ⶶⶸ-ⶾⷀ-ⷆⷈ-ⷎⷐ-ⷖⷘ-ⷞⸯ々-〆〱-〵〻-〼ぁ-ゖゝ-ゟァ-ヺー-ヿㄅ-ㄭㄱ-ㆎㆠ-ㆺㇰ-ㇿ㐀-䶵一-鿌ꀀ-ꒌꓐ-ꓽꔀ-ꘌꘐ-ꘟꘪ-ꘫꙀ-ꙮꙿ-ꚗꚠ-ꛥꜗ-ꜟꜢ-ꞈꞋ-ꞎꞐ-ꞓꞠ-Ɦꟸ-ꠁꠃ-ꠅꠇ-ꠊꠌ-ꠢꡀ-ꡳꢂ-ꢳꣲ-ꣷꣻꤊ-ꤥꤰ-ꥆꥠ-ꥼꦄ-ꦲꧏꨀ-ꨨꩀ-ꩂꩄ-ꩋꩠ-ꩶꩺꪀ-ꪯꪱꪵ-ꪶꪹ-ꪽꫀꫂꫛ-ꫝꫠ-ꫪꫲ-ꫴꬁ-ꬆꬉ-ꬎꬑ-ꬖꬠ-ꬦꬨ-ꬮꯀ-ꯢ가-힣ힰ-ퟆퟋ-ퟻ豈-舘並-龎ﬀ-ﬆﬓ-ﬗיִײַ-ﬨשׁ-זּטּ-לּמּנּ-סּףּ-פּצּ-ﮱﯓ-ﴽﵐ-ﶏﶒ-ﷇﷰ-ﷻﹰ-ﹴﹶ-ﻼＡ-Ｚａ-ｚｦ-ﾾￂ-ￇￊ-ￏￒ-ￗￚ-ￜ'
+const TD=[ // token definitions
   ['-',/^(?:[ \t]+|[⍝\#].*)+/],        // whitespace and comments
   ['L',/^[\n\r]+/],                    // newline
   ['⋄',/^[◇⋄]/],                       // statement separator
@@ -352,7 +348,7 @@ var TD=[ // token definitions
   ['J',/^«[^»]*»/],                    // JS literal
   ['X',RegExp('^(?:⎕?['+rLetters+']['+rLetters+'0-9]*|⍺⍺|⍵⍵|∇∇|[^¯\'":«»])','i')] // identifier
 ]
-function parse(s,o){ // s:APL source code, o:options
+const parse=(s,o)=>{ // s:APL source code, o:options
   // Tokenize:
   // A token is {t:type,v:value,o:offset,s:aplCode}
   // "stk" keeps track of bracket nesting and causes 'L' tokens to be dropped when the latest unclosed bracket is '('
@@ -393,14 +389,14 @@ function parse(s,o){ // s:APL source code, o:options
   var i=1,token=tokens[0] // single-token lookahead
 
   // consume(x) consumes the upcoming token and returns a truthy value only if its type matches any character in x.
-  function consume(x){if(x.includes(token.t))return token=tokens[i++]}
+  const consume=x=>{if(x.includes(token.t))return token=tokens[i++]}
 
   // demand() is like consume() but intolerant to a mismatch.
-  function demand(x){token.t===x?(token=tokens[i++]):parserError('Expected token of type '+x+' but got '+token.t)}
+  const demand=x=>{token.t===x?(token=tokens[i++]):parserError('Expected token of type '+x+' but got '+token.t)}
 
-  function parserError(x){syntaxError(x,{file:o.file,offset:token.o,aplCode:s})}
+  const parserError=x=>{syntaxError(x,{file:o.file,offset:token.o,aplCode:s})}
 
-  function body(){ // parse a body
+  const body=_=>{ // parse a body
     var r=['B']
     while(1){
       if('$};'.includes(token.t))return r
@@ -412,7 +408,7 @@ function parse(s,o){ // s:APL source code, o:options
     }
   }
 
-  function expr(){ // parse an expression
+  const expr=_=>{ // parse an expression
     var r=['.'],item
     while(1){
       var token0=token
@@ -439,7 +435,7 @@ function parse(s,o){ // s:APL source code, o:options
   var r=body();demand('$');return r
 }
 var vocabulary={}
-function addVocabulary(h){for(var k in h)vocabulary[k]=h[k]}
+const addVocabulary=h=>{for(var k in h)vocabulary[k]=h[k]}
 
 // pervasive() is a higher-order function
 //
@@ -449,22 +445,22 @@ function addVocabulary(h){for(var k in h)vocabulary[k]=h[k]}
 // What pervasive() actually does is to take two versions of a scalar function
 // (a monadic and a dyadic one), make them pervasive, and combine them into a
 // single function that dispatches based on the number of arguments.
-function pervasive(h){
+const pervasive=h=>{
   var monad=h.monad,dyad=h.dyad
-  var pervadeMonadic=!monad?nonceError:function(x){
+  var pervadeMonadic=!monad?nonceError:x=>{
     if(x instanceof A)return x.map(pervadeMonadic)
     var r=monad(x);typeof r==='number'&&r!==r&&domainError('NaN');return r
   }
-  var pervadeDyadic=!dyad?nonceError:function(x,y){
+  var pervadeDyadic=!dyad?nonceError:(x,y)=>{
     // tx,ty: 0=unwrapped scalar; 1=singleton array; 2=non-singleton array
     var tx=x instanceof A?(x.isSingleton()?20:30):10
     var ty=y instanceof A?(y.isSingleton()? 2: 3): 1
     switch(tx+ty){ // todo: use the larger shape when tx=10 and ty=1
       case 11:        var r=dyad(x,y);typeof r==='number'&&r!==r&&domainError('NaN');return r
-      case 12:case 13:return y.map(function(yi){return pervadeDyadic(x,yi)})
-      case 21:case 31:return x.map(function(xi){return pervadeDyadic(xi,y)})
-      case 23:        xi=x.data[x.offset];return y.map(function(yi){return pervadeDyadic(xi,yi)})
-      case 32:case 22:yi=y.data[y.offset];return x.map(function(xi){return pervadeDyadic(xi,yi)})
+      case 12:case 13:return y.map(yi=>pervadeDyadic(x,yi))
+      case 21:case 31:return x.map(xi=>pervadeDyadic(xi,y))
+      case 23:        xi=x.data[x.offset];return y.map(yi=>pervadeDyadic(xi,yi))
+      case 32:case 22:yi=y.data[y.offset];return x.map(xi=>pervadeDyadic(xi,yi))
       case 33:
         x.shape.length!==y.shape.length&&rankError()
         x.shape!=''+y.shape&&lengthError()
@@ -472,36 +468,34 @@ function pervasive(h){
       default:assert(0)
     }
   }
-  return function(om,al){
+  return(om,al)=>{
     assert(om instanceof A);assert(al instanceof A||al==null)
     return(al!=null?pervadeDyadic:pervadeMonadic)(om,al)
   }
 }
-function real(f){return function(x,y,axis){
-  return typeof x!=='number'||y!=null&&typeof y!=='number'?domainError():f(x,y,axis)
-}}
-function numeric(f,g){return function(x,y,axis){
-  return(typeof x!=='number'||y!=null&&typeof y!=='number'?g(complexify(x),y==null?y:complexify(y),axis):f(x,y,axis))
-}}
-function match(x,y){
+const real=f=>(x,y,axis)=>
+  typeof x!=='number'||y!=null&&typeof y!=='number'?domainError():f(x,y,axis)
+const numeric=(f,g)=>(x,y,axis)=>
+  (typeof x!=='number'||y!=null&&typeof y!=='number'?g(complexify(x),y==null?y:complexify(y),axis):f(x,y,axis))
+const match=(x,y)=>{
   if(x instanceof A){
     if(!(y instanceof A)||x.shape!=''+y.shape)return 0
-    var r=1;each2(x,y,function(xi,yi){r&=match(xi,yi)});return r
+    var r=1;each2(x,y,(xi,yi)=>{r&=match(xi,yi)});return r
   }else{
     if(y instanceof A)return 0
     if(x instanceof Z&&y instanceof Z)return x.re===y.re&&x.im===y.im
     return x===y
   }
 }
-function numApprox(x,y){return x===y||Math.abs(x-y)<1e-11}
-function approx(x,y){
+const numApprox=(x,y)=>x===y||Math.abs(x-y)<1e-11
+const approx=(x,y)=>{
   // approx() is like match(), but it is tolerant to precision errors;
   // used for comparing expected and actual results in doctests
   if(x instanceof A){
     if(!(y instanceof A))return 0
     if(x.shape.length!==y.shape.length)return 0
     if(x.shape!=''+y.shape)return 0
-    var r=1;each2(x,y,function(xi,yi){r&=approx(xi,yi)});return r
+    var r=1;each2(x,y,(xi,yi)=>{r&=approx(xi,yi)});return r
   }else{
     if(y instanceof A)return 0
     if(x==null||y==null)return 0
@@ -511,8 +505,8 @@ function approx(x,y){
     return x===y
   }
 }
-function bool(x){return(x&1)!==x?domainError():x}
-function getAxisList(axes,rank){
+const bool=x=>(x&1)!==x?domainError():x
+const getAxisList=(axes,rank)=>{
   assert(isInt(rank,0))
   if(axes==null)return[]
   assert(axes instanceof A)
@@ -531,10 +525,10 @@ function getAxisList(axes,rank){
     domainError()
   }
 }
-function withIdentity(x,f){f.identity=x instanceof A?x:A.scalar(x);return f}
-function adverb     (f){f.adv =1;return f}
-function conjunction(f){f.conj=1;return f}
-function cps        (f){f.cps =1;return f}
+const withIdentity=(x,f)=>{f.identity=x instanceof A?x:A.scalar(x);return f}
+const adverb     =f=>{f.adv =1;return f}
+const conjunction=f=>{f.conj=1;return f}
+const cps        =f=>{f.cps =1;return f}
 addVocabulary({
   '+':withIdentity(0,pervasive({
     // +4            ←→ 4
@@ -544,7 +538,7 @@ addVocabulary({
     // + (5 6)(7 1)  ←→ (5 6)(7 1)
     // +1j¯2         ←→ 1j2
     monad:numeric(
-      function(x){return x},
+      x=>x,
       Z.conjugate
     ),
     // 1+2                      ←→ 3
@@ -559,8 +553,8 @@ addVocabulary({
     // ¯+¯¯                     !!! DOMAIN ERROR
     // 1j¯+2j¯¯                 !!! DOMAIN ERROR
     dyad:numeric(
-      function(y,x){return x+y},
-      function(y,x){return Z.add(x,y)}
+      (y,x)=>x+y,
+      (y,x)=>Z.add(x,y)
     )
   })),
   '-':withIdentity(0,pervasive({
@@ -568,7 +562,7 @@ addVocabulary({
     // -1 2 3 ←→ ¯1 ¯2 ¯3
     // -1j2   ←→ ¯1j¯2
     monad:numeric(
-      function(x){return-x},
+      x=>-x,
       Z.negate
     ),
     // 1-3     ←→ ¯2
@@ -577,8 +571,8 @@ addVocabulary({
     // 5-3j8   ←→ 2j¯8
     // -/⍬     ←→ 0
     dyad:numeric(
-      function(y,x){return x-y},
-      function(y,x){return Z.subtract(x,y)}
+      (y,x)=>x-y,
+      (y,x)=>Z.subtract(x,y)
     )
   })),
   '×':withIdentity(1,pervasive({
@@ -587,16 +581,16 @@ addVocabulary({
     // ×¯¯          ←→ ¯1
     // ×3j¯4        ←→ .6j¯.8
     monad:numeric(
-      function(x){return(x>0)-(x<0)},
-      function(x){var d=Math.sqrt(x.re*x.re+x.im*x.im);return simplify(x.re/d,x.im/d)}
+      x=>(x>0)-(x<0),
+      x=>{var d=Math.sqrt(x.re*x.re+x.im*x.im);return simplify(x.re/d,x.im/d)}
     ),
     // 7×8       ←→ 56
     // 1j¯2×¯2j3 ←→ 4j7
     // 2×1j¯2    ←→ 2j¯4
     // ×/⍬       ←→ 1
     dyad:numeric(
-      function(y,x){return x*y},
-      function(y,x){return Z.multiply(x,y)}
+      (y,x)=>x*y,
+      (y,x)=>Z.multiply(x,y)
     )
   })),
   '÷': withIdentity(1, pervasive({
@@ -604,8 +598,8 @@ addVocabulary({
     // ÷2j3 ←→ 0.15384615384615385J¯0.23076923076923078
     // 0÷0  !!! DOMAIN ERROR
     monad:numeric(
-      function(x){return 1/x},
-      function(x){var d=x.re*x.re+x.im*x.im;return simplify(x.re/d,-x.im/d)}
+      x=>1/x,
+      x=>{var d=x.re*x.re+x.im*x.im;return simplify(x.re/d,-x.im/d)}
     ),
     // 27÷9     ←→ 3
     // 4j7÷1j¯2 ←→ ¯2j3
@@ -613,8 +607,8 @@ addVocabulary({
     // 5÷2j1    ←→ 2j¯1
     // ÷/⍬      ←→ 1
     dyad:numeric(
-      function(y,x){return x/y},
-      function(y,x){return Z.divide(x,y)}
+      (y,x)=>x/y,
+      (y,x)=>Z.divide(x,y)
     )
   })),
   '*':withIdentity(1,pervasive({
@@ -628,7 +622,7 @@ addVocabulary({
     // ¯1*.5 ←→ 0j1
     // 1j2*3j4 ←→ .129009594074467j.03392409290517014
     // */⍬ ←→ 1
-    dyad:function(y,x){return Z.pow(x,y)}
+    dyad:(y,x)=>Z.pow(x,y)
   })),
   '⍟':pervasive({
     // ⍟123 ←→ 4.812184355372417
@@ -640,14 +634,13 @@ addVocabulary({
     // 12⍟¯34 ←→ 1.419111870829036j1.26426988871305
     // ¯12⍟¯34 ←→ 1.1612974763994781j¯.2039235425372641
     // 1j2⍟3j4 ←→ 1.2393828252698689J¯0.5528462880299602
-    dyad:function(y,x){
-      return typeof x==='number'&&typeof y==='number'&&x>0&&y>0?Math.log(y)/Math.log(x):Z.divide(Z.log(y),Z.log(x))
-    }
+    dyad:(y,x)=>typeof x==='number'&&typeof y==='number'&&x>0&&y>0
+                ?Math.log(y)/Math.log(x):Z.divide(Z.log(y),Z.log(x))
   }),
   '|': withIdentity(0, pervasive({
     // ∣¯8 0 8 ¯3.5 ←→ 8 0 8 3.5
     // |5j12 ←→ 13
-    monad:numeric(function(x){return Math.abs(x)},Z.magnitude),
+    monad:numeric(x=>Math.abs(x),Z.magnitude),
     // 3∣5 ←→ 2
     // 1j2|3j4 ←→ ¯1j1
     // 7 ¯7∘.|31 28 ¯30        ←→ 2 3⍴3 0 5 ¯4 0 ¯2
@@ -658,12 +651,12 @@ addVocabulary({
     // 10|4j3 ←→ 4j3
     // 4j6|7j10 ←→ 3j4
     // ¯10 7j10 0.3|17 5 10 ←→ ¯3 ¯5j7 0.1
-    dyad:function(y,x){return Z.residue(x,y)}
+    dyad:(y,x)=>Z.residue(x,y)
   }))
 })
 var scanOrExpand
 addVocabulary({
-  '⍀':adverb(function(om,al,axis){return scanOrExpand(om,al,axis||A.zero)}),
+  '⍀':adverb((om,al,axis)=>scanOrExpand(om,al,axis||A.zero)),
 
   // +\20 10 ¯5 7               ←→ 20 30 25 32
   // ,\"AB" "CD" "EF"           ←→ 'AB' 'ABCD' 'ABCDEF'
@@ -689,15 +682,15 @@ addVocabulary({
   // 1 0 1⍀2 2⍴'ABCD'    ←→ 3 2⍴'AB  CD'
   // 1 0 1\[0]2 2⍴'ABCD' ←→ 3 2⍴'AB  CD'
   // 1 0 1\[1]2 2⍴'ABCD' ←→ 2 3⍴'A BC D'
-  '\\':scanOrExpand=adverb(function(om,al,axis){
+  '\\':scanOrExpand=adverb((om,al,axis)=>{
     if(typeof om==='function'){
       assert(typeof al==='undefined')
       var f=om
-      return function(om,al){
+      return(om,al)=>{
         assert(al==null)
         if(!om.shape.length)return om
         axis=axis?axis.toInt(0,om.shape.length):om.shape.length-1
-        return om.map(function(x,indices,p){
+        return om.map((x,indices,p)=>{
           x instanceof A||(x=A.scalar(x))
           for(var j=0,nj=indices[axis];j<nj;j++){
             p-=om.stride[axis]
@@ -741,8 +734,8 @@ addVocabulary({
     // ○2J2   ←→ 6.283185307179586J6.283185307179586
     // ○'ABC' !!! DOMAIN ERROR
     monad:numeric(
-      function(x){return Math.PI*x},
-      function(x){return new Z(Math.PI*x.re,Math.PI*x.im)}
+      x=>Math.PI*x,
+      x=>new Z(Math.PI*x.re,Math.PI*x.im)
     ),
     // ¯12○2          ←→ ¯0.4161468365471J0.9092974268257
     // ¯12○2j3        ←→ ¯0.02071873100224J0.04527125315609
@@ -806,7 +799,7 @@ addVocabulary({
     // 1○'hello'      !!! DOMAIN ERROR
     // 99○1           !!! DOMAIN ERROR
     // 99○1j2         !!! DOMAIN ERROR
-    dyad:function(x,i){
+    dyad:(x,i)=>{
       if(typeof x==='number'){
         switch(i){
           case-12:return Z.exp(simplify(0,x))
@@ -874,7 +867,7 @@ addVocabulary({
   })
 })
 addVocabulary({
-  ',':function(om,al,axis){
+  ',':(om,al,axis)=>{
     if(al){
       // 10,66               ←→ 10 66
       // '10 ','MAY ','1985' ←→ '10 MAY 1985'
@@ -986,23 +979,23 @@ addVocabulary({
   // 123j0               ←→ 123
   // 2j¯3+¯2j3           ←→ 0
   // =/⍬                 ←→ 1
-  '=':withIdentity(1,pervasive({dyad:eq=function(y,x){
-    return+(x instanceof Z&&y instanceof Z?x.re===y.re&&x.im===y.im:x===y)
-  }})),
+  '=':withIdentity(1,pervasive({dyad:eq=(y,x)=>
+    +(x instanceof Z&&y instanceof Z?x.re===y.re&&x.im===y.im:x===y)
+  })),
 
   // 3≢5 ←→ 1
   // 8≠8 ←→ 0
   // ≠/⍬ ←→ 0
-  '≠':withIdentity(0,pervasive({dyad:function(y,x){return 1-eq(y,x)}})),
+  '≠':withIdentity(0,pervasive({dyad:(y,x)=>1-eq(y,x)})),
 
   // </⍬ ←→ 0
   // >/⍬ ←→ 0
   // ≤/⍬ ←→ 1
   // ≥/⍬ ←→ 1
-  '<':withIdentity(0,pervasive({dyad:real(function(y,x){return+(x< y)})})),
-  '>':withIdentity(0,pervasive({dyad:real(function(y,x){return+(x> y)})})),
-  '≤':withIdentity(1,pervasive({dyad:real(function(y,x){return+(x<=y)})})),
-  '≥':withIdentity(1,pervasive({dyad:real(function(y,x){return+(x>=y)})})),
+  '<':withIdentity(0,pervasive({dyad:real((y,x)=>+(x< y))})),
+  '>':withIdentity(0,pervasive({dyad:real((y,x)=>+(x> y))})),
+  '≤':withIdentity(1,pervasive({dyad:real((y,x)=>+(x<=y))})),
+  '≥':withIdentity(1,pervasive({dyad:real((y,x)=>+(x>=y))})),
 
   // 3≡3                    ←→ 1
   // 3≡,3                   ←→ 0
@@ -1018,11 +1011,11 @@ addVocabulary({
   // ≡2 2⍴⍳4                 ←→ 1
   // ≡"abc"1 2 3(23 55)      ←→ 2
   // ≡"abc"(2 4⍴"abc"2 3"k") ←→ 3
-  '≡':function(om,al){return al?A.bool[+match(om,al)]:new A([depthOf(om)],[])}
+  '≡':(om,al)=>al?A.bool[+match(om,al)]:new A([depthOf(om)],[])
 })
-function depthOf(x){
+const depthOf=x=>{
   if(!(x instanceof A)||!x.shape.length&&!(x.data[0]instanceof A))return 0
-  var r=0;each(x,function(y){r=Math.max(r,depthOf(y))});return r+1
+  var r=0;each(x,y=>{r=Math.max(r,depthOf(y))});return r+1
 }
 addVocabulary({
   // (÷∘-)2     ←→ ¯0.5
@@ -1033,21 +1026,21 @@ addVocabulary({
   // 3⍴∘⍴2 3⍴⍳6 ←→ 2 3 2
   // 3∘-1       ←→ 2
   // (-∘2)9     ←→ 7
-  '∘':conjunction(function(g,f){
+  '∘':conjunction((g,f)=>{
     if(typeof f==='function'){
       if(typeof g==='function'){
-        return function(om,al){return f(g(om),al)} // f∘g
+        return(om,al)=>f(g(om),al) // f∘g
       }else{
-        return function(om,al){al==null||syntaxError('The function does not take a left argument');return f(g,om)} // f∘B
+        return(om,al)=>{al==null||syntaxError('The function does not take a left argument');return f(g,om)} // f∘B
       }
     }else{
       assert(typeof g==='function')
-      return function(om,al){al==null||syntaxError('The function does not take a left argument');return g(om,f)} // A∘g
+      return(om,al)=>{al==null||syntaxError('The function does not take a left argument');return g(om,f)} // A∘g
     }
   })
 })
 addVocabulary({
-  '∪':function(om,al){
+  '∪':(om,al)=>{
     if(al){
       // 1 2∪2 3     ←→ 1 2 3
       // 'SHOCK'∪'CHOCOLATE' ←→ 'SHOCKLATE'
@@ -1063,24 +1056,24 @@ addVocabulary({
       // 2 3 3∪4 5 3 4 ←→ 2 3 3 4 5 4
       // 'lentils' 'bulghur'(3 4 5)∪'lentils' 'rice' ←→ 'lentils' 'bulghur'(3 4 5)'rice'
       if(al.shape.length>1||om.shape.length>1)rankError()
-      var a=al.toArray(),r=[];each(om,function(x){contains(a,x)||r.push(x)});return new A(a.concat(r))
+      var a=al.toArray(),r=[];each(om,x=>{contains(a,x)||r.push(x)});return new A(a.concat(r))
     }else{
       // ∪3 17 17 17 ¯3 17 0 ←→ 3 17 ¯3 0
       // ∪3 17               ←→ 3 17
       // ∪17                 ←→ ,17
       // ∪⍬                  ←→ ⍬
       if(om.shape.length>1)rankError()
-      var r=[];each(om,function(x){contains(r,x)||r.push(x)});return new A(r)
+      var r=[];each(om,x=>{contains(r,x)||r.push(x)});return new A(r)
     }
   },
-  '∩':function(om,al){
+  '∩':(om,al)=>{
     if(al){
       // 'ABRA'∩'CAR' ←→ 'ARA'
       // 1'PLUS'2∩⍳5  ←→ 1 2
       // 1∩2          ←→ ⍬
       // 1∩2 3⍴4      !!! RANK ERROR
       if(al.shape.length>1||om.shape.length>1)rankError()
-      var r=[],b=om.toArray();each(al,function(x){contains(b,x)&&r.push(x)})
+      var r=[],b=om.toArray();each(al,x=>{contains(b,x)&&r.push(x)})
       return new A(r)
     }else{
       // ∩1 !!! NONCE ERROR
@@ -1088,7 +1081,7 @@ addVocabulary({
     }
   }
 })
-function contains(a,x){for(var i=0;i<a.length;i++)if(match(x,a[i]))return 1}
+const contains=(a,x)=>{for(var i=0;i<a.length;i++)if(match(x,a[i]))return 1}
 addVocabulary({
   // 10⊥3 2 6 9                        ←→ 3269
   // 8⊥3 1                             ←→ 25
@@ -1130,7 +1123,7 @@ addVocabulary({
   // ...             0 1 10 11 100 101 110 111)
   // 2j3⊤4j5 6j7 8j9 ←→ 2j2 2j1 ¯1j2
   // 10⊥3 4.5j1 ←→ 34.5j1
-  '⊥':function(om,al){
+  '⊥':(om,al)=>{
     assert(al)
     if(!al.shape.length)al=new A([al.unwrap()])
     if(!om.shape.length)om=new A([om.unwrap()])
@@ -1149,7 +1142,7 @@ addVocabulary({
   }
 })
 addVocabulary({
-  '.':conjunction(function(g,f){return f===vocabulary['∘']?outerProduct(g):innerProduct(g,f)})
+  '.':conjunction((g,f)=>f===vocabulary['∘']?outerProduct(g):innerProduct(g,f))
 })
 // 2 3 4∘.×1 2 3 4 ←→ (3 4⍴2 4  6  8
 // ...                     3 6  9 12
@@ -1174,9 +1167,9 @@ addVocabulary({
 // 2 3∘.×4 5      ←→ 2 2⍴8 10 12 15
 // 2 3∘ . ×4 5    ←→ 2 2⍴8 10 12 15
 // 2 3∘.{⍺×⍵}4 5  ←→ 2 2⍴8 10 12 15
-function outerProduct(f){
+const outerProduct=f=>{
   assert(typeof f==='function')
-  return function(om,al){
+  return(om,al)=>{
     al||syntaxError('Adverb ∘. (Outer product) can be applied to dyadic verbs only')
     var a=al.toArray(),b=om.toArray(),data=[]
     for(var i=0;i<a.length;i++)for(var j=0;j<b.length;j++){
@@ -1203,9 +1196,9 @@ function outerProduct(f){
 // 8 8 7 7 8 7 5+.=7   ←→ 3
 // 7+.=7               ←→ 1
 // (3 2⍴5 ¯3 ¯2 4 ¯1 0)+.×2 2⍴6 ¯3 5 7 ←→ 3 2⍴15 ¯36 8 34 ¯6 3
-function innerProduct(g,f){
+const innerProduct=(g,f)=>{
   var F=vocabulary['¨'](reduce(f)),G=outerProduct(g)
-  return function(om,al){
+  return(om,al)=>{
     if(!al.shape.length)al=new A([al.unwrap()])
     if(!om.shape.length)om=new A([om.unwrap()])
     return F(G(
@@ -1227,17 +1220,17 @@ addVocabulary({
   // 2 3⍴¨1 2                       ←→ (1 1)(2 2 2)
   // 4 5⍴¨"THE" "CAT"               ←→ 'THET' 'CATCA'
   // {1+⍵*2}¨2 3⍴⍳6                 ←→ 2 3⍴1 2 5 10 17 26
-  '¨':adverb(function(f,g){
+  '¨':adverb((f,g)=>{
     assert(typeof f==='function');assert(g==null)
-    return function(om,al){
+    return(om,al)=>{
       if(!al){
-        return om.map(function(x){
+        return om.map(x=>{
           x instanceof A||(x=new A([x],[]))
           var r=f(x);assert(r instanceof A)
           return r.shape.length?r:r.unwrap()
         })
       }else if(arrayEquals(al.shape,om.shape)){
-        return om.map2(al, function(x, y) {
+        return om.map2(al,(x,y)=>{
           x instanceof A||(x=new A([x],[]))
           y instanceof A||(y=new A([y],[]))
           var r=f(x,y);assert(r instanceof A)
@@ -1245,14 +1238,14 @@ addVocabulary({
         })
       }else if(al.isSingleton()){
         var y=al.data[0]instanceof A?al.unwrap():al
-        return om.map(function(x){
+        return om.map(x=>{
           x instanceof A||(x=new A([x],[]))
           var r=f(x,y);assert(r instanceof A)
           return r.shape.length?r:r.unwrap()
         })
       }else if(om.isSingleton()){
         var x=om.data[0]instanceof A?om.unwrap():om
-        return al.map(function(y){
+        return al.map(y=>{
           y instanceof A||(y=new A([y],[]))
           var r=f(x,y);assert(r instanceof A)
           return r.shape.length?r:r.unwrap()
@@ -1297,7 +1290,7 @@ addVocabulary({
   // ...         1 1 4
   // ...         1 3 11)
   // 0j1 2j3 4j5⊤6j7 ←→ 0 ¯2j2 2j2
-  '⊤':function(om,al){
+  '⊤':(om,al)=>{
     assert(al)
     var a=al.toArray(),b=om.toArray(),shape=al.shape.concat(om.shape),data=Array(prod(shape))
     var n=al.shape.length?al.shape[0]:1,m=a.length/n
@@ -1313,12 +1306,12 @@ addVocabulary({
   }
 })
 addVocabulary({
-  '∊':function(om,al){
+  '∊':(om,al)=>{
     if(al){
       // 2 3 4 5 6∊1 2 3 5 8 13 21 ←→ 1 1 0 1 0
       // 5∊1 2 3 5 8 13 21         ←→ 1
       var b=om.toArray()
-      return al.map(function(x){
+      return al.map(x=>{
         for(var i=0;i<b.length;i++)if(match(x,b[i]))return 1
         return 0
       })
@@ -1330,7 +1323,7 @@ addVocabulary({
     }
   }
 })
-function enlist(x,r){x instanceof A?each(x,function(y){enlist(y,r)}):r.push(x)}
+const enlist=(x,r)=>{x instanceof A?each(x,y=>enlist(y,r)):r.push(x)}
 var Beta
 addVocabulary({
 
@@ -1345,9 +1338,9 @@ addVocabulary({
     // !¯200.5 ←→ 0
     // !¯1   !!! DOMAIN ERROR
     // !¯200 !!! DOMAIN ERROR
-    monad:real(function(x){
-      return!isInt(x)?Γ(x+1):x<0?domainError():x<smallFactorials.length?smallFactorials[x]:Math.round(Γ(x+1))
-    }),
+    monad:real(x=>
+      !isInt(x)?Γ(x+1):x<0?domainError():x<smallFactorials.length?smallFactorials[x]:Math.round(Γ(x+1))
+    ),
 
     // 2!4       ←→ 6
     // 3!20      ←→ 1140
@@ -1372,7 +1365,7 @@ addVocabulary({
     // ¯3!¯5 ←→ 0   #    1   1   1      0
     //
     // 0.5!¯1 !!! DOMAIN ERROR
-    dyad:Beta=real(function(n,k){
+    dyad:Beta=real((n,k)=>{
       var r;
       switch(256*negInt(k)+16*negInt(n)+negInt(n-k)){
         case 0x000:r=Math.exp(lnΓ(n+1)-lnΓ(k+1)-lnΓ(n-k+1))            ;break
@@ -1390,34 +1383,34 @@ addVocabulary({
 })
 
 
-function negInt(x){return isInt(x)&&x<0}
-var smallFactorials=[1];(function(){var x=1;for(var i=1;i<=25;i++)smallFactorials.push(x*=i)}())
+const negInt=x=>isInt(x)&&x<0
+var smallFactorials=[1];(_=>{var x=1;for(var i=1;i<=25;i++)smallFactorials.push(x*=i)})()
 
 var Γ,lnΓ
-;(function(){
-  var g=7
-  var p=[0.99999999999980993,676.5203681218851,-1259.1392167224028,771.32342877765313,-176.61502916214059,
-         12.507343278686905,-0.13857109526572012,9.9843695780195716e-6,1.5056327351493116e-7]
-  var g_ln=607/128
-  var p_ln=[0.99999999999999709182,57.156235665862923517,-59.597960355475491248,14.136097974741747174,
-            -0.49191381609762019978,0.33994649984811888699e-4,0.46523628927048575665e-4,-0.98374475304879564677e-4,
-            0.15808870322491248884e-3,-0.21026444172410488319e-3,0.21743961811521264320e-3,-0.16431810653676389022e-3,
-            0.84418223983852743293e-4,-0.26190838401581408670e-4,0.36899182659531622704e-5]
+;(_=>{
+  const g=7
+  const p=[0.99999999999980993,676.5203681218851,-1259.1392167224028,771.32342877765313,-176.61502916214059,
+           12.507343278686905,-0.13857109526572012,9.9843695780195716e-6,1.5056327351493116e-7]
+  const g_ln=607/128
+  const p_ln=[0.99999999999999709182,57.156235665862923517,-59.597960355475491248,14.136097974741747174,
+              -0.49191381609762019978,0.33994649984811888699e-4,0.46523628927048575665e-4,-0.98374475304879564677e-4,
+              0.15808870322491248884e-3,-0.21026444172410488319e-3,0.21743961811521264320e-3,-0.16431810653676389022e-3,
+              0.84418223983852743293e-4,-0.26190838401581408670e-4,0.36899182659531622704e-5]
   // Spouge approximation (suitable for large arguments)
-  lnΓ=function(z){
+  lnΓ=z=>{
     if(z<0)return NaN
     var x=p_ln[0];for(var i=p_ln.length-1;i>0;i--)x+=p_ln[i]/(z+i)
     var t=z+g_ln+.5
     return.5*Math.log(2*Math.PI)+(z+.5)*Math.log(t)-t+Math.log(x)-Math.log(z)
   }
-  Γ=function(z){
+  Γ=z=>{
     if(z<.5)return Math.PI/(Math.sin(Math.PI*z)*Γ(1-z))
     if(z>100)return Math.exp(lnΓ(z))
     z--;x=p[0];for(var i=1;i<g+2;i++)x+=p[i]/(z+i)
     t=z+g+.5
     return Math.sqrt(2*Math.PI)*Math.pow(t,z+.5)*Math.exp(-t)*x
   }
-}())
+})()
 addVocabulary({
   // ⍎'+/ 2 2 ⍴ 1 2 3 4'  ←→ 3 7
   // ⍴⍎'123 456'          ←→ ,2
@@ -1425,10 +1418,10 @@ addVocabulary({
   // ⍎'undefinedVariable' !!!
   // ⍎'1 2 (3'            !!!
   // ⍎123                 !!!
-  '⍎':function(om,al){return al?nonceError():exec(om.toSimpleString())}
+  '⍎':(om,al)=>al?nonceError():exec(om.toSimpleString())
 })
 addVocabulary({
-  '⍷':function(om,al){
+  '⍷':(om,al)=>{
     al||nonceError()
     // "AN"⍷"BANANA"                        ←→ 0 1 0 1 0 0
     // "BIRDS" "NEST"⍷"BIRDS" "NEST" "SOUP" ←→ 1 0 0
@@ -1511,7 +1504,7 @@ addVocabulary({
     monad:Z.floor,
     // 3⌊5 ←→ 3
     // ⌊/⍬ ←→ ¯
-    dyad:real(function(y,x){return Math.min(y,x)})
+    dyad:real((y,x)=>Math.min(y,x))
   })),
   '⌈':withIdentity(-Infinity,pervasive({
     // ⌈123   ←→ 123
@@ -1528,7 +1521,7 @@ addVocabulary({
     monad:Z.ceil,
     // 3⌈5 ←→ 5
     // ⌈/⍬ ←→ ¯¯
-    dyad:real(function(y,x){return Math.max(y,x)})
+    dyad:real((y,x)=>Math.max(y,x))
   }))
 })
 addVocabulary({
@@ -1543,15 +1536,15 @@ addVocabulary({
   //
   // (+,-,×,÷)2  ←→ 2 ¯2 1 .5
   // 1(+,-,×,÷)2 ←→ 3 ¯1 2 .5
-  _fork1:function(h,g){
+  _fork1:(h,g)=>{
     assert(typeof h==='function')
     assert(typeof g==='function')
     return[h,g]
   },
-  _fork2:function(hg,f){
+  _fork2:(hg,f)=>{
     var h=hg[0],g=hg[1]
     assert(typeof h==='function')
-    return function(b,a){return g(h(b,a),f(b,a))}
+    return(b,a)=>g(h(b,a),f(b,a))
   }
 })
 addVocabulary({
@@ -1579,11 +1572,11 @@ addVocabulary({
   // ⍕¯∞             ←→ 1 2⍴'¯∞'
   // ⍕¯1             ←→ 1 2⍴'¯1'
   // ⍕¯1e¯100J¯2e¯99 ←→ 1 14⍴'¯1e¯100J¯2e¯99'
-  '⍕':function(om,al){al&&nonceError();var t=format(om);return new A(t.join(''),[t.length,t[0].length])}
+  '⍕':(om,al)=>{al&&nonceError();var t=format(om);return new A(t.join(''),[t.length,t[0].length])}
 })
 
 // Format an APL object as an array of strings
-function format(a){
+const format=a=>{
   var t=typeof a
   if(a===null)return['null']
   if(t==='undefined')return['undefined']
@@ -1681,22 +1674,22 @@ addVocabulary({
   // ...   ←→ 6 4⍴'ABELABLEACESACREaBELaBLE'
   //
   // ⍋0 1 2 3 4 3 6 6 4 9 1 11 12 13 14 15 ←→ 0 1 10 2 3 5 4 8 6 7 9 11 12 13 14 15
-  '⍋':function(om,al){return grade(om,al,1)},
+  '⍋':(om,al)=>grade(om,al,1),
 
   // ⍒3 1 8 ←→ 2 0 1
-  '⍒':function(om,al){return grade(om,al,-1)}
+  '⍒':(om,al)=>grade(om,al,-1)
 })
 
 // Helper for ⍋ and ⍒
-function grade(om,al,direction){
+const grade=(om,al,direction)=>{
   var h={} // maps a character to its index in the collation
   if(al){
     al.shape.length||rankError()
-    each(al,function(x,indices){typeof x==='string'||domainError();h[x]=indices[indices.length-1]})
+    each(al,(x,indices)=>{typeof x==='string'||domainError();h[x]=indices[indices.length-1]})
   }
   om.shape.length||rankError()
   var r=[];for(var i=0;i<om.shape[0];i++)r.push(i)
-  return new A(r.sort(function(i,j){
+  return new A(r.sort((i,j)=>{
     var p=om.offset,indices=repeat([0],om.shape.length)
     while(1){
       var x=om.data[p+i*om.stride[0]],tx=typeof x
@@ -1722,17 +1715,17 @@ addVocabulary({
   // f←{⍺+2×⍵} ⋄ g←f⍁789 ⋄ f/⍬ !!! DOMAIN ERROR
   // {}⍁1 2                    !!! RANK ERROR
   // ({}⍁(1 1 1⍴123))/⍬        ←→ 123
-  '⍁':conjunction(function(f,x){
+  '⍁':conjunction((f,x)=>{
     if(f instanceof A){var h=f;f=x;x=h}
     assert(typeof f==='function')
     assert(x instanceof A)
     x.isSingleton()||rankError()
     if(x.shape.length)x=A.scalar(x.unwrap())
-    return withIdentity(x,function(om,al,axis){return f(om,al,axis)})
+    return withIdentity(x,(om,al,axis)=>f(om,al,axis))
   })
 })
 addVocabulary({
-  '⍳':function(om,al){
+  '⍳':(om,al)=>{
     if(al){
       // 2 5 9 14 20⍳9                           ←→ 2
       // 2 5 9 14 20⍳6                           ←→ 5
@@ -1748,9 +1741,9 @@ addVocabulary({
       // ⍬⍳123 234                               ←→ 0 0
       // 123 234⍳⍬                               ←→ ⍬
       al.shape.length===1||rankError()
-      return om.map(function(x){
+      return om.map(x=>{
         var rank=al.shape
-        try{each(al,function(y,indices){if(match(x,y)){rank=indices;throw'break'}})}
+        try{each(al,(y,indices)=>{if(match(x,y)){rank=indices;throw'break'}})}
         catch(e){if(e!=='break')throw e}
         return rank.length===1?rank[0]:new A(rank)
       })
@@ -1809,7 +1802,7 @@ addVocabulary({
   // ⊃⊂[1 0]2 3⍴⍳6 ←→ 3 2⍴0 3 1 4 2 5
   // ⍴⊂[1 0]2 3⍴⍳6 ←→ ⍬
   // ⍴⊃⊂⊂1 2 3     ←→ ⍬
-  '⊂':function(om,al,axes){
+  '⊂':(om,al,axes)=>{
     assert(!al)
     if(axes==null){
       axes=[];for(var i=0;i<om.shape.length;i++)axes.push(i)
@@ -1817,13 +1810,13 @@ addVocabulary({
       axes=getAxisList(axes,om.shape.length)
     }
     if(om.isSimple())return om
-    var unitShape =axes.map(function(k){return om.shape [k]})
-    var unitStride=axes.map(function(k){return om.stride[k]})
+    var unitShape =axes.map(k=>om.shape [k])
+    var unitStride=axes.map(k=>om.stride[k])
     var resultAxes=[];for(var k=0;k<om.shape.length;k++)axes.indexOf(k)<0&&resultAxes.push(k)
-    var shape =resultAxes.map(function(k){return om.shape [k]})
-    var stride=resultAxes.map(function(k){return om.stride[k]})
+    var shape =resultAxes.map(k=>om.shape [k])
+    var stride=resultAxes.map(k=>om.stride[k])
     var data=[]
-    each(new A(om.data,shape,stride,om.offset),function(x,indices,p){data.push(new A(om.data,unitShape,unitStride,p))})
+    each(new A(om.data,shape,stride,om.offset),(x,indices,p)=>{data.push(new A(om.data,unitShape,unitStride,p))})
     return new A(data,shape)
   }
 })
@@ -1831,7 +1824,7 @@ addVocabulary({
   '~': pervasive({
     // ~0 1 ←→ 1 0
     // ~2   !!! DOMAIN ERROR
-    monad:function(x){return+!bool(x)}
+    monad:x=>+!bool(x)
   }),
   '∨':withIdentity(0,pervasive({
     // 1∨1               ←→ 1
@@ -1855,7 +1848,7 @@ addVocabulary({
     // 135j¯14∨155j34    ←→ 5j12
     // 2 3 4∨0j1 1j2 2j3 ←→ 1 1 1
     // 2j2 2j4∨5j5 4j4   ←→ 1j1 2
-    dyad:function(y,x){
+    dyad:(y,x)=>{
       if(!Z.isint(x)||!Z.isint(y))domainError('∨ is implemented only for Gaussian integers')
       return Z.gcd(x,y)
     }
@@ -1885,7 +1878,7 @@ addVocabulary({
     // 135j¯14∧155j34                 ←→ 805j¯1448
     // 2 3 4∧0j1 1j2 2j3              ←→ 0j2 3j6 8j12
     // 2j2 2j4∧5j5 4j4                ←→ 10j10 ¯4j12
-    dyad:function(y,x){
+    dyad:(y,x)=>{
       if(!Z.isint(x)||!Z.isint(y))domainError('∧ is implemented only for Gaussian integers')
       return Z.lcm(x,y)
     }
@@ -1895,13 +1888,13 @@ addVocabulary({
   // 1⍱0 ←→ 0
   // 1⍱1 ←→ 0
   // 0⍱2 !!! DOMAIN ERROR
-  '⍱':pervasive({dyad:real(function(y,x){return+!(bool(x)|bool(y))})}),
+  '⍱':pervasive({dyad:real((y,x)=>+!(bool(x)|bool(y)))}),
   // 0⍲0 ←→ 1
   // 0⍲1 ←→ 1
   // 1⍲0 ←→ 1
   // 1⍲1 ←→ 0
   // 0⍲2 !!! DOMAIN ERROR
-  '⍲':pervasive({dyad:real(function(y,x){return+!(bool(x)&bool(y))})})
+  '⍲':pervasive({dyad:real((y,x)=>+!(bool(x)&bool(y)))})
 })
 addVocabulary({
   // ({⍵+1}⍣5) 3 ←→ 8
@@ -1910,10 +1903,10 @@ addVocabulary({
   // 'a'(,⍣3)'b' ←→ 'aaab'
   // 1{⍺+÷⍵}⍣=1 ←→ 1.618033988749895
   // c←0 ⋄ 5⍣{c←c+1}0 ⋄ c ←→ 5
-  '⍣':conjunction(function(g,f){
+  '⍣':conjunction((g,f)=>{
     if(f instanceof A&&typeof g==='function'){var h=f;f=g;g=h}else{assert(typeof f==='function')}
     if(typeof g==='function'){
-      return function(om,al){
+      return(om,al)=>{
         while(1){
           var om1=f(om,al)
           if(g(om,om1).toBool())return om
@@ -1922,7 +1915,7 @@ addVocabulary({
       }
     }else{
       var n=g.toInt(0)
-      return function(om,al){
+      return(om,al)=>{
         for(var i=0;i<n;i++)om=f(om,al)
         return om
       }
@@ -1930,27 +1923,27 @@ addVocabulary({
   })
 })
 addVocabulary({
-  'get_⎕':cps(function(_,_1,_2,callback){
+  'get_⎕':cps((_,_1,_2,callback)=>{
     if(typeof window!=='undefined'&&typeof window.prompt==='function'){
-      setTimeout(function(){callback(exec(prompt('⎕:')||''))},0)
+      setTimeout(_=>{callback(exec(prompt('⎕:')||''))},0)
     }else{
       process.stdout.write('⎕:\n')
-      readline('      ',function(line){callback(exec(new A(line).toSimpleString()))})
+      readline('      ',line=>{callback(exec(new A(line).toSimpleString()))})
     }
   }),
-  'set_⎕': function(x) {
+  'set_⎕':x=>{
     var s=format(x).join('\n')+'\n'
     if(typeof window!=='undefined'&&typeof window.alert==='function'){window.alert(s)}else{process.stdout.write(s)}
     return x
   },
-  'get_⍞':cps(function(_,_1,_2,callback){
+  'get_⍞':cps((_,_1,_2,callback)=>{
     if(typeof window!=='undefined'&&typeof window.prompt==='function'){
-      setTimeout(function(){callback(new A(prompt('')||''))},0)
+      setTimeout(_=>{callback(new A(prompt('')||''))},0)
     }else{
-      readline('',function(line){callback(new A(line))})
+      readline('',line=>{callback(new A(line))})
     }
   }),
-  'set_⍞':function(x){
+  'set_⍞':x=>{
     var s=format(x).join('\n')
     if(typeof window!=='undefined'&&typeof window.alert==='function'){window.alert(s)}else{process.stdout.write(s)}
     return x
@@ -1961,15 +1954,15 @@ addVocabulary({
   // ⎕IO   ←→ 0
   // ⎕IO←0 ←→ 0
   // ⎕IO←1 !!!
-  'get_⎕IO':function(){return A.zero},
-  'set_⎕IO':function(x){if(match(x,A.zero)){return x}else{domainError('The index origin (⎕IO) is fixed at 0')}},
-  '⎕DL':cps(function(om,al,_,callback){
-    var t0=+new Date;setTimeout(function(){callback(new A([new Date-t0]))},om.unwrap())
+  'get_⎕IO':_=>A.zero,
+  'set_⎕IO':x=>{if(match(x,A.zero)){return x}else{domainError('The index origin (⎕IO) is fixed at 0')}},
+  '⎕DL':cps((om,al,_,callback)=>{
+    var t0=+new Date;setTimeout(_=>{callback(new A([new Date-t0]))},om.unwrap())
   }),
   // 'b(c+)d'⎕RE'abcd' ←→ 1 'bcd' (,'c')
   // 'B(c+)d'⎕RE'abcd' ←→ ⍬
   // 'a(b'   ⎕RE'c'           !!! DOMAIN ERROR
-  '⎕RE':function(om,al){
+  '⎕RE':(om,al)=>{
     var x=al.toSimpleString(),y=om.toSimpleString()
     try{var re=RegExp(x)}catch(e){domainError(e.toString())}
     var m=re.exec(y)
@@ -1980,16 +1973,16 @@ addVocabulary({
   // ⎕UCS'a' ←→ 97
   // ⎕UCS'ab' ←→ 97 98
   // ⎕UCS 2 2⍴97+⍳4 ←→ 2 2⍴'abcd'
-  '⎕UCS':function(om,al){
+  '⎕UCS':(om,al)=>{
     al&&nonceError()
-    return om.map(function(x){
-      return isInt(x,0,0x10000)?String.fromCharCode(x):typeof x==='string'?x.charCodeAt(0):domainError()
-    })
+    return om.map(x=>
+      isInt(x,0,0x10000)?String.fromCharCode(x):typeof x==='string'?x.charCodeAt(0):domainError()
+    )
   },
-  'get_⎕OFF':function(){typeof process==='undefined'&&nonceError();process.exit(0)}
+  'get_⎕OFF':_=>{typeof process==='undefined'&&nonceError();process.exit(0)}
 })
 addVocabulary({
-  '?':function(om,al){return al?deal(om,al):roll(om)}
+  '?':(om,al)=>al?deal(om,al):roll(om)
 })
 
 // n←6 ⋄ r←?n ⋄ (0≤r)∧(r<n) ←→ 1
@@ -1999,7 +1992,7 @@ addVocabulary({
 // ?'a' !!! DOMAIN ERROR
 // ?1j2 !!! DOMAIN ERROR
 // ?∞   !!! DOMAIN ERROR
-var roll=pervasive({monad:function(om){isInt(om,1)||domainError();return Math.floor(Math.random()*om)}})
+var roll=pervasive({monad:om=>{isInt(om,1)||domainError();return Math.floor(Math.random()*om)}})
 
 // n←100 ⋄ (+/n?n)=(+/⍳n) ←→ 1 # a permutation (an "n?n" dealing) contains all 0...n
 // n←100 ⋄ A←(n÷2)?n ⋄ ∧/(0≤A),A<n ←→ 1 # any number x in a dealing is 0 <= x < n
@@ -2009,7 +2002,7 @@ var roll=pervasive({monad:function(om){isInt(om,1)||domainError();return Math.fl
 // 1?1 1 !!! LENGTH ERROR
 // 5?3   !!! DOMAIN ERROR
 // ¯1?3  !!! DOMAIN ERROR
-function deal(om,al){
+const deal=(om,al)=>{
   al=al.unwrap();om=om.unwrap()
   isInt(om,0)&&isInt(al,0,om+1)||domainError()
   var r=Array(om);for(var i=0;i<om;i++)r[i]=i
@@ -2018,10 +2011,10 @@ function deal(om,al){
 }
 addVocabulary({
   // ↗'CUSTOM ERROR' !!! CUSTOM ERROR
-  '↗':function(om){aplError(om.toString())}
+  '↗':om=>aplError(om.toString())
 })
 addVocabulary({
-  '⍴':function(om,al){
+  '⍴':(om,al)=>{
     if(al){
       // ⍴1 2 3⍴0  ←→ 1 2 3
       // ⍴⍴1 2 3⍴0 ←→ ,3
@@ -2043,7 +2036,7 @@ addVocabulary({
       }else{
         var data=[]
         try{
-          each(om,function(x){
+          each(om,x=>{
             if(data.length>=n)throw'break'
             data.push(x)
           })
@@ -2073,7 +2066,7 @@ addVocabulary({
 })
 var rotate
 addVocabulary({
-  '⌽': rotate = function(om, al, axis) {
+  '⌽':rotate=(om,al,axis)=>{
     assert(typeof axis==='undefined'||axis instanceof A)
     if(al){
       // 1⌽1 2 3 4 5 6             ←→ 2 3 4 5 6 1
@@ -2128,12 +2121,12 @@ addVocabulary({
   // ⊖    2 5⍴1 2 3 4 5 6 7 8 9 0 ←→ 2 5⍴6 7 8 9 0 1 2 3 4 5
   // ⊖[1] 2 5⍴1 2 3 4 5 6 7 8 9 0 ←→ 2 5⍴5 4 3 2 1 0 9 8 7 6
   // 1⊖3 3⍴⍳9 ←→ 3 3⍴3 4 5 6 7 8 0 1 2
-  '⊖':function(om,al,axis){return rotate(om,al,axis||A.zero)}
+  '⊖':(om,al,axis)=>rotate(om,al,axis||A.zero)
 })
 var reduce
 addVocabulary({
-  '⌿':adverb(function(om,al,axis){return reduce(om,al,axis||A.zero)}),
-  '/':reduce=adverb(function(om,al,axis){
+  '⌿':adverb((om,al,axis)=>reduce(om,al,axis||A.zero)),
+  '/':reduce=adverb((om,al,axis)=>{
     if(typeof om==='function'){
       // +/3                    ←→ 3
       // +/3 5 8                ←→ 16
@@ -2153,7 +2146,7 @@ addVocabulary({
       assert(typeof f==='function')
       assert(typeof g==='undefined')
       assert(typeof axis0==='undefined'||axis0 instanceof A)
-      return function(om, al){
+      return(om,al)=>{
         if(!om.shape.length)om=new A([om.unwrap()])
         axis=axis0?axis0.toInt():om.shape.length-1
         0<=axis&&axis<om.shape.length||rankError()
@@ -2274,8 +2267,8 @@ addVocabulary({
   // (1 2)0⌷3 4⍴11 12 13 14 21 22 23 24 31 32 33 34 ←→ 21 31
   // a←2 2⍴0 ⋄ a[;0]←1 ⋄ a ←→ 2 2⍴1 0 1 0
   // a←2 3⍴0 ⋄ a[1;0 2]←1 ⋄ a ←→ 2 3⍴0 0 0 1 0 1
-  '⌷':squish=function(om,al,axes){
-    if(typeof om==='function')return function(x,y){return om(x,y,al)}
+  '⌷':squish=(om,al,axes)=>{
+    if(typeof om==='function')return(x,y)=>om(x,y,al)
     al||nonceError()
     al.shape.length>1&&rankError()
     var a=al.toArray();a.length>om.shape.length&&lengthError()
@@ -2325,7 +2318,7 @@ addVocabulary({
   // " X"[(3 3⍴⍳9)∊1 3 6 7 8] ←→ 3 3⍴(' X ',
   // ...                              'X  ',
   // ...                              'XXX')
-  _index:function(alphaAndAxes,om){
+  _index:(alphaAndAxes,om)=>{
     var h=alphaAndAxes.toArray(),al=h[0],axes=h[1]
     return squish(om,al,axes)
   },
@@ -2346,8 +2339,8 @@ addVocabulary({
   // a←1 2 3 ⋄ a[⍬]←4 ⋄ a ←→ 1 2 3
   // a←3 3⍴⍳9 ⋄ a[⍬;1 2]←789 ⋄ a ←→ 3 3⍴⍳9
   // a←1 2 3 ⋄ a[]←4 5 6 ⋄ a ←→ 4 5 6
-  _substitute:function(args){
-    var h=args.toArray().map(function(x){return x instanceof A?x:new A([x],[])})
+  _substitute:args=>{
+    var h=args.toArray().map(x=>x instanceof A?x:new A([x],[]))
     var value=h[0],al=h[1],om=h[2],axes=h[3]
 
     al.shape.length>1&&rankError()
@@ -2364,7 +2357,7 @@ addVocabulary({
     var subs=squish(vocabulary['⍳'](new A(om.shape)),al,new A(axes))
     if(value.isSingleton())value=new A([value],subs.shape,repeat([0],subs.shape.length))
     var data=om.toArray(),stride=strideForShape(om.shape)
-    each2(subs,value,function(u,v){
+    each2(subs,value,(u,v)=>{
       if(v instanceof A&&!v.shape.length)v=v.unwrap()
       if(u instanceof A){
         var p=0,ua=u.toArray()
@@ -2378,7 +2371,7 @@ addVocabulary({
   }
 })
 
-function indexAtSingleAxis(om,sub,ax){
+const indexAtSingleAxis=(om,sub,ax)=>{
   assert(om instanceof A&&sub instanceof A&&isInt(ax)&&0<=ax&&ax<om.shape.length)
   var u=sub.toArray(),n=om.shape[ax]
   for(var i=0;i<u.length;i++){isInt(u[i])||domainError();0<=u[i]&&u[i]<n||indexError()}
@@ -2396,7 +2389,7 @@ function indexAtSingleAxis(om,sub,ax){
     var shape1=om.shape.slice(0);shape1.splice(ax,1)
     var stride1=om.stride.slice(0);stride1.splice(ax,1)
     var data=[]
-    each(sub,function(x){
+    each(sub,x=>{
       var chunk=new A(om.data,shape1,stride1,om.offset+x*om.stride[ax])
       data.push.apply(data,chunk.toArray())
     })
@@ -2411,7 +2404,7 @@ function indexAtSingleAxis(om,sub,ax){
   }
 }
 addVocabulary({
-  '↑':function(om,al){return al?take(om,al):first(om)}
+  '↑':(om,al)=>al?take(om,al):first(om)
 })
 
 // 5↑'ABCDEFGH'     ←→ 'ABCDE'
@@ -2437,7 +2430,7 @@ addVocabulary({
 // ¯2↑3 3⍴⍳9        ←→ 2 3⍴3+⍳6
 // 4↑3 3⍴⍳9         ←→ 4 3⍴(⍳9),0 0 0
 // ⍬↑3 3⍴⍳9         ←→ 3 3⍴⍳9
-function take(om,al){
+const take=(om,al)=>{
   al.shape.length<=1||rankError()
   if(!om.shape.length)om=new A([om.unwrap()],al.shape.length?repeat([1],al.shape[0]):[1])
   var a=al.toArray()
@@ -2480,7 +2473,7 @@ function take(om,al){
 //! ↑''             ←→ ' '
 function first(om){var x=om.empty()?om.getPrototype():om.data[om.offset];return x instanceof A?x:new A([x],[])}
 addVocabulary({
-  '⍉':function(om,al){
+  '⍉':(om,al)=>{
     if(al){
       // (2 2⍴⍳4)⍉2 2 2 2⍴⍳16 !!! RANK ERROR
       // 0⍉3 5 8 ←→ 3 5 8
@@ -2530,14 +2523,14 @@ addVocabulary({
 addVocabulary({
   //  ({'monadic'}⍠{'dyadic'})0 ←→ 'monadic'
   // 0({'monadic'}⍠{'dyadic'})0 ←→ 'dyadic'
-  '⍠':conjunction(function(f,g){
+  '⍠':conjunction((f,g)=>{
     assert(typeof f==='function')
     assert(typeof g==='function')
-    return function(om,al,axis){return(al?f:g)(om,al,axis)}
+    return(om,al,axis)=>(al?f:g)(om,al,axis)
   })
 })
-var NOUN=1,VERB=2,ADV=3,CONJ=4
-function exec(s,o){ // s:APL code, o:options
+const NOUN=1,VERB=2,ADV=3,CONJ=4
+const exec=(s,o)=>{ // s:APL code, o:options
   o=o||{}
   var ast=parse(s,o),code=compileAST(ast,o),env=[prelude.env[0].slice(0)]
   for(var k in ast.vars)env[0][ast.vars[k].slot]=o.ctx[k]
@@ -2549,29 +2542,28 @@ function exec(s,o){ // s:APL code, o:options
   }
   return r
 }
-function repr(x){
-  return x===null||['string','number','boolean'].indexOf(typeof x)>=0?JSON.stringify(x):
-         x instanceof Array?'['+x.map(repr).join(',')+']':
-         x.repr?x.repr():
-         '{'+Object.keys(x).map(function(k){return repr(k)+':'+repr(x[k])}).join(',')+'}'
-}
-function compileAST(ast,o){
+const repr=x=>
+  x===null||['string','number','boolean'].indexOf(typeof x)>=0?JSON.stringify(x):
+  x instanceof Array?'['+x.map(repr).join(',')+']':
+  x.repr?x.repr():
+  '{'+Object.keys(x).map(k=>repr(k)+':'+repr(x[k])).join(',')+'}'
+const compileAST=(ast,o)=>{
   o=o||{}
   ast.scopeDepth=0
   ast.nSlots=prelude.nSlots
   ast.vars=Object.create(prelude.vars)
   o.ctx=o.ctx||Object.create(vocabulary)
   for(var key in o.ctx)if(!ast.vars[key]){
-    var value=o.ctx[key]
-    var varInfo=ast.vars[key]={category:NOUN,slot:ast.nSlots++,scopeDepth:ast.scopeDepth}
+    const value=o.ctx[key]
+    const varInfo=ast.vars[key]={category:NOUN,slot:ast.nSlots++,scopeDepth:ast.scopeDepth}
     if(typeof value==='function'||value instanceof Proc){
       varInfo.category=value.adv?ADV:value.conj?CONJ:VERB
       if(/^[gs]et_.*/.test(key))ast.vars[key.slice(4)]={category:NOUN}
     }
   }
-  function err(node,message){syntaxError({message:message,file:o.file,offset:node.offset,aplCode:o.aplCode})}
+  const err=(node,message)=>{syntaxError({message:message,file:o.file,offset:node.offset,aplCode:o.aplCode})}
   assert(VERB<ADV&&ADV<CONJ)//we are relying on this ordering below
-  function categorizeLambdas(node){
+  const categorizeLambdas=node=>{
     switch(node[0]){
       case'B':case':':case'←':case'[':case'{':case'.':case'⍬':
         var r=VERB;for(var i=1;i<node.length;i++)if(node[i])r=Math.max(r,categorizeLambdas(node[i]))
@@ -2585,7 +2577,7 @@ function compileAST(ast,o){
   var queue=[ast] // accumulates"body"nodes we encounter on the way
   while(queue.length){
     var scopeNode=queue.shift(),vars=scopeNode.vars
-    function visit(node){
+    const visit=node=>{
       node.scopeNode=scopeNode
       switch(node[0]){
         case':':var r=visit(node[1]);visit(node[2]);return r
@@ -2682,7 +2674,7 @@ function compileAST(ast,o){
       }
       assert(0)
     }
-    function visitLHS(node,rhsCategory){
+    const visitLHS=(node,rhsCategory)=>{
       node.scopeNode=scopeNode
       switch(node[0]){
         case'X':
@@ -2710,7 +2702,7 @@ function compileAST(ast,o){
     }
     for(var i=1;i<scopeNode.length;i++)visit(scopeNode[i])
   }
-  function render(node){
+  const render=node=>{
     switch(node[0]){
       case'B':
         if(node.length===1){
@@ -2790,15 +2782,15 @@ function compileAST(ast,o){
         // ¯∞j¯∞ ←→ ¯¯j¯¯
         // ∞∞ ←→ ¯ ¯
         // ∞¯ ←→ ¯ ¯
-        var a=node[1].replace(/[¯∞]/g,'-').split(/j/i).map(function(x){
-          return x==='-'?Infinity:x==='--'?-Infinity:x.match(/^-?0x/i)?parseInt(x,16):parseFloat(x)
-        })
+        var a=node[1].replace(/[¯∞]/g,'-').split(/j/i).map(x=>
+          x==='-'?Infinity:x==='--'?-Infinity:x.match(/^-?0x/i)?parseInt(x,16):parseFloat(x)
+        )
         var v=a[1]?new Z(a[0],a[1]):a[0]
         return[LDC,new A([v],[])]
       case'J':
         // 123 + «456 + 789» ←→ 1368
-        var f=Function('return function(_w,_a){return('+node[1].replace(/^«|»$/g,'')+')}')()
-        return[EMB,function(_w,_a){return aplify(f(_w,_a))}]
+        var f=Function('return(_w,_a)=>('+node[1].replace(/^«|»$/g,'')+')')()
+        return[EMB,(_w,_a)=>aplify(f(_w,_a))]
       case'[':
         // ⍴ x[⍋x←6?40] ←→ ,6
         var v=node.scopeNode.vars._index,axes=[],a=[],c
@@ -2812,7 +2804,7 @@ function compileAST(ast,o){
         for(var i=1;i<node.length;i++){
           var f=render(node[i]);fragments.push(f);if(f.length!==2||f[0]!==LDC)areAllConst=0
         }
-        return areAllConst?[LDC,new A(fragments.map(function(f){return f[1].isSimple()?f[1].unwrap():f[1]}))]
+        return areAllConst?[LDC,new A(fragments.map(f=>f[1].isSimple()?f[1].unwrap():f[1]))]
                          :[].concat.apply([],fragments).concat([VEC,node.length-1])
       case'⍬':return[LDC,A.zilde]
       case'M':return render(node[2]).concat(render(node[1]),MON)
@@ -2833,7 +2825,7 @@ function compileAST(ast,o){
       default:assert(0)
     }
   }
-  function renderLHS(node){
+  const renderLHS=node=>{
     switch(node[0]){
       case'X':
         var name=node[1],vars=node.scopeNode.vars,v=vars['set_'+name]
@@ -2862,46 +2854,46 @@ function compileAST(ast,o){
   }
   return render(ast)
 }
-;(function(){
+;(_=>{
   var env=prelude.env=[[]]
   for(var k in prelude.vars)env[0][prelude.vars[k].slot]=vocabulary[k]
   vm({code:prelude.code,env:env})
   for(var k in prelude.vars)vocabulary[k]=env[0][prelude.vars[k].slot]
-}())
-function aplify(x){
+})()
+const aplify=x=>{
   if(typeof x==='string')return x.length===1?A.scalar(x):new A(x)
   if(typeof x==='number')return A.scalar(x)
-  if(x instanceof Array)return new A(x.map(function(y){y=aplify(y);return y.shape.length?y:y.unwrap()}))
+  if(x instanceof Array)return new A(x.map(y=>{y=aplify(y);return y.shape.length?y:y.unwrap()}))
   if(x instanceof A)return x
   aplError('Cannot aplify object:'+x)
 }
-var apl=this.apl=function(aplCode,opts){return(apl.ws(opts))(aplCode)}
+var apl=this.apl=(aplCode,opts)=>apl.ws(opts)(aplCode)
 extend(apl,{format:format,approx:approx,parse:parse,compileAST:compileAST,repr:repr})
-apl.ws=function(opts){
+apl.ws=opts=>{
   opts=opts||{}
   ctx=Object.create(vocabulary)
-  if(opts.in )ctx['get_⎕']=ctx['get_⍞']=function(){var s=opts.in();assert(typeof s==='string');return new A(s)}
-  if(opts.out)ctx['set_⎕']=ctx['set_⍞']=function(x){opts.out(format(x).join('\n')+'\n')}
-  return function(aplCode){return exec(aplCode,{ctx:ctx})}
+  if(opts.in )ctx['get_⎕']=ctx['get_⍞']=_=>{var s=opts.in();assert(typeof s==='string');return new A(s)}
+  if(opts.out)ctx['set_⎕']=ctx['set_⍞']=x=>{opts.out(format(x).join('\n')+'\n')}
+  return aplCode=>exec(aplCode,{ctx:ctx})
 }
-function readline(prompt,f){
+const readline=(prompt,f)=>{
   ;(readline.requesters=readline.requesters||[]).push(f)
   var rl=readline.rl
   if(!rl){
     rl=readline.rl=require('readline').createInterface(process.stdin,process.stdout)
-    rl.on('line',function(x){var h=readline.requesters.pop();h&&h(x)})
-    rl.on('close',function(){process.stdout.write('\n');process.exit(0)})
+    rl.on('line',x=>{var h=readline.requesters.pop();h&&h(x)})
+    rl.on('close',_=>{process.stdout.write('\n');process.exit(0)})
   }
   rl.setPrompt(prompt);rl.prompt()
 }
 if(typeof module!=='undefined'){
   module.exports=apl
-  if(module===require.main)(function(){
+  if(module===require.main)(_=>{
     var usage='Usage: apl.js [options] [filename.apl]\n'+
               'Options:\n'+
               '  -l --linewise   Process stdin line by line and disable prompt\n'
     var file,linewise
-    process.argv.slice(2).forEach(function(arg){
+    process.argv.slice(2).forEach(arg=>{
       if(arg==='-h'||arg==='--help'){process.stderr.write(usage);process.exit(0)}
       else if(arg==='-l'||arg=='--linewise')linewise=1
       else if(arg[0]==='-'){process.stderr.write('unrecognized option:'+arg+'\n'+usage);process.exit(1)}
@@ -2929,12 +2921,12 @@ if(typeof module!=='undefined'){
       while(k=fs.readSync(0,b,n,b.length-n)){n+=k;n===b.length&&b.copy(b=Buffer(2*n))} // read all of stdin
       exec(b.toString('utf8',0,n))
     }else{
-      var ws=apl.ws(),out=process.stdout
-      function f(s){
+      const ws=apl.ws(),out=process.stdout
+      const f=s=>{
         try{s.match(/^[\ \t\f\r\n]*$/)||out.write(format(ws(s)).join('\n')+'\n')}catch(e){out.write(e+'\n')}
         readline('      ',f)
       }
       f('')
     }
-  }())
+  })()
 }
