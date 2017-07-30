@@ -1328,7 +1328,7 @@ const deal=(om,al)=>{
 }
 
 // ↗'CUSTOM ERROR' !!! CUSTOM ERROR
-voc['↗']=om=>err(om.toString())
+voc['↗']=om=>err(toSimpleString(om))
 
 voc['⍴']=(om,al)=>{
   if(al){

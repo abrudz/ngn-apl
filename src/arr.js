@@ -1,6 +1,5 @@
 const A=(data,shape,stride,offset)=>{
-  const x={isA:1, data:data, shape:shape||[data.length], stride:stride, offset:offset||0,
-           toString:function(){return format(this).join('\n')}}
+  const x={isA:1, data:data, shape:shape||[data.length], stride:stride, offset:offset||0}
   x.stride=x.stride||strideForShape(x.shape)
   asrt(x.data.length!=null);asrt(x.shape.length!=null);asrt(x.stride.length===x.shape.length)
   asrt(!x.data.length||isInt(x.offset,0,x.data.length))
