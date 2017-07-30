@@ -11,8 +11,8 @@ const voc={}
       case 11:        var r=h.dyad(x,y);typeof r==='number'&&r!==r&&domErr();return r
       case 12:case 13:return map(y,yi=>f2(x,yi))
       case 21:case 31:return map(x,xi=>f2(xi,y))
-      case 23:        xi=x.data[x.offset];return map(y,yi=>f2(xi,yi))
-      case 32:case 22:yi=y.data[y.offset];return map(x,xi=>f2(xi,yi))
+      case 23:        const xi=x.data[x.offset];return map(y,yi=>f2(xi,yi))
+      case 32:case 22:const yi=y.data[y.offset];return map(x,xi=>f2(xi,yi))
       case 33:        x.shape.length!==y.shape.length&&rnkErr();x.shape!=''+y.shape&&lenErr();return map2(x,y,f2)
       default:        asrt(0)
     }
@@ -136,7 +136,7 @@ voc['÷']=withId(1,perv({
 voc['*']=withId(1,perv({
   // *2   ←→ 7.38905609893065
   // *2j3 ←→ ¯7.315110094901103J1.0427436562359045
-  monad:exp=numeric(Math.exp,Z.exp),
+  monad:numeric(Math.exp,Z.exp),
   // 2*3 ←→ 8
   // 3*2 ←→ 9
   // ¯2*3 ←→ ¯8
@@ -214,7 +214,7 @@ voc['\\']=adv((om,al,axis)=>{
         x.isA||(x=A.scalar(x))
         for(var j=0,nj=indices[axis];j<nj;j++){
           p-=om.stride[axis]
-          y=om.data[p]
+          var y=om.data[p]
           y.isA||(y=A.scalar(y))
           x=f(x,y)
         }
@@ -805,7 +805,7 @@ voc['!']=withId(1,perv({
   //
   // 0.5!¯1 !!! DOMAIN ERROR
   dyad:Beta=real((n,k)=>{
-    var r;
+    var r
     switch(256*negInt(k)+16*negInt(n)+negInt(n-k)){
       case 0x000:r=Math.exp(lnΓ(n+1)-lnΓ(k+1)-lnΓ(n-k+1))            ;break
       case 0x001:r=0                                                 ;break
@@ -842,8 +842,8 @@ var Γ,lnΓ
   Γ=z=>{
     if(z<.5)return Math.PI/(Math.sin(Math.PI*z)*Γ(1-z))
     if(z>100)return Math.exp(lnΓ(z))
-    z--;x=p[0];for(var i=1;i<g+2;i++)x+=p[i]/(z+i)
-    t=z+g+.5
+    z--;var x=p[0];for(var i=1;i<g+2;i++)x+=p[i]/(z+i)
+    var t=z+g+.5
     return Math.sqrt(2*Math.PI)*Math.pow(t,z+.5)*Math.exp(-t)*x
   }
 })()
@@ -1323,7 +1323,7 @@ const deal=(om,al)=>{
   al=unwrap(al);om=unwrap(om)
   isInt(om,0)&&isInt(al,0,om+1)||domErr()
   var r=Array(om);for(var i=0;i<om;i++)r[i]=i
-  for(var i=0;i<al;i++){var j=i+Math.floor(Math.random()*(om-i));h=r[i];r[i]=r[j];r[j]=h}
+  for(var i=0;i<al;i++){var j=i+Math.floor(Math.random()*(om-i));const h=r[i];r[i]=r[j];r[j]=h}
   return A(r.slice(0,al))
 }
 
@@ -1746,7 +1746,7 @@ const take=(om,al)=>{
     if(prod(copyShape)){
       var copyIndices=repeat([0],copyShape.length)
       while(1){
-        data[q]=om.data[p];axis=copyShape.length-1
+        data[q]=om.data[p];var axis=copyShape.length-1
         while(axis>=0&&copyIndices[axis]+1===copyShape[axis]){
           p-=copyIndices[axis]*om.stride[axis];q-=copyIndices[axis]*stride[axis];copyIndices[axis--]=0
         }

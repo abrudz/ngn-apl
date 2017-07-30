@@ -55,12 +55,12 @@ Z.tan=x=>Z.negitimes(Z.tanh(Z.itimes(x)))
 // arctan x = (i/2) (ln(1-ix) - ln(1+ix))
 Z.asin=x=>{x=Zify(x);return Z.negitimes(Z.log(Z.add(Z.itimes(x),Z.sqrt(Z.subtract(1,Z.pow(x,2))))))}
 Z.acos=x=>{
-  x=Zify(x);r=Z.negitimes(Z.log(Z.add(x,Z.sqrt(Z.subtract(Z.pow(x,2),1)))))
+  x=Zify(x);const r=Z.negitimes(Z.log(Z.add(x,Z.sqrt(Z.subtract(Z.pow(x,2),1)))))
   // TODO look up the algorithm for determining the sign of arccos; the following line is dubious
   return r instanceof Z&&(r.re<0||(r.re===0&&r.im<0))?Z.negate(r):r
 }
 Z.atan=x=>{
-  x=Zify(x);ix=Z.itimes(x)
+  x=Zify(x);const ix=Z.itimes(x)
   return Z.multiply(new Z(0,.5),Z.subtract(Z.log(Z.subtract(1,ix)),Z.log(Z.add(1,ix))))
 }
 
