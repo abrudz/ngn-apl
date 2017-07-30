@@ -1332,10 +1332,10 @@ voc['↗']=om=>err(toSimpleString(om))
 
 voc['⍴']=(om,al)=>{
   if(al){
+    // 2 5⍴¨⊂1 2 3 ←→ (1 2)(1 2 3 1 2)
     // ⍴1 2 3⍴0  ←→ 1 2 3
     // ⍴⍴1 2 3⍴0 ←→ ,3
-    // 3 3⍴⍳4    ←→ 3 3⍴0 1 2 3 0 1 2 3 0
-    // ⍴3 3⍴⍳4   ←→ 3 3
+    // 2 3⍴⍳5    ←→ 2 3⍴0 1 2 3 4 0
     // ⍬⍴123     ←→ 123
     // ⍬⍴⍬       ←→ 0
     // 2 3⍴⍬     ←→ 2 3⍴0
@@ -1343,29 +1343,22 @@ voc['⍴']=(om,al)=>{
     al.shape.length<=1||rnkErr()
     var a=toArray(al),n=prod(a)
     for(var i=0;i<a.length;i++)isInt(a[i],0)||domErr
-    if(!n){
-      return A([],a)
-    }else if(a.length>=om.shape.length&&arrEq(om.shape,a.slice(a.length-om.shape.length))){
-      // If ⍺ is only prepending axes to ⍴⍵, we can reuse the .data array
-      return A(om.data,a,repeat([0],a.length-om.shape.length).concat(om.stride),om.offset)
-    }else{
-      var data=[]
-      try{
-        each(om,x=>{
-          if(data.length>=n)throw'break'
-          data.push(x)
-        })
-      }catch(e){
-        if(e!=='break')throw e
-      }
-      if(data.length){
-        while(2*data.length<n)data=data.concat(data)
-        if(data.length!==n)data=data.concat(data.slice(0,n-data.length))
-      }else{
-        data=repeat([getPrototype(om)],n)
-      }
-      return A(data,a)
+    var data=[]
+    try{
+      each(om,x=>{
+        if(data.length>=n)throw'break'
+        data.push(x)
+      })
+    }catch(e){
+      if(e!=='break')throw e
     }
+    if(data.length){
+      while(2*data.length<n)data=data.concat(data)
+      if(data.length!==n)data=data.concat(data.slice(0,n-data.length))
+    }else{
+      data=repeat([getPrototype(om)],n)
+    }
+    return A(data,a)
   }else{
     // ⍴0       ←→ 0⍴0
     // ⍴0 0     ←→ 1⍴2
