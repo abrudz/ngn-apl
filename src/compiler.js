@@ -245,9 +245,7 @@ const NOUN=1,VERB=2,ADV=3,CONJ=4
         // ¯∞j¯∞ ←→ ¯¯j¯¯
         // ∞∞ ←→ ¯ ¯
         // ∞¯ ←→ ¯ ¯
-        var a=node[1].replace(/[¯∞]/g,'-').split(/j/i).map(x=>
-          x==='-'?Infinity:x==='--'?-Infinity:x.match(/^-?0x/i)?parseInt(x,16):parseFloat(x)
-        )
+        var a=node[1].replace(/[¯∞]/g,'-').split(/j/i).map(x=>x==='-'?Infinity:x==='--'?-Infinity:parseFloat(x))
         var v=a[1]?new Z(a[0],a[1]):a[0]
         return[LDC,A([v],[])]
       case'J':
