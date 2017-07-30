@@ -382,23 +382,18 @@ voc['○']=perv({
 })
 voc[',']=(om,al,axis)=>{
   if(al){
-    // 10,66←→10 66
-    // '10 ','MAY ','1985'←→'10 MAY 1985'
-    // (2 3⍴⍳6),2 2⍴⍳4     ←→ 2 5⍴(0 1 2 0 1  3 4 5 2 3)
-    // (3 2⍴⍳6),2 2⍴⍳4     !!! LENGTH ERROR
-    // (2 3⍴⍳6),9          ←→ 2 4⍴(0 1 2 9  3 4 5 9)
-    // (2 3 4⍴⍳24),99←→2 3 5⍴0 1 2 3 99 4 5 6 7 99 8 9 10 11 99 12 13 14 15 99 16 17 18 19 99 20 21 22 23 99
-    // ⍬,⍬                 ←→ ⍬
-    // ⍬,1                 ←→ ,1
-    // 1,⍬                 ←→ ,1
+    // 10,66 ←→ 10 66
+    // 'ab','c','def' ←→ 'abcdef'
+    // (2 3⍴⍳6),2 2⍴⍳4 ←→ 2 5⍴0 1 2 0 1 3 4 5 2 3
+    // (3 2⍴⍳6),2 2⍴⍳4 !!! LENGTH ERROR
+    // (2 3⍴⍳6),9 ←→ 2 4⍴0 1 2 9 3 4 5 9
+    // (2 3 4⍴⍳24),99 ←→ 2 3 5⍴0 1 2 3 99 4 5 6 7 99 8 9 10 11 99 12 13 14 15 99 16 17 18 19 99 20 21 22 23 99
+    // ⍬,⍬ ←→ ⍬
+    // ⍬,1 ←→ ,1
+    // 1,⍬ ←→ ,1
     var nAxes=Math.max(al.shape.length,om.shape.length)
-    if(axis){
-      axis=unwrap(axis)
-      typeof axis!=='number'&&domErr()
-      nAxes&&!(-1<axis&&axis<nAxes)&&rnkErr()
-    }else{
-      axis=nAxes-1
-    }
+    if(axis){axis=unwrap(axis);typeof axis!=='number'&&domErr();nAxes&&!(-1<axis&&axis<nAxes)&&rnkErr()}
+    else{axis=nAxes-1}
 
     if(!al.shape.length&&!om.shape.length){
       return A([unwrap(al),unwrap(om)])
@@ -483,9 +478,7 @@ var eq
 // 123j0               ←→ 123
 // 2j¯3+¯2j3           ←→ 0
 // =/⍬                 ←→ 1
-voc['=']=withId(1,perv({dyad:eq=(y,x)=>
-  +(x instanceof Z&&y instanceof Z?x.re===y.re&&x.im===y.im:x===y)
-})),
+voc['=']=withId(1,perv({dyad:eq=(y,x)=>+(x instanceof Z&&y instanceof Z?x.re===y.re&&x.im===y.im:x===y)})),
 
 // 3≢5 ←→ 1
 // 8≠8 ←→ 0
@@ -531,16 +524,9 @@ const depthOf=x=>{
 // 3∘-1       ←→ 2
 // (-∘2)9     ←→ 7
 voc['∘']=conj((g,f)=>{
-  if(typeof f==='function'){
-    if(typeof g==='function'){
-      return(om,al)=>f(g(om),al) // f∘g
-    }else{
-      return(om,al)=>{al==null||synErr();return f(g,om)} // f∘B
-    }
-  }else{
-    asrt(typeof g==='function')
-    return(om,al)=>{al==null||synErr();return g(om,f)} // A∘g
-  }
+  if(typeof f==='function'){if(typeof g==='function'){return(om,al)=>f(g(om),al)}      // f∘g
+                            else{return(om,al)=>{al==null||synErr();return f(g,om)}}}  // f∘B
+  else{asrt(typeof g==='function');return(om,al)=>{al==null||synErr();return g(om,f)}} // A∘g
 })
 
 voc['∪']=(om,al)=>{
@@ -648,12 +634,7 @@ const outerProduct=f=>{
     return A(data,al.shape.concat(om.shape))
   }
 }
-// For matrices, the inner product behaves like matrix multiplication where +
-// and × can be substituted with any verbs.
-//
-// For higher dimensions, the general formula is:
-// A f.g B   <->   f/¨ (⊂[¯1+⍴⍴A]A) ∘.g ⊂[0]B
-//
+
 // (1 3 5 7)+.=2 3 6 7 ←→ 2
 // (1 3 5 7)∧.=2 3 6 7 ←→ 0
 // (1 3 5 7)∧.=1 3 5 7 ←→ 1
@@ -661,16 +642,12 @@ const outerProduct=f=>{
 // 8 8 7 7 8 7 5+.=7   ←→ 3
 // 7+.=7               ←→ 1
 // (3 2⍴5 ¯3 ¯2 4 ¯1 0)+.×2 2⍴6 ¯3 5 7 ←→ 3 2⍴15 ¯36 8 34 ¯6 3
-const innerProduct=(g,f)=>{
+const innerProduct=(g,f)=>{ // A f.g B <-> f/¨(⊂[¯1+⍴⍴A]A)∘.g⊂[0]B
   var F=voc['¨'](voc['/'](f)),G=outerProduct(g)
-  return(om,al)=>{
-    if(!al.shape.length)al=A([unwrap(al)])
-    if(!om.shape.length)om=A([unwrap(om)])
-    return F(G(
-      voc['⊂'](om,undefined,A([0])),
-      voc['⊂'](al,undefined,A([al.shape.length-1]))
-    ))
-  }
+  return(om,al)=>{if(!al.shape.length)al=A([unwrap(al)])
+                  if(!om.shape.length)om=A([unwrap(om)])
+                  return F(G(voc['⊂'](om,undefined,A([0])),
+                             voc['⊂'](al,undefined,A([al.shape.length-1]))))}
 }
 
 // ⍴¨(0 0 0 0)(0 0 0)             ←→ (,4)(,3)
@@ -829,9 +806,9 @@ var Γ,lnΓ
       12.507343278686905,-0.13857109526572012,9.9843695780195716e-6,1.5056327351493116e-7]
   ,g_ln=607/128
   ,p_ln=[0.99999999999999709182,57.156235665862923517,-59.597960355475491248,14.136097974741747174,
-              -0.49191381609762019978,0.33994649984811888699e-4,0.46523628927048575665e-4,-0.98374475304879564677e-4,
-              0.15808870322491248884e-3,-0.21026444172410488319e-3,0.21743961811521264320e-3,-0.16431810653676389022e-3,
-              0.84418223983852743293e-4,-0.26190838401581408670e-4,0.36899182659531622704e-5]
+         -0.49191381609762019978,0.33994649984811888699e-4,0.46523628927048575665e-4,-0.98374475304879564677e-4,
+         0.15808870322491248884e-3,-0.21026444172410488319e-3,0.21743961811521264320e-3,-0.16431810653676389022e-3,
+         0.84418223983852743293e-4,-0.26190838401581408670e-4,0.36899182659531622704e-5]
   // Spouge approximation (suitable for large arguments)
   lnΓ=z=>{
     if(z<0)return NaN
@@ -875,7 +852,7 @@ voc['⍷']=(om,al)=>{
   // (2 3 4⍴0)⍷(3 4 0⍴0) ←→ 3 4 0⍴0
   // (2 3 0⍴0)⍷(3 4 0⍴0) ←→ 3 4 0⍴0
   if(al.shape.length>om.shape.length)return A([0],om.shape,repeat([0],om.shape.length))
-  if(al.shape.length < om.shape.length){
+  if(al.shape.length<om.shape.length){
     al=A( // prepend ones to the shape of ⍺
       al.data,
       repeat([1],om.shape.length-al.shape.length).concat(al.shape),
@@ -903,16 +880,9 @@ voc['⍷']=(om,al)=>{
 }
 
 voc['⌊']=withId(Infinity,perv({
-  // ⌊123   ←→ 123
-  // ⌊12.3  ←→ 12
-  // ⌊¯12.3 ←→ ¯13
-  // ⌊¯123  ←→ ¯123
-  // ⌊'a'   !!! DOMAIN ERROR
-  // ⌊12j3      ←→ 12j3
-  // ⌊1.2j2.3   ←→ 1j2
-  // ⌊1.2j¯2.3  ←→ 1j¯3
-  // ⌊¯1.2j2.3  ←→ ¯1j2
-  // ⌊¯1.2j¯2.3 ←→ ¯1j¯3
+  // ⌊123 12.3 ¯12.3 ¯123 ←→ 123 12 ¯13 ¯123
+  // ⌊'a' !!! DOMAIN ERROR
+  // ⌊12j3 1.2j2.3 1.2j¯2.3 ¯1.2j2.3 ¯1.2j¯2.3 ←→ 12j3 1j2 1j¯3 ¯1j2 ¯1j¯3
   // ⌊0 5 ¯5 (○1) ¯1.5 ←→ 0 5 ¯5 3 ¯2
   monad:Z.floor,
   // 3⌊5 ←→ 3
@@ -921,16 +891,9 @@ voc['⌊']=withId(Infinity,perv({
 }))
 
 voc['⌈']=withId(-Infinity,perv({
-  // ⌈123   ←→ 123
-  // ⌈12.3  ←→ 13
-  // ⌈¯12.3 ←→ ¯12
-  // ⌈¯123  ←→ ¯123
+  // ⌈123 12.3 ¯12.3 ¯123 ←→ 123 13 ¯12 ¯123
   // ⌈'a'   !!! DOMAIN ERROR
-  // ⌈12j3      ←→ 12j3
-  // ⌈1.2j2.3   ←→ 1j3
-  // ⌈1.2j¯2.3  ←→ 1j¯2
-  // ⌈¯1.2j2.3  ←→ ¯1j3
-  // ⌈¯1.2j¯2.3 ←→ ¯1j¯2
+  // ⌈12j3 1.2j2.3 1.2j¯2.3 ¯1.2j2.3 ¯1.2j¯2.3 ←→ 12j3 1j3 1j¯2 ¯1j3 ¯1j¯2
   // ⌈0 5 ¯5(○1)¯1.5 ←→ 0 5 ¯5 4 ¯1
   monad:Z.ceil,
   // 3⌈5 ←→ 5
@@ -943,16 +906,8 @@ voc['⌈']=withId(-Infinity,perv({
 // a←1 ⋄ b←¯22 ⋄ c←85 ⋄ √←{⍵*.5} ⋄ ((-b)(+,-)√(b*2)-4×a×c)÷2×a ←→ 17 5
 // (+,-,×,÷)2  ←→ 2 ¯2 1 .5
 // 1(+,-,×,÷)2 ←→ 3 ¯1 2 .5
-voc._fork1=(h,g)=>{
-  asrt(typeof h==='function')
-  asrt(typeof g==='function')
-  return[h,g]
-}
-voc._fork2=(hg,f)=>{
-  var h=hg[0],g=hg[1]
-  asrt(typeof h==='function')
-  return(b,a)=>g(h(b,a),f(b,a))
-}
+voc._fork1=(h,g)=>{asrt(typeof h==='function');asrt(typeof g==='function');return[h,g]}
+voc._fork2=(hg,f)=>{var h=hg[0],g=hg[1];asrt(typeof h==='function');return(b,a)=>g(h(b,a),f(b,a))}
 
 // ⍕123            ←→ 1 3⍴'123'
 // ⍕123 456        ←→ 1 7⍴'123 456'
@@ -972,8 +927,7 @@ voc._fork2=(hg,f)=>{
 // ⍕¯1e¯100J¯2e¯99 ←→ 1 14⍴'¯1e¯100J¯2e¯99'
 voc['⍕']=(om,al)=>{al&&nyiErr();var t=format(om);return A(t.join(''),[t.length,t[0].length])}
 
-// Format an APL object as an array of strings
-const format=a=>{
+const format=a=>{ // as array of strings
   var t=typeof a
   if(a===null)return['null']
   if(t==='undefined')return['undefined']
@@ -1047,11 +1001,8 @@ const format=a=>{
 // a←6 4⍴"ABLEaBLEACREABELaBELACES" ⋄ a[("AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz")⍋a;] ←→ 6 4⍴'ABELABLEACESACREaBELaBLE'
 // ⍋0 1 2 3 4 3 6 6 4 9 1 11 12 13 14 15 ←→ 0 1 10 2 3 5 4 8 6 7 9 11 12 13 14 15
 voc['⍋']=(om,al)=>grade(om,al,1),
-
 // ⍒3 1 8 ←→ 2 0 1
 voc['⍒']=(om,al)=>grade(om,al,-1)
-
-// Helper for ⍋ and ⍒
 const grade=(om,al,dir)=>{
   var h={} // maps a character to its index in the collation
   if(al){
