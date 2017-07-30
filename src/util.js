@@ -11,10 +11,6 @@ const asrt=x=>{if(!x)throw Error('assertion failed')}
   var m=n*x.length;while(x.length*2<m)x=x.concat(x)
   return x.concat(x.slice(0,m-x.length))
 }
-,spread=(x,i,m,n)=>{ // repeat the pattern x[i...i+m] so it covers x[i...i+n]
-  if(x instanceof Array){for(var j=m;j<n;j++)x[i+j]=x[i+j%m]}
-  else{x=x.subarray(i,i+n);while(2*m<n){x.set(x.subarray(0,m),m);m*=2};x.set(x.subarray(0,n-m),m)}
-}
 ,arrEq=(x,y)=>{
   if(x.length!==y.length)return 0
   for(var i=0;i<x.length;i++)if(x[i]!==y[i])return 0

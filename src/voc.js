@@ -1127,32 +1127,12 @@ voc['⍳']=(om,al)=>{
     // ⍳¯1 !!! DOMAIN ERROR
     om.shape.length<=1||rnkErr()
     var a=toArray(om);for(var i=0;i<a.length;i++)isInt(a[i],0)||domErr()
-    var n=prod(a),data
-    if(!n){
-      data=[]
-    }else if(a.length===1){
-      data=n<=0x100      ?new Uint8Array (n):
-           n<=0x10000    ?new Uint16Array(n):
-           n<=0x100000000?new Uint32Array(n):
-           domErr()
-      for(var i=0;i<n;i++)data[i]=i
-    }else{
-      var m=Math.max.apply(Math,a)
-      var ctor=m<=0x100      ?Uint8Array :
-               m<=0x10000    ?Uint16Array:
-               m<=0x100000000?Uint32Array:
-               domErr()
-      var itemData=new ctor(n*a.length)
-      var u=n
-      for(var i=0;i<a.length;i++){
-        u/=a[i];p=n*i
-        for(var j=0;j<a[i];j++){itemData[p]=j;spread(itemData,p,1,u);p+=u}
-        spread(itemData,n*i,a[i]*u,n)
-      }
-      data=[]
-      var itemShape=[a.length],itemStride=[n]
-      for(var i=0;i<n;i++)data.push(new A(itemData,itemShape,itemStride,i))
+    var n=prod(a),m=a.length,data,r=new Float64Array(n*m),p=1,q=n
+    for(var i=0;i<m;i++){
+      var ai=a[i],u=i-m;q/=a[i];for(var j=0;j<p;j++)for(var k=0;k<ai;k++)for(var l=0;l<q;l++)r[u+=m]=k
+      p*=ai
     }
+    if(m===1){data=r}else{data=Array(n);for(var i=0;i<n;i++)data[i]=new A(r.slice(m*i,m*i+m))}
     return new A(data,a)
   }
 }
