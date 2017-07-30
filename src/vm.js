@@ -52,7 +52,7 @@ const LDC=1,VEC=2,GET=3,SET=4,MON=5,DYA=6,LAM=7,RET=8,POP=9,SPL=10,JEQ=11,EMB=12
       case SPL:
         var n=code[pc++]
         var a=toArray(stk[stk.length-1]).reverse()
-        for(var i=0;i<a.length;i++)if(!(a[i]instanceof A))a[i]=new A([a[i]],[])
+        for(var i=0;i<a.length;i++)if(!(a[i].isA))a[i]=new A([a[i]],[])
         if(a.length===1){a=repeat(a,n)}else if(a.length!==n){lenErr()}
         stk.push.apply(stk,a)
         break

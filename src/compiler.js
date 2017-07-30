@@ -321,7 +321,7 @@ const NOUN=1,VERB=2,ADV=3,CONJ=4
   if(typeof x==='string')return x.length===1?A.scalar(x):new A(x)
   if(typeof x==='number')return A.scalar(x)
   if(x instanceof Array)return new A(x.map(y=>{y=aplify(y);return y.shape.length?y:unwrap(y)}))
-  if(x instanceof A)return x
+  if(x.isA)return x
   err('Cannot aplify object:'+x)
 }
 var prelude

@@ -1,12 +1,12 @@
 const voc={}
 ,perv=h=>{
   var f1=!h.monad?nyiErr:x=>{
-    if(x instanceof A)return map(x,f1)
+    if(x.isA)return map(x,f1)
     var r=h.monad(x);typeof r==='number'&&r!==r&&domErr();return r
   }
   var f2=!h.dyad?nyiErr:(x,y)=>{
-    var tx=x instanceof A?(isSingleton(x)?20:30):10
-    var ty=y instanceof A?(isSingleton(y)? 2: 3): 1
+    var tx=x.isA?(isSingleton(x)?20:30):10
+    var ty=y.isA?(isSingleton(y)? 2: 3): 1
     switch(tx+ty){ // todo: use the larger shape when tx=10 and ty=1
       case 11:        var r=h.dyad(x,y);typeof r==='number'&&r!==r&&domErr();return r
       case 12:case 13:return map(y,yi=>f2(x,yi))
@@ -17,17 +17,17 @@ const voc={}
       default:        asrt(0)
     }
   }
-  return(om,al)=>{asrt(om instanceof A);asrt(!al||al instanceof A);return(al?f2:f1)(om,al)}
+  return(om,al)=>{asrt(om.isA);asrt(!al||al.isA);return(al?f2:f1)(om,al)}
 }
 ,real=f=>(x,y,axis)=>typeof x!=='number'||y!=null&&typeof y!=='number'?domErr():f(x,y,axis)
 ,numeric=(f,g)=>(x,y,axis)=>
   (typeof x!=='number'||y!=null&&typeof y!=='number'?g(Zify(x),y==null?y:Zify(y),axis):f(x,y,axis))
 ,match=(x,y)=>{
-  if(x instanceof A){
-    if(!(y instanceof A)||x.shape!=''+y.shape)return 0
+  if(x.isA){
+    if(!(y.isA)||x.shape!=''+y.shape)return 0
     var r=1;each2(x,y,(xi,yi)=>{r&=match(xi,yi)});return r
   }else{
-    if(y instanceof A)return 0
+    if(y.isA)return 0
     if(x instanceof Z&&y instanceof Z)return x.re===y.re&&x.im===y.im
     return x===y
   }
@@ -36,13 +36,13 @@ const voc={}
 ,approx=(x,y)=>{
   // approx() is like match(), but it is tolerant to precision errors;
   // used for comparing expected and actual results in doctests
-  if(x instanceof A){
-    if(!(y instanceof A))return 0
+  if(x.isA){
+    if(!(y.isA))return 0
     if(x.shape.length!==y.shape.length)return 0
     if(x.shape!=''+y.shape)return 0
     var r=1;each2(x,y,(xi,yi)=>{r&=approx(xi,yi)});return r
   }else{
-    if(y instanceof A)return 0
+    if(y.isA)return 0
     if(x==null||y==null)return 0
     if(typeof x==='number')x=new Z(x)
     if(typeof y==='number')y=new Z(y)
@@ -54,10 +54,10 @@ const voc={}
 ,getAxisList=(axes,rank)=>{
   asrt(isInt(rank,0))
   if(axes==null)return[]
-  asrt(axes instanceof A)
+  asrt(axes.isA)
   if(axes.shape.length!==1||axes.shape[0]!==1)synErr() // [sic]
   var a=unwrap(axes)
-  if(a instanceof A){
+  if(a.isA){
     a=toArray(a)
     for(var i=0;i<a.length;i++){
       isInt(a[i],0,rank)||domErr()
@@ -70,7 +70,7 @@ const voc={}
     domErr()
   }
 }
-,withId=(x,f)=>{f.identity=x instanceof A?x:A.scalar(x);return f}
+,withId=(x,f)=>{f.identity=x.isA?x:A.scalar(x);return f}
 ,adv =f=>{f.adv =1;return f}
 ,conj=f=>{f.conj=1;return f}
 ,cps =f=>{f.cps =1;return f}
@@ -211,11 +211,11 @@ voc['\\']=adv((om,al,axis)=>{
       if(!om.shape.length)return om
       axis=axis?toInt(axis,0,om.shape.length):om.shape.length-1
       return map(om,(x,indices,p)=>{
-        x instanceof A||(x=A.scalar(x))
+        x.isA||(x=A.scalar(x))
         for(var j=0,nj=indices[axis];j<nj;j++){
           p-=om.stride[axis]
           y=om.data[p]
-          y instanceof A||(y=A.scalar(y))
+          y.isA||(y=A.scalar(y))
           x=f(x,y)
         }
         x.shape.length||(x=unwrap(x))
@@ -518,7 +518,7 @@ voc['≥']=withId(1,perv({dyad:real((y,x)=>+(x>=y))})),
 voc['≡']=(om,al)=>al?A.bool[+match(om,al)]:new A([depthOf(om)],[])
 
 const depthOf=x=>{
-  if(!(x instanceof A)||!x.shape.length&&!(x.data[0]instanceof A))return 0
+  if(!(x.isA)||!x.shape.length&&!(x.data[0].isA))return 0
   var r=0;each(x,y=>{r=Math.max(r,depthOf(y))});return r+1
 }
 
@@ -639,8 +639,8 @@ const outerProduct=f=>{
     var a=toArray(al),b=toArray(om),data=[]
     for(var i=0;i<a.length;i++)for(var j=0;j<b.length;j++){
       var x=a[i],y=b[j]
-      x instanceof A||(x=A.scalar(x))
-      y instanceof A||(y=A.scalar(y))
+      x.isA||(x=A.scalar(x))
+      y.isA||(y=A.scalar(y))
       var z=f(y,x)
       z.shape.length||(z=unwrap(z))
       data.push(z)
@@ -690,29 +690,29 @@ voc['¨']=adv((f,g)=>{
   return(om,al)=>{
     if(!al){
       return map(om,x=>{
-        x instanceof A||(x=new A([x],[]))
-        var r=f(x);asrt(r instanceof A)
+        x.isA||(x=new A([x],[]))
+        var r=f(x);asrt(r.isA)
         return r.shape.length?r:unwrap(r)
       })
     }else if(arrEq(al.shape,om.shape)){
       return map2(om,al,(x,y)=>{
-        x instanceof A||(x=new A([x],[]))
-        y instanceof A||(y=new A([y],[]))
-        var r=f(x,y);asrt(r instanceof A)
+        x.isA||(x=new A([x],[]))
+        y.isA||(y=new A([y],[]))
+        var r=f(x,y);asrt(r.isA)
         return r.shape.length?r:unwrap(r)
       })
     }else if(isSingleton(al)){
-      var y=al.data[0]instanceof A?unwrap(al):al
+      var y=al.data[0].isA?unwrap(al):al
       return map(om,x=>{
-        x instanceof A||(x=new A([x],[]))
-        var r=f(x,y);asrt(r instanceof A)
+        x.isA||(x=new A([x],[]))
+        var r=f(x,y);asrt(r.isA)
         return r.shape.length?r:unwrap(r)
       })
     }else if(isSingleton(om)){
-      var x=om.data[0]instanceof A?unwrap(om):om
+      var x=om.data[0].isA?unwrap(om):om
       return map(al,y=>{
-        y instanceof A||(y=new A([y],[]))
-        var r=f(x,y);asrt(r instanceof A)
+        y.isA||(y=new A([y],[]))
+        var r=f(x,y);asrt(r.isA)
         return r.shape.length?r:unwrap(r)
       })
     }else{
@@ -764,7 +764,7 @@ voc['∊']=(om,al)=>{
   }
 }
 
-const enlist=(x,r)=>{x instanceof A?each(x,y=>enlist(y,r)):r.push(x)}
+const enlist=(x,r)=>{x.isA?each(x,y=>enlist(y,r)):r.push(x)}
 var Beta
 voc['!']=withId(1,perv({
 
@@ -980,7 +980,7 @@ const format=a=>{
   if(t==='string')return[a]
   if(t==='number'){var r=[fmtNum(a)];r.align='right';return r}
   if(t==='function')return['#procedure']
-  if(!(a instanceof A))return[''+a]
+  if(!(a.isA))return[''+a]
   if(empty(a))return['']
 
   var sa=a.shape
@@ -998,7 +998,7 @@ const format=a=>{
       var c=cols[j],x=a[nCols*i+j],box=format(x)
       r.height=Math.max(r.height,box.length)
       c.width=Math.max(c.width,box[0].length)
-      c.type=Math.max(c.type,typeof x==='string'&&x.length===1?0:x instanceof A?2:1)
+      c.type=Math.max(c.type,typeof x==='string'&&x.length===1?0:x.isA?2:1)
       gridRow.push(box)
     }
   }
@@ -1087,9 +1087,9 @@ const grade=(om,al,direction)=>{
 // {}⍁1 2                    !!! RANK ERROR
 // ({}⍁(1 1 1⍴123))/⍬        ←→ 123
 voc['⍁']=conj((f,x)=>{
-  if(f instanceof A){var h=f;f=x;x=h}
+  if(f.isA){var h=f;f=x;x=h}
   asrt(typeof f==='function')
-  asrt(x instanceof A)
+  asrt(x.isA)
   isSingleton(x)||rnkErr()
   if(x.shape.length)x=A.scalar(unwrap(x))
   return withId(x,(om,al,axis)=>f(om,al,axis))
@@ -1227,7 +1227,7 @@ voc['⍲']=perv({dyad:real((y,x)=>+!(bool(x)&bool(y)))})
 // 1{⍺+÷⍵}⍣=1 ←→ 1.618033988749895
 // c←0 ⋄ 5⍣{c←c+1}0 ⋄ c ←→ 5
 voc['⍣']=conj((g,f)=>{
-  if(f instanceof A&&typeof g==='function'){var h=f;f=g;g=h}else{asrt(typeof f==='function')}
+  if(f.isA&&typeof g==='function'){var h=f;f=g;g=h}else{asrt(typeof f==='function')}
   if(typeof g==='function'){
     return(om,al)=>{
       while(1){
@@ -1380,7 +1380,7 @@ voc['⍴']=(om,al)=>{
 }
 
 voc['⌽']=(om,al,axis)=>{
-  asrt(typeof axis==='undefined'||axis instanceof A)
+  asrt(typeof axis==='undefined'||axis.isA)
   if(al){
     // 1⌽1 2 3 4 5 6             ←→ 2 3 4 5 6 1
     // 3⌽'ABCDEFGH'              ←→ 'DEFGHABC'
@@ -1457,7 +1457,7 @@ voc['/']=adv((om,al,axis)=>{
     var f=om,g=al,axis0=axis
     asrt(typeof f==='function')
     asrt(typeof g==='undefined')
-    asrt(typeof axis0==='undefined'||axis0 instanceof A)
+    asrt(typeof axis0==='undefined'||axis0.isA)
     return(om,al)=>{
       if(!om.shape.length)om=new A([unwrap(om)])
       axis=axis0?toInt(axis0):om.shape.length-1
@@ -1482,15 +1482,15 @@ voc['/']=adv((om,al,axis)=>{
       var data=[],indices=repeat([0],shape.length),p=om.offset
       while(1){
         if(isBackwards){
-          var x=om.data[p];x instanceof A||(x=A.scalar(x))
+          var x=om.data[p];x.isA||(x=A.scalar(x))
           for(var i=1;i<n;i++){
-            var y=om.data[p+i*om.stride[axis]];y instanceof A||(y=A.scalar(y))
+            var y=om.data[p+i*om.stride[axis]];y.isA||(y=A.scalar(y))
             x=f(x,y)
           }
         }else{
-          var x=om.data[p+(n-1)*om.stride[axis]];x instanceof A||(x=A.scalar(x))
+          var x=om.data[p+(n-1)*om.stride[axis]];x.isA||(x=A.scalar(x))
           for(var i=n-2;i>=0;i--){
-            var y=om.data[p+i*om.stride[axis]];y instanceof A||(y=A.scalar(y))
+            var y=om.data[p+i*om.stride[axis]];y.isA||(y=A.scalar(y))
             x=f(x,y)
           }
         }
@@ -1598,7 +1598,7 @@ voc['⌷']=(om,al,axes)=>{
   }
   var r=om
   for(var i=a.length-1;i>=0;i--){
-    var u=a[i]instanceof A?a[i]:new A([a[i]],[])
+    var u=a[i].isA?a[i]:new A([a[i]],[])
     r=indexAtSingleAxis(r,u,axes[i])
   }
   return r
@@ -1641,7 +1641,7 @@ voc._index=(alphaAndAxes,om)=>{
 // a←3 3⍴⍳9 ⋄ a[⍬;1 2]←789 ⋄ a ←→ 3 3⍴⍳9
 // a←1 2 3 ⋄ a[]←4 5 6 ⋄ a ←→ 4 5 6
 voc._substitute=args=>{
-  var h=toArray(args).map(x=>x instanceof A?x:new A([x],[]))
+  var h=toArray(args).map(x=>x.isA?x:new A([x],[]))
   var value=h[0],al=h[1],om=h[2],axes=h[3]
   al.shape.length>1&&rnkErr()
   var a=toArray(al);a.length>om.shape.length&&lenErr()
@@ -1656,8 +1656,8 @@ voc._substitute=args=>{
   if(isSingleton(value))value=new A([value],subs.shape,repeat([0],subs.shape.length))
   var data=toArray(om),stride=strideForShape(om.shape)
   each2(subs,value,(u,v)=>{
-    if(v instanceof A&&!v.shape.length)v=unwrap(v)
-    if(u instanceof A){
+    if(v.isA&&!v.shape.length)v=unwrap(v)
+    if(u.isA){
       var p=0,ua=toArray(u)
       for(var i=0;i<ua.length;i++)p+=ua[i]*stride[i]
       data[p]=v
@@ -1669,7 +1669,7 @@ voc._substitute=args=>{
 }
 
 const indexAtSingleAxis=(om,sub,ax)=>{
-  asrt(om instanceof A&&sub instanceof A&&isInt(ax)&&0<=ax&&ax<om.shape.length)
+  asrt(om.isA&&sub.isA&&isInt(ax)&&0<=ax&&ax<om.shape.length)
   var u=toArray(sub),n=om.shape[ax]
   for(var i=0;i<u.length;i++){isInt(u[i])||domErr();0<=u[i]&&u[i]<n||idxErr()}
   var isUniform=0
@@ -1767,7 +1767,7 @@ const take=(om,al)=>{
 // ↑123            ←→ 123
 // ↑⍬              ←→ 0
 //! ↑''             ←→ ' '
-const first=x=>{var y=empty(x)?getPrototype(x):x.data[x.offset];return y instanceof A?y:new A([y],[])}
+const first=x=>{var y=empty(x)?getPrototype(x):x.data[x.offset];return y.isA?y:new A([y],[])}
 
 voc['⍉']=(om,al)=>{
   if(al){

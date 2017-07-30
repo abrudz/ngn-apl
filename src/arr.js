@@ -37,6 +37,7 @@ function A(data,shape,stride,offset){ // APL array constructor
   x.stride=stride||strideForShape(x.shape);asrt(x.stride.length===x.shape.length)
   x.offset=offset||0                      ;asrt(!x.data.length||isInt(x.offset,0,x.data.length))
   x.toString=function(){return format(this).join('\n')}
+  x.isA=1
   for(var i=0;i<x.shape.length;i++)asrt(isInt(x.shape[i],0))
   if(x.data.length)for(var i=0;i<x.stride.length;i++)asrt(isInt(x.stride[i],-x.data.length,x.data.length+1))
 }
@@ -59,7 +60,7 @@ const empty=x=>{for(var i=0;i<x.shape.length;i++)if(!x.shape[i])return 1;return 
   }
 }
 ,isSingleton=x=>{var s=x.shape;for(var i=0;i<s.length;i++)if(s[i]!==1)return 0;return 1}
-,isSimple=x=>!x.shape.length&&!(x.data[x.offset]instanceof A)
+,isSimple=x=>!x.shape.length&&!(x.data[x.offset].isA)
 ,unwrap=x=>{isSingleton(x)||lenErr();return x.data[x.offset]}
 ,getPrototype=x=>empty(x)||typeof x.data[x.offset]!=='string'?0:' ' // todo
 ,strideForShape=s=>{
