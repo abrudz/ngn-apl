@@ -82,7 +82,7 @@ voc['+']=withId(0,perv({
   // +((5 6)(7 1)) ←→ (5 6)(7 1)
   // + (5 6)(7 1)  ←→ (5 6)(7 1)
   // +1j¯2         ←→ 1j2
-  monad:numeric(x=>x,Z.conjugate),
+  monad:numeric(x=>x,Z.cjg),
   // 1+2                      ←→ 3
   // 2 3+5 8                  ←→ 7 11
   // (2 3⍴1 2 3 4 5 6)+    ¯2 ←→ 2 3 ⍴ ¯1 0 1 2 3 4
@@ -100,13 +100,13 @@ voc['-']=withId(0,perv({
   // -4     ←→ ¯4
   // -1 2 3 ←→ ¯1 ¯2 ¯3
   // -1j2   ←→ ¯1j¯2
-  monad:numeric(x=>-x,Z.negate),
+  monad:numeric(x=>-x,Z.neg),
   // 1-3     ←→ ¯2
   // 5-¯3    ←→ 8
   // 5j2-3j8 ←→ 2j¯6
   // 5-3j8   ←→ 2j¯8
   // -/⍬     ←→ 0
-  dyad:numeric((y,x)=>x-y,(y,x)=>Z.subtract(x,y))
+  dyad:numeric((y,x)=>x-y,(y,x)=>Z.sub(x,y))
 }))
 voc['×']=withId(1,perv({
   // ×¯2 ¯1 0 1 2 ←→ ¯1 ¯1 0 1 1
@@ -118,7 +118,7 @@ voc['×']=withId(1,perv({
   // 1j¯2×¯2j3 ←→ 4j7
   // 2×1j¯2    ←→ 2j¯4
   // ×/⍬       ←→ 1
-  dyad:numeric((y,x)=>x*y,(y,x)=>Z.multiply(x,y))
+  dyad:numeric((y,x)=>x*y,(y,x)=>Z.mul(x,y))
 }))
 voc['÷']=withId(1,perv({
   // ÷2   ←→ .5
@@ -131,7 +131,7 @@ voc['÷']=withId(1,perv({
   // 0j2÷0j1  ←→ 2
   // 5÷2j1    ←→ 2j¯1
   // ÷/⍬      ←→ 1
-  dyad:numeric((y,x)=>x/y,(y,x)=>Z.divide(x,y))
+  dyad:numeric((y,x)=>x/y,(y,x)=>Z.div(x,y))
 }))
 voc['*']=withId(1,perv({
   // *2   ←→ 7.38905609893065
@@ -157,12 +157,12 @@ voc['⍟']=perv({
   // ¯12⍟¯34 ←→ 1.1612974763994781j¯.2039235425372641
   // 1j2⍟3j4 ←→ 1.2393828252698689J¯0.5528462880299602
   dyad:(y,x)=>typeof x==='number'&&typeof y==='number'&&x>0&&y>0
-              ?Math.log(y)/Math.log(x):Z.divide(Z.log(y),Z.log(x))
+              ?Math.log(y)/Math.log(x):Z.div(Z.log(y),Z.log(x))
 })
 voc['|']=withId(0,perv({
   // |¯8 0 8 ¯3.5 ←→ 8 0 8 3.5
   // |5j12 ←→ 13
-  monad:numeric(x=>Math.abs(x),Z.magnitude),
+  monad:numeric(x=>Math.abs(x),Z.mag),
   // 3|5 ←→ 2
   // 1j2|3j4 ←→ ¯1j1
   // 7 ¯7∘.|31 28 ¯30        ←→ 2 3⍴3 0 5 ¯4 0 ¯2
@@ -348,31 +348,31 @@ voc['○']=perv({
       switch(i){
         case -12:return Z.exp(simplify(-x.im,x.re))
         case -11:return Z.itimes(x)
-        case -10:return Z.conjugate(x)
+        case -10:return Z.cjg(x)
         case  -9:return x
-        case  -8:return Z.negate(Z.sqrt(Z.subtract(-1,Z.multiply(x,x))))
+        case  -8:return Z.neg(Z.sqrt(Z.sub(-1,Z.mul(x,x))))
         case  -7:return Z.atanh(x)
         case  -6:return Z.acosh(x)
         case  -5:return Z.asinh(x)
         case  -4:
           if(x.re===-1&&!x.im)return 0
-          var a=Z.add(x,1),b=Z.subtract(x,1);return Z.multiply(a,Z.sqrt(Z.divide(b,a)))
+          var a=Z.add(x,1),b=Z.sub(x,1);return Z.mul(a,Z.sqrt(Z.div(b,a)))
         case  -3:return Z.atan(x)
         case  -2:return Z.acos(x)
         case  -1:return Z.asin(x)
-        case   0:return Z.sqrt(Z.subtract(1,Z.multiply(x,x)))
+        case   0:return Z.sqrt(Z.sub(1,Z.mul(x,x)))
         case   1:return Z.sin(x)
         case   2:return Z.cos(x)
         case   3:return Z.tan(x)
-        case   4:return Z.sqrt(Z.add(1,Z.multiply(x,x)))
+        case   4:return Z.sqrt(Z.add(1,Z.mul(x,x)))
         case   5:return Z.sinh(x)
         case   6:return Z.cosh(x)
         case   7:return Z.tanh(x)
-        case   8:return Z.sqrt(Z.subtract(-1,Z.multiply(x,x)))
+        case   8:return Z.sqrt(Z.sub(-1,Z.mul(x,x)))
         case   9:return x.re
-        case  10:return Z.magnitude(x)
+        case  10:return Z.mag(x)
         case  11:return x.im
-        case  12:return Z.direction(x)
+        case  12:return Z.dir(x)
         default:domErr()
       }
     }else{
@@ -614,7 +614,7 @@ voc['⊥']=(om,al)=>{
     var y=[];for(var l=0;l<firstDimB;l++)y.push(b[j+l*(b.length/firstDimB)])
     if(x.length===1)x=repeat([x[0]],y.length)
     if(y.length===1)y=repeat([y[0]],x.length)
-    var z=y[0];for(var k=1;k<y.length;k++)z=Z.add(Z.multiply(z,x[k]),y[k])
+    var z=y[0];for(var k=1;k<y.length;k++)z=Z.add(Z.mul(z,x[k]),y[k])
     data.push(z)
   }
   return A(data,al.shape.slice(0,-1).concat(om.shape.slice(1)))
@@ -741,7 +741,7 @@ voc['⊤']=(om,al)=>{
     for(var k=n-1;k>=0;k--){
       var x=a[k*m+i]
       data[(k*m+i)*b.length+j]=iszero(x)?y:Z.residue(x,y)
-      y=iszero(x)?0:Z.divide(Z.subtract(y,Z.residue(x,y)),x)
+      y=iszero(x)?0:Z.div(Z.sub(y,Z.residue(x,y)),x)
     }
   }
   return A(data,shape)
@@ -1052,7 +1052,7 @@ voc['⍋']=(om,al)=>grade(om,al,1),
 voc['⍒']=(om,al)=>grade(om,al,-1)
 
 // Helper for ⍋ and ⍒
-const grade=(om,al,direction)=>{
+const grade=(om,al,dir)=>{
   var h={} // maps a character to its index in the collation
   if(al){
     al.shape.length||rnkErr()
@@ -1065,12 +1065,12 @@ const grade=(om,al,direction)=>{
     while(1){
       var x=om.data[p+i*om.stride[0]],tx=typeof x
       var y=om.data[p+j*om.stride[0]],ty=typeof y
-      if(tx<ty)return-direction
-      if(tx>ty)return direction
+      if(tx<ty)return-dir
+      if(tx>ty)return dir
       if(h[x]!=null)x=h[x]
       if(h[y]!=null)y=h[y]
-      if(x<y)return-direction
-      if(x>y)return direction
+      if(x<y)return-dir
+      if(x>y)return dir
       var a=indices.length-1
       while(a>0&&indices[a]+1===om.shape[a]){p-=om.stride[a]*indices[a];indices[a--]=0}
       if(a<=0)break
