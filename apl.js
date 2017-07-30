@@ -1,4 +1,5 @@
 //usr/bin/env node "$0" $@;exit $?
+"use strict";
 var preludeSrc="⍬←()\n⍝ ⍬     ←→ 0⍴0\n⍝ ⍴⍬    ←→ ,0\n⍝# ⍬←5   !!!\n⍝ ⍳0    ←→ ⍬\n⍝ ⍴0    ←→ ⍬\n⍝ ⍬     ←→ ⍬\n⍝ ⍬⍬    ←→ ⍬ ⍬\n⍝ 1⍬2⍬3 ←→ 1 ⍬ 2 ⍬ 3\n\n⎕a←'ABCDEFGHIJKLMNOPQRSTUVWXYZ'\n⎕á←'ÁÂÃÇÈÊËÌÍÎÏÐÒÓÔÕÙÚÛÝþãìðòõ'\n⎕d←'0123456789'\n\n~←~⍠{(~⍺∊⍵)/⍺}\n⍝ \"ABCDEFGHIJKLMNOPQRSTUVWXYZ\"~\"AEIOU\" ←→ 'BCDFGHJKLMNPQRSTVWXYZ'\n⍝ 1 2 3 4 5 6~2 4 6                    ←→ 1 3 5\n⍝ \"THIS IS TEXT\"~\" \"                   ←→ 'THISISTEXT'\n⍝ \"THIS\" \"AND\" \"THAT\"~\"T\"              ←→ 'THIS' 'AND' 'THAT'\n⍝ \"THIS\" \"AND\" \"THAT\"~\"AND\"            ←→ 'THIS' 'AND' 'THAT'\n⍝ \"THIS\" \"AND\" \"THAT\"~⊂\"AND\"           ←→ 'THIS' 'THAT'\n⍝ \"THIS\" \"AND\" \"THAT\"~\"TH\" \"AND\"       ←→ 'THIS' 'THAT'\n⍝ 11 12 13 14 15 16~2 3⍴1 2 3 14 5 6   ←→ 11 12 13 15 16\n⍝ (2 2⍴⍳4)~2 !!! RANK ERROR\n\n_atop←{⍶⍹⍵;⍶⍺⍹⍵}\n⍝ (-⍟)2 3 ←→ -⍟2 3\n⍝ 2(-*)3 ←→ -2*3\n\n⊃←{\n  0=⍴⍴⍵:↑⍵\n  0=×/⍴⍵:⍵\n  shape←⍴⍵ ⋄ ⍵←,⍵\n  r←⌈/≢¨shapes←⍴¨⍵ ⍝ maximum rank of all shapes\n  max←↑⌈/shapes←(⍴ ↓ (r⍴1)∘,)¨shapes ⍝ maximum shape of rank adjusted shapes\n  (shape,max)⍴↑⍪/shapes{max↑⍺⍴⍵}¨⍵\n  ;\n  1<⍴⍴⍺:↗'RANK ERROR'\n  x←⍵\n  {\n    1<⍴⍴⍵:↗'RANK ERROR'\n    ⍵←,⍵\n    (⍴⍵)≠⍴⍴x:↗'RANK ERROR'\n    ∨/⍵≥⍴x:↗'INDEX ERROR'\n    x←⊃⍵⌷x\n  }¨⍺\n  x\n}\n⍝ ⊃3            ←→ 3\n⍝ ⊃(1 2)(3 4)   ←→ 2 2⍴1 2 3 4\n⍝ ⊃(1 2)(3 4 5) ←→ 2 3⍴1 2 0 3 4 5\n⍝ ⊃1 2          ←→ 1 2\n⍝ ⊃(1 2)3       ←→ 2 2⍴1 2 3 0\n⍝ ⊃1(2 3)       ←→ 2 2⍴1 0 2 3\n⍝ ⊃2 2⍴1(1 1 2⍴3 4)(5 6)(2 0⍴0) ←→ 2 2 1 2 2⍴1 0 0 0 3 4 0 0 5 6 0 0 0 0 0 0\n⍝ ⊃⍬            ←→ ⍬\n⍝ ⊃2 3 0⍴0      ←→ 2 3 0⍴0\n⍝ ⍬⊃3               ←→ 3\n⍝ 2⊃'PICK'          ←→ 'C'\n⍝ (⊂1 0)⊃2 2⍴'ABCD' ←→ 'C'\n⍝ 1⊃'foo' 'bar'     ←→ 'bar'\n⍝ 1 2⊃'foo' 'bar'   ←→ 'r'\n⍝ (2 2⍴0)⊃1 2       !!! RANK ERROR\n⍝ (⊂2 1⍴0)⊃2 2⍴0    !!! RANK ERROR\n⍝ (⊂2 2⍴0)⊃1 2      !!! RANK ERROR\n⍝ (⊂2 2)⊃1 2        !!! RANK ERROR\n⍝ (⊂0 2)⊃2 2⍴'ABCD' !!! INDEX ERROR\n\n⊂←⊂⍠{ ⍝ ⍺⊂⍵ definition\n  1<⍴⍴⍺:↗'RANK ERROR' ⋄ 1≠⍴⍴⍵:↗'NONCE ERROR' ⋄ ⍺←,⍺=0\n  keep←~1 1⍷⍺ ⋄ sel←keep/⍺ ⋄ dat←keep/⍵\n  {1=1↑sel:{sel←1↓sel ⋄ dat←1↓dat}⍬}⍬\n  {1=¯1↑sel:{sel←¯1↓sel ⋄ dat←¯1↓dat}⍬}⍬\n  sel←(⍴sel),⍨sel/⍳⍴sel ⋄ drop←0\n  sel{∆←drop↓⍺↑⍵ ⋄ drop←⍺+1 ⋄ ∆}¨⊂dat\n}\n⍝ a←' this is a test ' ⋄ (a≠' ')⊂a ←→ 'this' 'is' (,'a') 'test'\n\n↓←{\n  0=⍴⍴⍵:⍵ ⋄ ⊂[¯1+⍴⍴⍵]⍵\n  ;\n  1<⍴⍴⍺:↗'RANK ERROR'\n  a←,⍺\n  ⍵←{0=⍴⍴⍵:((⍴a)⍴1)⍴⍵⋄⍵}⍵\n  (⍴a)>⍴⍴⍵:↗'RANK ERROR'\n  a←(⍴⍴⍵)↑a\n  a←((a>0)×0⌊a-⍴⍵)+(a≤0)×0⌈a+⍴⍵\n  a↑⍵\n}\n⍝ ↓1 2 3 ←→ ⊂1 2 3\n⍝ ↓(1 2)(3 4) ←→ ⊂(1 2)(3 4)\n⍝ ↓2 2⍴⍳4 ←→ (0 1)(2 3)\n⍝ ↓2 3 4⍴⍳24 ←→ 2 3⍴(0 1 2 3)(4 5 6 7)(8 9 10 11)(12 13 14 15)(16 17 18 19)(20 21 22 23)\n⍝ 4↓'OVERBOARD'         ←→ 'BOARD'\n⍝ ¯5↓'OVERBOARD'        ←→ 'OVER'\n⍝ ⍴10↓'OVERBOARD'       ←→ ,0\n⍝ 0 ¯2↓3 3⍴'ONEFATFLY'  ←→ 3 1⍴'OFF'\n⍝ ¯2 ¯1↓3 3⍴'ONEFATFLY' ←→ 1 2⍴'ON'\n⍝ 1↓3 3⍴'ONEFATFLY'     ←→ 2 3⍴'FATFLY'\n⍝ ⍬↓3 3⍴⍳9              ←→ 3 3⍴⍳9\n⍝ 1 1↓2 3 4⍴\"ABCDEFGHIJKLMNOPQRSTUVWXYZ\"   ←→ 1 2 4⍴'QRSTUVWX'\n⍝ ¯1 ¯1↓2 3 4⍴\"ABCDEFGHIJKLMNOPQRSTUVWXYZ\" ←→ 1 2 4⍴'ABCDEFGH'\n⍝ 1↓0                   ←→ ⍬\n⍝ 0 1↓2                 ←→ 1 0⍴0\n⍝ 1 2↓3                 ←→ 0 0⍴0\n⍝ ⍬↓0                   ←→ 0\n\n⍪←{(≢⍵)(×/1↓⍴⍵)⍴⍵; ⍺,[0]⍵}\n⍝ ⍪2 3 4 ←→ 3 1⍴2 3 4\n⍝ ⍪0 ←→ 1 1⍴0\n⍝ ⍪2 2⍴2 3 4 5 ←→ 2 2⍴2 3 4 5\n⍝ ⍴⍪2 3⍴⍳6 ←→ 2 3\n⍝ ⍴⍪2 3 4⍴⍳24 ←→ 2 12\n⍝ (2 3⍴⍳6)⍪9 ←→ 3 3⍴(0 1 2 3 4 5 9 9 9)\n⍝ 1⍪2 ←→ 1 2\n\n⊢←{⍵}\n⍝ 123⊢456 ←→ 456\n⍝ ⊢456 ←→ 456\n\n⊣←{⍵;⍺}\n⍝ 123⊣456 ←→ 123\n⍝ ⊣456 ←→ 456\n\n≢←{⍬⍴(⍴⍵),1; ~⍺≡⍵}\n⍝ ≢0 ←→ 1\n⍝ ≢0 0 0 ←→ 3\n⍝ ≢⍬ ←→ 0\n⍝ ≢2 3⍴⍳6 ←→ 2\n⍝ 3≢3 ←→ 0\n\n,←{(×/⍴⍵)⍴⍵}⍠,\n⍝ ,2 3 4⍴'abcdefghijklmnopqrstuvwx' ←→ 'abcdefghijklmnopqrstuvwx'\n⍝ ,123 ←→ 1⍴123\n\n⌹←{\n  norm←{(⍵+.×+⍵)*0.5}\n\n  QR←{ ⍝ QR decomposition\n    n←(⍴⍵)[1]\n    1≥n:{t←norm,⍵ ⋄ (⍵÷t)(⍪t)}⍵\n    m←⌈n÷2\n    a0←((1↑⍴⍵),m)↑⍵\n    a1←(0,m)↓⍵\n    (q0 r0)←∇a0\n    c←(+⍉q0)+.×a1\n    (q1 r1)←∇a1-q0+.×c\n    (q0,q1)((r0,c)⍪((⌊n÷2),-n)↑r1)\n  }\n\n  Rinv←{ ⍝ Inverse of an upper triangular matrix\n    1=n←1↑⍴⍵:÷⍵\n    m←⌈n÷2\n    ai←∇(m,m)↑⍵\n    di←∇(m,m)↓⍵\n    b←(m,m-n)↑⍵\n    bx←-ai+.×b+.×di\n    (ai,bx)⍪((⌊n÷2),-n)↑di\n  }\n\n  0=⍴⍴⍵:÷⍵\n  1=⍴⍴⍵:,∇⍪⍵\n  2≠⍴⍴⍵:↗'RANK ERROR'\n  0∊≥/⍴⍵:↗'LENGTH ERROR'\n  (Q R)←QR ⍵\n  (Rinv R)+.×+⍉Q\n  ;\n  (⌹⍵)+.×⍺\n}\n⍝ ⌹2 ←→ .5\n⍝ ⌹2 2⍴4 3 3 2 ←→ 2 2⍴¯2 3 3 ¯4\n⍝ (4 4⍴12 1 4 10 ¯6 ¯5 4 7 ¯4 9 3 4 ¯2 ¯6 7 7)⌹93 81 93.5 120.5 ←→ .0003898888816687221 ¯.005029566573526544 .04730651764247189 .0705568912859835\n⍝ ⌹2 2 2⍴⍳8 !!! RANK ERROR\n⍝ ⌹2 3⍴⍳6 !!! LENGTH ERROR\n\n⍨←{⍵⍶⍵;⍵⍶⍺}\n⍝ 17-⍨23 ←→ 6\n⍝ 7⍴⍨2 3 ←→ 2 3⍴7\n⍝ +⍨2    ←→ 4\n⍝ -⍨123  ←→ 0\n";
 const asrt=x=>{if(!x)throw Error('assertion failed')}
 ,isInt=(x,start,end)=>x===~~x&&(start==null||start<=x&&(end==null||x<end))
@@ -41,7 +42,23 @@ const err=(name,m,o)=>{ // m:message, o:options
 ,idxErr=(m,o)=>err( 'INDEX ERROR',m,o)
 ,nyiErr=(m,o)=>err( 'NONCE ERROR',m,o)
 ,valErr=(m,o)=>err( 'VALUE ERROR',m,o)
-const each=(a,f)=>{ // iterates through the elements of an APL array in ravel order.
+const A=function(data,shape,stride,offset){
+  var x={isA:1, data:data, shape:shape||[data.length], stride:stride, offset:offset||0,
+         toString:function(){return format(this).join('\n')}}
+  x.stride=x.stride||strideForShape(x.shape)
+  asrt(x.data.length!=null);asrt(x.shape.length!=null);asrt(x.stride.length===x.shape.length)
+  asrt(!x.data.length||isInt(x.offset,0,x.data.length))
+  for(var i=0;i<x.shape.length;i++)asrt(isInt(x.shape[i],0))
+  if(x.data.length)for(var i=0;i<x.stride.length;i++)asrt(isInt(x.stride[i],-x.data.length,x.data.length+1))
+  return x
+}
+,strideForShape=s=>{
+  asrt(s.length!=null)
+  var r=Array(s.length),u=1
+  for(var i=r.length-1;i>=0;i--){asrt(isInt(s[i],0));r[i]=u;u*=s[i]}
+  return r
+}
+,each=(a,f)=>{
   if(empty(a))return
   var data=a.data,shape=a.shape,stride=a.stride,lastAxis=shape.length-1,p=a.offset,i=[],axis=shape.length
   while(--axis>=0)i.push(0)
@@ -56,11 +73,11 @@ const each=(a,f)=>{ // iterates through the elements of an APL array in ravel or
     p+=stride[axis]
   }
 }
-const each2=(a,b,f)=>{ // like each() but iterates over two APL array in parallel
+,each2=(a,b,f)=>{
   var data =a.data,shape =a.shape,stride =a.stride
   var data1=b.data,shape1=b.shape,stride1=b.stride
   shape.length!==shape1.length&&rnkErr()
-  shape!=''+shape1&&lenErr() // abuse JS type coercion -- compare the shapes as strings
+  shape!=''+shape1&&lenErr()
   if(empty(a))return
   var lastAxis=shape.length-1,p=a.offset,q=b.offset
   var i=Array(shape.length);for(var j=0;j<i.length;j++)i[j]=0
@@ -72,21 +89,9 @@ const each2=(a,b,f)=>{ // like each() but iterates over two APL array in paralle
     i[axis]++;p+=stride[axis];q+=stride1[axis]
   }
 }
-
-function A(data,shape,stride,offset){ // APL array constructor
-  var x=this
-  x.data=data                             ;asrt(x.data.length!=null)
-  x.shape=shape||[x.data.length]          ;asrt(x.shape.length!=null)
-  x.stride=stride||strideForShape(x.shape);asrt(x.stride.length===x.shape.length)
-  x.offset=offset||0                      ;asrt(!x.data.length||isInt(x.offset,0,x.data.length))
-  x.toString=function(){return format(this).join('\n')}
-  x.isA=1
-  for(var i=0;i<x.shape.length;i++)asrt(isInt(x.shape[i],0))
-  if(x.data.length)for(var i=0;i<x.stride.length;i++)asrt(isInt(x.stride[i],-x.data.length,x.data.length+1))
-}
-const empty=x=>{for(var i=0;i<x.shape.length;i++)if(!x.shape[i])return 1;return 0}
-,map=(x,f)=>{var r=[];each(x,(y,i,p)=>r.push(f(y,i,p)));return new A(r,x.shape)}
-,map2=(x,y,f)=>{var r=[];each2(x,y,(xi,yi,i)=>r.push(f(xi,yi,i)));return new A(r,x.shape)}
+,empty=x=>{for(var i=0;i<x.shape.length;i++)if(!x.shape[i])return 1;return 0}
+,map=(x,f)=>{var r=[];each(x,(y,i,p)=>r.push(f(y,i,p)));return A(r,x.shape)}
+,map2=(x,y,f)=>{var r=[];each2(x,y,(xi,yi,i)=>r.push(f(xi,yi,i)));return A(r,x.shape)}
 ,toArray=x=>{var r=[];each(x,y=>r.push(y));return r}
 ,toInt=(x,m,M)=>{var r=unwrap(x);if(r!==r|0||m!=null&&r<m||M!=null&&M<=r)domErr();return r}
 ,toSimpleString=x=>{
@@ -106,17 +111,11 @@ const empty=x=>{for(var i=0;i<x.shape.length;i++)if(!x.shape[i])return 1;return 
 ,isSimple=x=>!x.shape.length&&!(x.data[x.offset].isA)
 ,unwrap=x=>{isSingleton(x)||lenErr();return x.data[x.offset]}
 ,getPrototype=x=>empty(x)||typeof x.data[x.offset]!=='string'?0:' ' // todo
-,strideForShape=s=>{
-  asrt(s.length!=null)
-  var r=Array(s.length),u=1
-  for(var i=r.length-1;i>=0;i--){asrt(isInt(s[i],0));r[i]=u;u*=s[i]}
-  return r
-}
 
-A.zero =new A([0],[])
-A.one  =new A([1],[])
-A.zilde=new A([],[0])
-A.scalar=x=>new A([x],[])
+A.zero =A([0],[])
+A.one  =A([1],[])
+A.zilde=A([],[0])
+A.scalar=x=>A([x],[])
 A.bool=[A.zero,A.one]
 // Zify(x) - complexify
 // * if x is real, it's converted to a complex instance with imaginary part 0
@@ -175,12 +174,12 @@ Z.tan=x=>Z.negitimes(Z.tanh(Z.itimes(x)))
 // arctan x = (i/2) (ln(1-ix) - ln(1+ix))
 Z.asin=x=>{x=Zify(x);return Z.negitimes(Z.log(Z.add(Z.itimes(x),Z.sqrt(Z.subtract(1,Z.pow(x,2))))))}
 Z.acos=x=>{
-  x=Zify(x);r=Z.negitimes(Z.log(Z.add(x,Z.sqrt(Z.subtract(Z.pow(x,2),1)))))
+  x=Zify(x);const r=Z.negitimes(Z.log(Z.add(x,Z.sqrt(Z.subtract(Z.pow(x,2),1)))))
   // TODO look up the algorithm for determining the sign of arccos; the following line is dubious
   return r instanceof Z&&(r.re<0||(r.re===0&&r.im<0))?Z.negate(r):r
 }
 Z.atan=x=>{
-  x=Zify(x);ix=Z.itimes(x)
+  x=Zify(x);const ix=Z.itimes(x)
   return Z.multiply(new Z(0,.5),Z.subtract(Z.log(Z.subtract(1,ix)),Z.log(Z.add(1,ix))))
 }
 
@@ -241,7 +240,7 @@ const LDC=1,VEC=2,GET=3,SET=4,MON=5,DYA=6,LAM=7,RET=8,POP=9,SPL=10,JEQ=11,EMB=12
       case VEC:
         var a=stk.splice(stk.length-code[pc++])
         for(var i=0;i<a.length;i++)if(isSimple(a[i]))a[i]=unwrap(a[i])
-        stk.push(new A(a))
+        stk.push(A(a))
         break
       case GET:var r=env[code[pc++]][code[pc++]];r!=null||valErr();stk.push(r);break
       case SET:env[code[pc++]][code[pc++]]=stk[stk.length-1];break
@@ -283,7 +282,7 @@ const LDC=1,VEC=2,GET=3,SET=4,MON=5,DYA=6,LAM=7,RET=8,POP=9,SPL=10,JEQ=11,EMB=12
       case SPL:
         var n=code[pc++]
         var a=toArray(stk[stk.length-1]).reverse()
-        for(var i=0;i<a.length;i++)if(!(a[i].isA))a[i]=new A([a[i]],[])
+        for(var i=0;i<a.length;i++)if(!(a[i].isA))a[i]=A([a[i]],[])
         if(a.length===1){a=repeat(a,n)}else if(a.length!==n){lenErr()}
         stk.push.apply(stk,a)
         break
@@ -397,8 +396,8 @@ const voc={}
       case 11:        var r=h.dyad(x,y);typeof r==='number'&&r!==r&&domErr();return r
       case 12:case 13:return map(y,yi=>f2(x,yi))
       case 21:case 31:return map(x,xi=>f2(xi,y))
-      case 23:        xi=x.data[x.offset];return map(y,yi=>f2(xi,yi))
-      case 32:case 22:yi=y.data[y.offset];return map(x,xi=>f2(xi,yi))
+      case 23:        const xi=x.data[x.offset];return map(y,yi=>f2(xi,yi))
+      case 32:case 22:const yi=y.data[y.offset];return map(x,xi=>f2(xi,yi))
       case 33:        x.shape.length!==y.shape.length&&rnkErr();x.shape!=''+y.shape&&lenErr();return map2(x,y,f2)
       default:        asrt(0)
     }
@@ -522,7 +521,7 @@ voc['÷']=withId(1,perv({
 voc['*']=withId(1,perv({
   // *2   ←→ 7.38905609893065
   // *2j3 ←→ ¯7.315110094901103J1.0427436562359045
-  monad:exp=numeric(Math.exp,Z.exp),
+  monad:numeric(Math.exp,Z.exp),
   // 2*3 ←→ 8
   // 3*2 ←→ 9
   // ¯2*3 ←→ ¯8
@@ -600,7 +599,7 @@ voc['\\']=adv((om,al,axis)=>{
         x.isA||(x=A.scalar(x))
         for(var j=0,nj=indices[axis];j<nj;j++){
           p-=om.stride[axis]
-          y=om.data[p]
+          var y=om.data[p]
           y.isA||(y=A.scalar(y))
           x=f(x,y)
         }
@@ -630,7 +629,7 @@ voc['\\']=adv((om,al,axis)=>{
         indices[i]++
       }
     }
-    return new A(data,shape)
+    return A(data,shape)
   }
 })
 voc['○']=perv({
@@ -787,25 +786,25 @@ voc[',']=(om,al,axis)=>{
     }
 
     if(!al.shape.length&&!om.shape.length){
-      return new A([unwrap(al),unwrap(om)])
+      return A([unwrap(al),unwrap(om)])
     }else if(!al.shape.length){
       var s=om.shape.slice(0)
       if(isInt(axis))s[axis]=1
-      al=new A([unwrap(al)],s,repeat([0],om.shape.length))
+      al=A([unwrap(al)],s,repeat([0],om.shape.length))
     }else if(!om.shape.length){
       var s=al.shape.slice(0)
       if(isInt(axis))s[axis]=1
-      om=new A([unwrap(om)],s,repeat([0],al.shape.length))
+      om=A([unwrap(om)],s,repeat([0],al.shape.length))
     }else if(al.shape.length+1===om.shape.length){
       isInt(axis)||rnkErr()
       var shape =al.shape .slice(0);shape .splice(axis,0,1)
       var stride=al.stride.slice(0);stride.splice(axis,0,0)
-      al=new A(al.data,shape,stride,al.offset)
+      al=A(al.data,shape,stride,al.offset)
     }else if(al.shape.length===om.shape.length+1){
       isInt(axis)||rnkErr()
       var shape =om.shape .slice(0);shape .splice(axis,0,1)
       var stride=om.stride.slice(0);stride.splice(axis,0,0)
-      om=new A(om.data,shape,stride,om.offset)
+      om=A(om.data,shape,stride,om.offset)
     }else if(al.shape.length!==om.shape.length){
       rnkErr()
     }
@@ -846,7 +845,7 @@ voc[',']=(om,al,axis)=>{
         q+=om.stride[a];r+=rStride[a];pIndices[a]++
       }
     }
-    return new A(data,shape,stride)
+    return A(data,shape,stride)
   }else{
     asrt(0)
   }
@@ -901,7 +900,7 @@ voc['≥']=withId(1,perv({dyad:real((y,x)=>+(x>=y))})),
 // ≡2 2⍴⍳4                 ←→ 1
 // ≡"abc"1 2 3(23 55)      ←→ 2
 // ≡"abc"(2 4⍴"abc"2 3"k") ←→ 3
-voc['≡']=(om,al)=>al?A.bool[+match(om,al)]:new A([depthOf(om)],[])
+voc['≡']=(om,al)=>al?A.bool[+match(om,al)]:A([depthOf(om)],[])
 
 const depthOf=x=>{
   if(!(x.isA)||!x.shape.length&&!(x.data[0].isA))return 0
@@ -945,14 +944,14 @@ voc['∪']=(om,al)=>{
     // 2 3 3∪4 5 3 4 ←→ 2 3 3 4 5 4
     // 'lentils' 'bulghur'(3 4 5)∪'lentils' 'rice' ←→ 'lentils' 'bulghur'(3 4 5)'rice'
     if(al.shape.length>1||om.shape.length>1)rnkErr()
-    var a=toArray(al),r=[];each(om,x=>{contains(a,x)||r.push(x)});return new A(a.concat(r))
+    var a=toArray(al),r=[];each(om,x=>{contains(a,x)||r.push(x)});return A(a.concat(r))
   }else{
     // ∪3 17 17 17 ¯3 17 0 ←→ 3 17 ¯3 0
     // ∪3 17               ←→ 3 17
     // ∪17                 ←→ ,17
     // ∪⍬                  ←→ ⍬
     if(om.shape.length>1)rnkErr()
-    var r=[];each(om,x=>{contains(r,x)||r.push(x)});return new A(r)
+    var r=[];each(om,x=>{contains(r,x)||r.push(x)});return A(r)
   }
 }
 voc['∩']=(om,al)=>{
@@ -963,7 +962,7 @@ voc['∩']=(om,al)=>{
     // 1∩2 3⍴4      !!! RANK ERROR
     if(al.shape.length>1||om.shape.length>1)rnkErr()
     var r=[],b=toArray(om);each(al,x=>{contains(b,x)&&r.push(x)})
-    return new A(r)
+    return A(r)
   }else{
     // ∩1 !!! NONCE ERROR
     nyiErr()
@@ -990,8 +989,8 @@ const contains=(a,x)=>{for(var i=0;i<a.length;i++)if(match(x,a[i]))return 1}
 // 10⊥3 4.5j1 ←→ 34.5j1
 voc['⊥']=(om,al)=>{
   asrt(al)
-  if(!al.shape.length)al=new A([unwrap(al)])
-  if(!om.shape.length)om=new A([unwrap(om)])
+  if(!al.shape.length)al=A([unwrap(al)])
+  if(!om.shape.length)om=A([unwrap(om)])
   var lastDimA=al.shape[al.shape.length-1],firstDimB=om.shape[0]
   if(lastDimA!==1&&firstDimB!==1&&lastDimA!==firstDimB)lenErr()
   var a=toArray(al),b=toArray(om),data=[],ni=a.length/lastDimA,nj=b.length/firstDimB
@@ -1003,7 +1002,7 @@ voc['⊥']=(om,al)=>{
     var z=y[0];for(var k=1;k<y.length;k++)z=Z.add(Z.multiply(z,x[k]),y[k])
     data.push(z)
   }
-  return new A(data,al.shape.slice(0,-1).concat(om.shape.slice(1)))
+  return A(data,al.shape.slice(0,-1).concat(om.shape.slice(1)))
 }
 
 voc['.']=conj((g,f)=>f===voc['∘']?outerProduct(g):innerProduct(g,f))
@@ -1031,7 +1030,7 @@ const outerProduct=f=>{
       z.shape.length||(z=unwrap(z))
       data.push(z)
     }
-    return new A(data,al.shape.concat(om.shape))
+    return A(data,al.shape.concat(om.shape))
   }
 }
 // For matrices, the inner product behaves like matrix multiplication where +
@@ -1050,11 +1049,11 @@ const outerProduct=f=>{
 const innerProduct=(g,f)=>{
   var F=voc['¨'](voc['/'](f)),G=outerProduct(g)
   return(om,al)=>{
-    if(!al.shape.length)al=new A([unwrap(al)])
-    if(!om.shape.length)om=new A([unwrap(om)])
+    if(!al.shape.length)al=A([unwrap(al)])
+    if(!om.shape.length)om=A([unwrap(om)])
     return F(G(
-      voc['⊂'](om,undefined,new A([0])),
-      voc['⊂'](al,undefined,new A([al.shape.length-1]))
+      voc['⊂'](om,undefined,A([0])),
+      voc['⊂'](al,undefined,A([al.shape.length-1]))
     ))
   }
 }
@@ -1076,28 +1075,28 @@ voc['¨']=adv((f,g)=>{
   return(om,al)=>{
     if(!al){
       return map(om,x=>{
-        x.isA||(x=new A([x],[]))
+        x.isA||(x=A([x],[]))
         var r=f(x);asrt(r.isA)
         return r.shape.length?r:unwrap(r)
       })
     }else if(arrEq(al.shape,om.shape)){
       return map2(om,al,(x,y)=>{
-        x.isA||(x=new A([x],[]))
-        y.isA||(y=new A([y],[]))
+        x.isA||(x=A([x],[]))
+        y.isA||(y=A([y],[]))
         var r=f(x,y);asrt(r.isA)
         return r.shape.length?r:unwrap(r)
       })
     }else if(isSingleton(al)){
       var y=al.data[0].isA?unwrap(al):al
       return map(om,x=>{
-        x.isA||(x=new A([x],[]))
+        x.isA||(x=A([x],[]))
         var r=f(x,y);asrt(r.isA)
         return r.shape.length?r:unwrap(r)
       })
     }else if(isSingleton(om)){
       var x=om.data[0].isA?unwrap(om):om
       return map(al,y=>{
-        y.isA||(y=new A([y],[]))
+        y.isA||(y=A([y],[]))
         var r=f(x,y);asrt(r.isA)
         return r.shape.length?r:unwrap(r)
       })
@@ -1130,7 +1129,7 @@ voc['⊤']=(om,al)=>{
       y=iszero(x)?0:Z.divide(Z.subtract(y,Z.residue(x,y)),x)
     }
   }
-  return new A(data,shape)
+  return A(data,shape)
 }
 
 voc['∊']=(om,al)=>{
@@ -1146,7 +1145,7 @@ voc['∊']=(om,al)=>{
     // ∊17                   ←→ ,17
     // ⍴∊(1 2 3)"ABC"(4 5 6) ←→ ,9
     // ∊2 2⍴(1+2 2⍴⍳4)"DEF"(1+2 3⍴⍳6)(7 8 9) ←→ 1 2 3 4,'DEF',1 2 3 4 5 6 7 8 9
-    var r=[];enlist(om,r);return new A(r)
+    var r=[];enlist(om,r);return A(r)
   }
 }
 
@@ -1191,7 +1190,7 @@ voc['!']=withId(1,perv({
   //
   // 0.5!¯1 !!! DOMAIN ERROR
   dyad:Beta=real((n,k)=>{
-    var r;
+    var r
     switch(256*negInt(k)+16*negInt(n)+negInt(n-k)){
       case 0x000:r=Math.exp(lnΓ(n+1)-lnΓ(k+1)-lnΓ(n-k+1))            ;break
       case 0x001:r=0                                                 ;break
@@ -1228,8 +1227,8 @@ var Γ,lnΓ
   Γ=z=>{
     if(z<.5)return Math.PI/(Math.sin(Math.PI*z)*Γ(1-z))
     if(z>100)return Math.exp(lnΓ(z))
-    z--;x=p[0];for(var i=1;i<g+2;i++)x+=p[i]/(z+i)
-    t=z+g+.5
+    z--;var x=p[0];for(var i=1;i<g+2;i++)x+=p[i]/(z+i)
+    var t=z+g+.5
     return Math.sqrt(2*Math.PI)*Math.pow(t,z+.5)*Math.exp(-t)*x
   }
 })()
@@ -1260,32 +1259,32 @@ voc['⍷']=(om,al)=>{
   // (2 3 0⍴0)⍷(3 4 5⍴0) ←→ 3 4 5⍴1
   // (2 3 4⍴0)⍷(3 4 0⍴0) ←→ 3 4 0⍴0
   // (2 3 0⍴0)⍷(3 4 0⍴0) ←→ 3 4 0⍴0
-  if(al.shape.length>om.shape.length)return new A([0],om.shape,repeat([0],om.shape.length))
+  if(al.shape.length>om.shape.length)return A([0],om.shape,repeat([0],om.shape.length))
   if(al.shape.length < om.shape.length){
-    al=new A( // prepend ones to the shape of ⍺
+    al=A( // prepend ones to the shape of ⍺
       al.data,
       repeat([1],om.shape.length-al.shape.length).concat(al.shape),
       repeat([0],om.shape.length-al.shape.length).concat(al.stride),
       al.offset
     )
   }
-  if(empty(al))return new A([1],om.shape,repeat([0],om.shape.length))
+  if(empty(al))return A([1],om.shape,repeat([0],om.shape.length))
   var findShape=[]
   for(var i=0;i<om.shape.length;i++){
     var d=om.shape[i]-al.shape[i]+1
-    if(d<=0)return new A([0],om.shape,repeat([0],om.shape.length))
+    if(d<=0)return A([0],om.shape,repeat([0],om.shape.length))
     findShape.push(d)
   }
   var stride=strideForShape(om.shape),data=repeat([0],prod(om.shape))
   var p=om.offset,q=0,indices=repeat([0],findShape.length)
   while(1){
-    data[q]=+match(al,new A(om.data,al.shape,om.stride,p))
+    data[q]=+match(al,A(om.data,al.shape,om.stride,p))
     var a=findShape.length-1
     while(a>=0&&indices[a]+1===findShape[a]){p-=indices[a]*om.stride[a];q-=indices[a]*stride[a];indices[a--]=0}
     if(a<0)break
     p+=om.stride[a];q+=stride[a];indices[a]++
   }
-  return new A(data,om.shape)
+  return A(data,om.shape)
 }
 
 voc['⌊']=withId(Infinity,perv({
@@ -1356,7 +1355,7 @@ voc._fork2=(hg,f)=>{
 // ⍕¯∞             ←→ 1 2⍴'¯∞'
 // ⍕¯1             ←→ 1 2⍴'¯1'
 // ⍕¯1e¯100J¯2e¯99 ←→ 1 14⍴'¯1e¯100J¯2e¯99'
-voc['⍕']=(om,al)=>{al&&nyiErr();var t=format(om);return new A(t.join(''),[t.length,t[0].length])}
+voc['⍕']=(om,al)=>{al&&nyiErr();var t=format(om);return A(t.join(''),[t.length,t[0].length])}
 
 // Format an APL object as an array of strings
 const format=a=>{
@@ -1446,7 +1445,7 @@ const grade=(om,al,direction)=>{
   }
   om.shape.length||rnkErr()
   var r=[];for(var i=0;i<om.shape[0];i++)r.push(i)
-  return new A(r.sort((i,j)=>{
+  return A(r.sort((i,j)=>{
     var p=om.offset,indices=repeat([0],om.shape.length)
     while(1){
       var x=om.data[p+i*om.stride[0]],tx=typeof x
@@ -1501,7 +1500,7 @@ voc['⍳']=(om,al)=>{
       var rank=al.shape
       try{each(al,(y,indices)=>{if(match(x,y)){rank=indices;throw'break'}})}
       catch(e){if(e!=='break')throw e}
-      return rank.length===1?rank[0]:new A(rank)
+      return rank.length===1?rank[0]:A(rank)
     })
   }else{
     // ⍳5     ←→ 0 1 2 3 4
@@ -1518,8 +1517,8 @@ voc['⍳']=(om,al)=>{
       var ai=a[i],u=i-m;q/=a[i];for(var j=0;j<p;j++)for(var k=0;k<ai;k++)for(var l=0;l<q;l++)r[u+=m]=k
       p*=ai
     }
-    if(m===1){data=r}else{data=Array(n);for(var i=0;i<n;i++)data[i]=new A(r.slice(m*i,m*i+m))}
-    return new A(data,a)
+    if(m===1){data=r}else{data=Array(n);for(var i=0;i<n;i++)data[i]=A(r.slice(m*i,m*i+m))}
+    return A(data,a)
   }
 }
 
@@ -1546,8 +1545,8 @@ voc['⊂']=(om,al,axes)=>{
   var shape =resultAxes.map(k=>om.shape [k])
   var stride=resultAxes.map(k=>om.stride[k])
   var data=[]
-  each(new A(om.data,shape,stride,om.offset),(x,indices,p)=>{data.push(new A(om.data,unitShape,unitStride,p))})
-  return new A(data,shape)
+  each(A(om.data,shape,stride,om.offset),(x,indices,p)=>{data.push(A(om.data,unitShape,unitStride,p))})
+  return A(data,shape)
 }
 
 // ~0 1 ←→ 1 0
@@ -1635,7 +1634,7 @@ voc['get_⎕']=cps((_,_1,_2,callback)=>{
     setTimeout(_=>{callback(exec(prompt('⎕:')||''))},0)
   }else{
     process.stdout.write('⎕:\n')
-    readline('      ',line=>{callback(exec(toSimpleString(new A(line))))})
+    readline('      ',line=>{callback(exec(toSimpleString(A(line))))})
   }
 })
 voc['set_⎕']=x=>{
@@ -1645,9 +1644,9 @@ voc['set_⎕']=x=>{
 }
 voc['get_⍞']=cps((_,_1,_2,callback)=>{
   if(typeof window!=='undefined'&&typeof window.prompt==='function'){
-    setTimeout(_=>{callback(new A(prompt('')||''))},0)
+    setTimeout(_=>{callback(A(prompt('')||''))},0)
   }else{
-    readline('',line=>{callback(new A(line))})
+    readline('',line=>{callback(A(line))})
   }
 })
 voc['set_⍞']=x=>{
@@ -1662,7 +1661,7 @@ voc['set_⍞']=x=>{
 voc['get_⎕IO']=_=>A.zero
 voc['set_⎕IO']=x=>{if(match(x,A.zero)){return x}else{domErr()}}
 
-voc['⎕DL']=cps((om,al,_,callback)=>{var t0=+new Date;setTimeout(_=>{callback(new A([new Date-t0]))},unwrap(om))})
+voc['⎕DL']=cps((om,al,_,callback)=>{var t0=+new Date;setTimeout(_=>{callback(A([new Date-t0]))},unwrap(om))})
 
 // 'b(c+)d'⎕RE'abcd' ←→ 1 'bcd' (,'c')
 // 'B(c+)d'⎕RE'abcd' ←→ ⍬
@@ -1672,8 +1671,8 @@ voc['⎕RE']=(om,al)=>{
   try{var re=RegExp(x)}catch(e){domErr(e.toString())}
   var m=re.exec(y)
   if(!m)return A.zilde
-  var r=[m.index];for(var i=0;i<m.length;i++)r.push(new A(m[i]||''))
-  return new A(r)
+  var r=[m.index];for(var i=0;i<m.length;i++)r.push(A(m[i]||''))
+  return A(r)
 }
 
 // ⎕UCS'a' ←→ 97
@@ -1709,8 +1708,8 @@ const deal=(om,al)=>{
   al=unwrap(al);om=unwrap(om)
   isInt(om,0)&&isInt(al,0,om+1)||domErr()
   var r=Array(om);for(var i=0;i<om;i++)r[i]=i
-  for(var i=0;i<al;i++){var j=i+Math.floor(Math.random()*(om-i));h=r[i];r[i]=r[j];r[j]=h}
-  return new A(r.slice(0,al))
+  for(var i=0;i<al;i++){var j=i+Math.floor(Math.random()*(om-i));const h=r[i];r[i]=r[j];r[j]=h}
+  return A(r.slice(0,al))
 }
 
 // ↗'CUSTOM ERROR' !!! CUSTOM ERROR
@@ -1730,10 +1729,10 @@ voc['⍴']=(om,al)=>{
     var a=toArray(al),n=prod(a)
     for(var i=0;i<a.length;i++)isInt(a[i],0)||domErr
     if(!n){
-      return new A([],a)
+      return A([],a)
     }else if(a.length>=om.shape.length&&arrEq(om.shape,a.slice(a.length-om.shape.length))){
       // If ⍺ is only prepending axes to ⍴⍵, we can reuse the .data array
-      return new A(om.data,a,repeat([0],a.length-om.shape.length).concat(om.stride),om.offset)
+      return A(om.data,a,repeat([0],a.length-om.shape.length).concat(om.stride),om.offset)
     }else{
       var data=[]
       try{
@@ -1750,7 +1749,7 @@ voc['⍴']=(om,al)=>{
       }else{
         data=repeat([getPrototype(om)],n)
       }
-      return new A(data,a)
+      return A(data,a)
     }
   }else{
     // ⍴0       ←→ 0⍴0
@@ -1761,7 +1760,7 @@ voc['⍴']=(om,al)=>{
     // ⍴'a'     ←→ 0⍴0
     // ⍴'ab'    ←→ 1⍴2
     // ⍴2 3 4⍴0 ←→ 2 3 4
-    return new A(om.shape)
+    return A(om.shape)
   }
 }
 
@@ -1793,7 +1792,7 @@ voc['⌽']=(om,al,axis)=>{
       if(a<0)break
       indices[a]++;p+=stride[a]
     }
-    return new A(data,shape)
+    return A(data,shape)
   }else{
     // ⌽1 2 3 4 5 6                 ←→ 6 5 4 3 2 1
     // ⌽(1 2)(3 4)(5 6)             ←→ (5 6)(3 4)(1 2)
@@ -1811,7 +1810,7 @@ voc['⌽']=(om,al,axis)=>{
     if(!om.shape.length)return om
     var stride=om.stride.slice(0);stride[axis]=-stride[axis]
     var offset=om.offset+(om.shape[axis]-1)*om.stride[axis]
-    return new A(om.data,om.shape,stride,offset)
+    return A(om.data,om.shape,stride,offset)
   }
 }
 
@@ -1845,7 +1844,7 @@ voc['/']=adv((om,al,axis)=>{
     asrt(typeof g==='undefined')
     asrt(typeof axis0==='undefined'||axis0.isA)
     return(om,al)=>{
-      if(!om.shape.length)om=new A([unwrap(om)])
+      if(!om.shape.length)om=A([unwrap(om)])
       axis=axis0?toInt(axis0):om.shape.length-1
       0<=axis&&axis<om.shape.length||rnkErr()
       var n,isNWise,isBackwards
@@ -1854,7 +1853,7 @@ voc['/']=adv((om,al,axis)=>{
       var shape=om.shape.slice(0);shape[axis]=om.shape[axis]-n+1
       var rShape=shape
       if(isNWise){
-        if(!shape[axis])return new A([],rShape)
+        if(!shape[axis])return A([],rShape)
         shape[axis]>=0||lenErr()
       }else{
         rShape=rShape.slice(0);rShape.splice(axis,1)
@@ -1862,7 +1861,7 @@ voc['/']=adv((om,al,axis)=>{
 
       if(empty(om)){
         var z=f.identity;z!=null||domErr();asrt(!z.shape.length)
-        return new A(z.data,rShape,repeat([0],rShape.length),z.offset)
+        return A(z.data,rShape,repeat([0],rShape.length),z.offset)
       }
 
       var data=[],indices=repeat([0],shape.length),p=om.offset
@@ -1887,7 +1886,7 @@ voc['/']=adv((om,al,axis)=>{
         if(a<0)break
         p+=om.stride[a];indices[a]++
       }
-      return new A(data,rShape)
+      return A(data,rShape)
     }
   }else{
     // 0 1 0 1/'abcd'                   ←→ 'bd'
@@ -1911,7 +1910,7 @@ voc['/']=adv((om,al,axis)=>{
     // 2 ¯1 2/[1]3 1⍴7 8 9       ←→ 3 5⍴7 7 0 7 7 8 8 0 8 8 9 9 0 9 9
     // 2 ¯1 2/[1]3 1⍴'abc'       ←→ 3 5⍴'aa aabb bbcc cc'
     // 2 ¯2 2/7                  ←→ 7 7 0 0 7 7
-    om.shape.length||(om=new A([unwrap(om)]))
+    om.shape.length||(om=A([unwrap(om)]))
     axis=axis?toInt(axis,0,om.shape.length):om.shape.length-1
     al.shape.length<=1||rnkErr()
     var a=toArray(al),n=om.shape[axis]
@@ -1943,7 +1942,7 @@ voc['/']=adv((om,al,axis)=>{
         indices[i]++
       }
     }
-    return new A(data,shape)
+    return A(data,shape)
   }
 })
 
@@ -1984,7 +1983,7 @@ voc['⌷']=(om,al,axes)=>{
   }
   var r=om
   for(var i=a.length-1;i>=0;i--){
-    var u=a[i].isA?a[i]:new A([a[i]],[])
+    var u=a[i].isA?a[i]:A([a[i]],[])
     r=indexAtSingleAxis(r,u,axes[i])
   }
   return r
@@ -2027,7 +2026,7 @@ voc._index=(alphaAndAxes,om)=>{
 // a←3 3⍴⍳9 ⋄ a[⍬;1 2]←789 ⋄ a ←→ 3 3⍴⍳9
 // a←1 2 3 ⋄ a[]←4 5 6 ⋄ a ←→ 4 5 6
 voc._substitute=args=>{
-  var h=toArray(args).map(x=>x.isA?x:new A([x],[]))
+  var h=toArray(args).map(x=>x.isA?x:A([x],[]))
   var value=h[0],al=h[1],om=h[2],axes=h[3]
   al.shape.length>1&&rnkErr()
   var a=toArray(al);a.length>om.shape.length&&lenErr()
@@ -2038,8 +2037,8 @@ voc._substitute=args=>{
   }else{
     axes=[];for(var i=0;i<a.length;i++)a.push(i)
   }
-  var subs=voc['⌷'](voc['⍳'](new A(om.shape)),al,new A(axes))
-  if(isSingleton(value))value=new A([value],subs.shape,repeat([0],subs.shape.length))
+  var subs=voc['⌷'](voc['⍳'](A(om.shape)),al,A(axes))
+  if(isSingleton(value))value=A([value],subs.shape,repeat([0],subs.shape.length))
   var data=toArray(om),stride=strideForShape(om.shape)
   each2(subs,value,(u,v)=>{
     if(v.isA&&!v.shape.length)v=unwrap(v)
@@ -2051,7 +2050,7 @@ voc._substitute=args=>{
       data[u]=v
     }
   })
-  return new A(data,om.shape)
+  return A(data,om.shape)
 }
 
 const indexAtSingleAxis=(om,sub,ax)=>{
@@ -2067,13 +2066,13 @@ const indexAtSingleAxis=(om,sub,ax)=>{
     for(var i=0;i<subStride.length;i++)subStride[i]*=d*om.stride[ax]
     stride.splice.apply(stride,[ax,1].concat(subStride))
     var offset=om.offset+u[0]*om.stride[ax]
-    return new A(om.data,shape,stride,offset)
+    return A(om.data,shape,stride,offset)
   }else{
     var shape1=om.shape.slice(0);shape1.splice(ax,1)
     var stride1=om.stride.slice(0);stride1.splice(ax,1)
     var data=[]
     each(sub,x=>{
-      var chunk=new A(om.data,shape1,stride1,om.offset+x*om.stride[ax])
+      var chunk=A(om.data,shape1,stride1,om.offset+x*om.stride[ax])
       data.push.apply(data,toArray(chunk))
     })
     var shape = shape1.slice(0)
@@ -2083,7 +2082,7 @@ const indexAtSingleAxis=(om,sub,ax)=>{
     var k=prod(shape1)
     for(var i=0;i<subStride.length;i++)subStride[i]*=k
     stride.splice.apply(stride,[ax,0].concat(subStride))
-    return new A(data,shape,stride)
+    return A(data,shape,stride)
   }
 }
 
@@ -2114,7 +2113,7 @@ voc['↑']=(om,al)=>al?take(om,al):first(om)
 // ⍬↑3 3⍴⍳9         ←→ 3 3⍴⍳9
 const take=(om,al)=>{
   al.shape.length<=1||rnkErr()
-  if(!om.shape.length)om=new A([unwrap(om)],al.shape.length?repeat([1],al.shape[0]):[1])
+  if(!om.shape.length)om=A([unwrap(om)],al.shape.length?repeat([1],al.shape[0]):[1])
   var a=toArray(al)
   a.length<=om.shape.length||rnkErr()
   for(var i=0;i<a.length;i++)typeof a[i]==='number'&&a[i]===Math.floor(a[i])||domErr()
@@ -2132,7 +2131,7 @@ const take=(om,al)=>{
     if(prod(copyShape)){
       var copyIndices=repeat([0],copyShape.length)
       while(1){
-        data[q]=om.data[p];axis=copyShape.length-1
+        data[q]=om.data[p];var axis=copyShape.length-1
         while(axis>=0&&copyIndices[axis]+1===copyShape[axis]){
           p-=copyIndices[axis]*om.stride[axis];q-=copyIndices[axis]*stride[axis];copyIndices[axis--]=0
         }
@@ -2140,10 +2139,10 @@ const take=(om,al)=>{
         p+=om.stride[axis];q+=stride[axis];copyIndices[axis]++
       }
     }
-    return new A(data,shape,stride)
+    return A(data,shape,stride)
   }else{
     var offset=om.offset;for(var i=0;i<a.length;i++)if(a[i]<0)offset+=(om.shape[i]+a[i])*om.stride[i]
-    return new A(om.data,shape,om.stride,offset)
+    return A(om.data,shape,om.stride,offset)
   }
 }
 
@@ -2153,7 +2152,7 @@ const take=(om,al)=>{
 // ↑123            ←→ 123
 // ↑⍬              ←→ 0
 //! ↑''             ←→ ' '
-const first=x=>{var y=empty(x)?getPrototype(x):x.data[x.offset];return y.isA?y:new A([y],[])}
+const first=x=>{var y=empty(x)?getPrototype(x):x.data[x.offset];return y.isA?y:A([y],[])}
 
 voc['⍉']=(om,al)=>{
   if(al){
@@ -2170,7 +2169,7 @@ voc['⍉']=(om,al)=>{
     // 0 0 0⍉3 3 3⍴⍳27 ←→ 0 13 26
     // 0 1 0⍉3 3 3⍴⍳27 ←→ 3 3⍴0 3 6 10 13 16 20 23 26
     al.shape.length<=1||rnkErr()
-    al.shape.length||(al=new A([unwrap(al)]))
+    al.shape.length||(al=A([unwrap(al)]))
     var n=om.shape.length
     al.shape[0]===n||lenErr()
     var shape=[],stride=[],a=toArray(al)
@@ -2187,7 +2186,7 @@ voc['⍉']=(om,al)=>{
       }
     }
     for(var i=0;i<shape.length;i++)shape[i]!=null||rnkErr()
-    return new A(om.data,shape,stride,om.offset)
+    return A(om.data,shape,stride,om.offset)
   }else{
     // ⍉2 3⍴1 2 3 6 7 8  ←→ 3 2⍴1 6 2 7 3 8
     // ⍴⍉2 3⍴1 2 3 6 7 8 ←→ 3 2
@@ -2195,7 +2194,7 @@ voc['⍉']=(om,al)=>{
     // ⍉2 3 4⍴⍳24        ←→ 4 3 2⍴0 12 4 16 8 20 1 13 5 17 9 21 2 14 6 18 10 22 3 15 7 19 11 23
     // ⍉⍬                ←→ ⍬
     // ⍉''               ←→ ''
-    return new A(om.data,reversed(om.shape),reversed(om.stride),om.offset)
+    return A(om.data,reversed(om.shape),reversed(om.stride),om.offset)
   }
 }
 
@@ -2548,7 +2547,7 @@ var apl=this.apl=(s,o)=>apl.ws(o)(s) // s:apl code; o:options
 extend(apl,{format:format,approx:approx,parse:parse,compileAST:compileAST,repr:repr})
 apl.ws=opts=>{
   opts=opts||{}
-  ctx=Object.create(voc)
+  const ctx=Object.create(voc)
   if(opts.in )ctx['get_⎕']=ctx['get_⍞']=_=>{var s=opts.in();asrt(typeof s==='string');return new A(s)}
   if(opts.out)ctx['set_⎕']=ctx['set_⍞']=x=>{opts.out(format(x).join('\n')+'\n')}
   return aplCode=>exec(aplCode,{ctx:ctx})

@@ -238,7 +238,7 @@ const NOUN=1,VERB=2,ADV=3,CONJ=4
         // "a      !!!
         var d=node[1][0] // the delimiter: " or '
         var s=node[1].slice(1,-1).replace(RegExp(d+d,'g'),d)
-        return[LDC,new A(s,s.length===1?[]:[s.length])]
+        return[LDC,A(s,s.length===1?[]:[s.length])]
       case'N':
         // ∞ ←→ ¯
         // ¯∞ ←→ ¯¯
@@ -249,7 +249,7 @@ const NOUN=1,VERB=2,ADV=3,CONJ=4
           x==='-'?Infinity:x==='--'?-Infinity:x.match(/^-?0x/i)?parseInt(x,16):parseFloat(x)
         )
         var v=a[1]?new Z(a[0],a[1]):a[0]
-        return[LDC,new A([v],[])]
+        return[LDC,A([v],[])]
       case'J':
         // 123 + «456 + 789» ←→ 1368
         var f=Function('return(_w,_a)=>('+node[1].replace(/^«|»$/g,'')+')')()
@@ -258,7 +258,7 @@ const NOUN=1,VERB=2,ADV=3,CONJ=4
         // ⍴ x[⍋x←6?40] ←→ ,6
         var v=node.scopeNode.vars._index,axes=[],a=[],c
         for(var i=2;i<node.length;i++)if(c=node[i]){axes.push(i-2);a.push.apply(a,render(c))}
-        a.push(VEC,axes.length,LDC,new A(axes),VEC,2,GET,v.scopeDepth,v.slot)
+        a.push(VEC,axes.length,LDC,A(axes),VEC,2,GET,v.scopeDepth,v.slot)
         a.push.apply(a,render(node[1]))
         a.push(DYA)
         return a
@@ -267,7 +267,7 @@ const NOUN=1,VERB=2,ADV=3,CONJ=4
         for(var i=1;i<node.length;i++){
           var f=render(node[i]);fragments.push(f);if(f.length!==2||f[0]!==LDC)areAllConst=0
         }
-        return areAllConst?[LDC,new A(fragments.map(f=>isSimple(f[1])?unwrap(f[1]):f[1]))]
+        return areAllConst?[LDC,A(fragments.map(f=>isSimple(f[1])?unwrap(f[1]):f[1]))]
                          :[].concat.apply([],fragments).concat([VEC,node.length-1])
       case'⍬':return[LDC,A.zilde]
       case'M':return render(node[2]).concat(render(node[1]),MON)
@@ -309,7 +309,7 @@ const NOUN=1,VERB=2,ADV=3,CONJ=4
         for(var i=2;i<node.length;i++)if(node[i]){axes.push(i-2);a.push.apply(a,render(node[i]))}
         a.push(VEC,axes.length)
         a.push.apply(a,render(node[1]))
-        a.push(LDC,new A(axes),VEC,4,GET,v.scopeDepth,v.slot,MON)
+        a.push(LDC,A(axes),VEC,4,GET,v.scopeDepth,v.slot,MON)
         a.push.apply(a,renderLHS(node[1]))
         return a
     }
@@ -318,9 +318,9 @@ const NOUN=1,VERB=2,ADV=3,CONJ=4
   return render(ast)
 }
 ,aplify=x=>{
-  if(typeof x==='string')return x.length===1?A.scalar(x):new A(x)
+  if(typeof x==='string')return x.length===1?A.scalar(x):A(x)
   if(typeof x==='number')return A.scalar(x)
-  if(x instanceof Array)return new A(x.map(y=>{y=aplify(y);return y.shape.length?y:unwrap(y)}))
+  if(x instanceof Array)return A(x.map(y=>{y=aplify(y);return y.shape.length?y:unwrap(y)}))
   if(x.isA)return x
   err('Cannot aplify object:'+x)
 }
