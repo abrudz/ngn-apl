@@ -17,8 +17,8 @@ const NOUN=1,VERB=2,ADV=3,CONJ=4
 ,compileAST=(ast,o)=>{
   o=o||{}
   ast.scopeDepth=0
-  ast.nSlots=prelude.nSlots
-  ast.vars=Object.create(prelude.vars)
+  ast.nSlots=prelude?prelude.nSlots:0
+  ast.vars=prelude?Object.create(prelude.vars):{}
   o.ctx=o.ctx||Object.create(voc)
   for(var key in o.ctx)if(!ast.vars[key]){
     const value=o.ctx[key]
@@ -324,7 +324,13 @@ const NOUN=1,VERB=2,ADV=3,CONJ=4
   if(x instanceof A)return x
   err('Cannot aplify object:'+x)
 }
+var prelude
 ;(_=>{
+  const ast=parse(preludeSrc)
+  const code=compileAST(ast) //creates ast.vars as a side effect
+  const vars={};for(var k in ast.vars)vars[k]=ast.vars[k] //flatten prototype chain
+  prelude={code:code,nSlots:ast.nSlots,vars:vars}
+
   var env=prelude.env=[[]]
   for(var k in prelude.vars)env[0][prelude.vars[k].slot]=voc[k]
   vm({code:prelude.code,env:env})
