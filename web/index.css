@@ -2,7 +2,6 @@ body{width:1000px;margin:10px auto;font-family:"APL385 Unicode",monospace}
 textarea,input,h1{font-family:"APL385 Unicode",monospace}
 a{padding:1px 1px;margin:1px 0;text-decoration:none;color:#008}
 a:hover{background-color:#fd8}
-#linkToMobile{float:right}
 #permalink{float:right}
 #code{font-size:large;vertical-align:bottom;height:200px;width:100%}
 #go{float:right;width:100px;font-size:48px;background-color:#acf;border-color:#acf;border-radius:4px;cursor:pointer}
