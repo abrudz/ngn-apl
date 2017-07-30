@@ -33,7 +33,7 @@ $($=>{
     '÷':'Reciprocal, Divide',
     '⌈':'Ceiling, Greater of',
     '⌊':'Floor, Lesser of',
-    '∣':'Absolute value, Residue',
+    '|':'Absolute value, Residue',
     '⍳':'Index generator, Index of',
     '?':'Roll, Deal',
     '*':'Exponential, To the power of',
@@ -119,7 +119,7 @@ $($=>{
       '{empty} ¨ ¯ < ≤ = ≥ > ≠ ∨ ∧ ÷ ×',
       '{empty} ⍵ ∊ ⍴ ~ ↑ ↓ ⍳ ○ ⍟ ← → ⍀',
       '⍺ ⌈ ⌊ ⍫ ∇ ∆ ∘ {empty} ⎕ ⋄ {empty} {enter}',
-      '{shift} ⊂ ⊃ ∩ ∪ ⊥ ⊤ ∣ ⍪ {empty} ⌿ {bksp}',
+      '{shift} ⊂ ⊃ ∩ ∪ ⊥ ⊤ | ⍪ {empty} ⌿ {bksp}',
       '{alt} {space} {exec!!}'
     ],
     'alt-shift':[

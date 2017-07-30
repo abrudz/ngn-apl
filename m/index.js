@@ -60,7 +60,7 @@ $(function($){
   var layouts=[
     '1234567890qwertyuiopasdfghjklzxcvbnm',
     '!@#$%^&*()QWERTYUIOPASDFGHJKLZXCVBNM',
-    '¨¯<≤=≥>≠∨∧←⍵∊⍴~↑↓⍳○*⍺⌈⌊⍪∇∆∘⋄⎕⊂⊃∩∪⊥⊤∣',
+    '¨¯<≤=≥>≠∨∧←⍵∊⍴~↑↓⍳○*⍺⌈⌊⍪∇∆∘⋄⎕⊂⊃∩∪⊥⊤|',
     '⍣[]{}«»;⍱⍲,⌽⍷\\⍉\'"⌷⍬⍟⊖+-×⍒⍋/÷⍞⌿⍀⍝.⍎⍕:'
   ]
   var alt=0,shift=0
