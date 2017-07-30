@@ -13,7 +13,7 @@ const vm=o=>{
       case LDC:stack.push(code[pc++]);break
       case VEC:
         var a=stack.splice(stack.length-code[pc++])
-        for(var i=0;i<a.length;i++)if(a[i].isSimple())a[i]=a[i].unwrap()
+        for(var i=0;i<a.length;i++)if(isSimple(a[i]))a[i]=unwrap(a[i])
         stack.push(new A(a))
         break
       case GET:var r=env[code[pc++]][code[pc++]];r!=null||valErr();stack.push(r);break
@@ -55,12 +55,12 @@ const vm=o=>{
       case POP:stack.pop();break
       case SPL:
         var n=code[pc++]
-        var a=stack[stack.length-1].toArray().reverse()
+        var a=toArray(stack[stack.length-1]).reverse()
         for(var i=0;i<a.length;i++)if(!(a[i]instanceof A))a[i]=new A([a[i]],[])
         if(a.length===1){a=repeat(a,n)}else if(a.length!==n){lenErr()}
         stack.push.apply(stack,a)
         break
-      case JEQ:var n=code[pc++];stack[stack.length-1].toInt(0,2)||(pc+=n);break
+      case JEQ:var n=code[pc++];toInt(stack[stack.length-1],0,2)||(pc+=n);break
       case EMB:var frame=env[env.length-1];stack.push(code[pc++](frame[0],frame[2]));break
       case CON:
         var frame=env[env.length-1]

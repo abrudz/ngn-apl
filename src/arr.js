@@ -1,5 +1,5 @@
 const each=(a,f)=>{ // iterates through the elements of an APL array in ravel order.
-  if(a.empty())return
+  if(empty(a))return
   var data=a.data,shape=a.shape,stride=a.stride,lastAxis=shape.length-1,p=a.offset,i=[],axis=shape.length
   while(--axis>=0)i.push(0)
   while(1){
@@ -18,7 +18,7 @@ const each2=(a,b,f)=>{ // like each() but iterates over two APL array in paralle
   var data1=b.data,shape1=b.shape,stride1=b.stride
   shape.length!==shape1.length&&rnkErr()
   shape!=''+shape1&&lenErr() // abuse JS type coercion -- compare the shapes as strings
-  if(a.empty())return
+  if(empty(a))return
   var lastAxis=shape.length-1,p=a.offset,q=b.offset
   var i=Array(shape.length);for(var j=0;j<i.length;j++)i[j]=0
   while(1){
@@ -31,55 +31,44 @@ const each2=(a,b,f)=>{ // like each() but iterates over two APL array in paralle
 }
 
 function A(data,shape,stride,offset){ // APL array constructor
-  this.data=data
-  this.shape=shape||[this.data.length]
-  this.stride=stride||strideForShape(this.shape)
-  this.offset=offset||0
-  asrt(this.data.length!=null)
-  asrt(this.shape.length!=null)
-  asrt(this.stride.length!=null)
-  asrt(!this.data.length||isInt(this.offset,0,this.data.length))
-  asrt(this.stride.length===this.shape.length)
-  for(var i=0;i<this.shape.length;i++)asrt(isInt(this.shape[i],0))
-  if(this.data.length)for(var i=0;i<this.stride.length;i++)asrt(isInt(this.stride[i],-this.data.length,this.data.length+1))
+  var x=this
+  x.data=data                             ;asrt(x.data.length!=null)
+  x.shape=shape||[x.data.length]          ;asrt(x.shape.length!=null)
+  x.stride=stride||strideForShape(x.shape);asrt(x.stride.length===x.shape.length)
+  x.offset=offset||0                      ;asrt(!x.data.length||isInt(x.offset,0,x.data.length))
+  x.toString=function(){return format(this).join('\n')}
+  for(var i=0;i<x.shape.length;i++)asrt(isInt(x.shape[i],0))
+  if(x.data.length)for(var i=0;i<x.stride.length;i++)asrt(isInt(x.stride[i],-x.data.length,x.data.length+1))
 }
-extend(A.prototype,{
-  empty:function(){var shape=this.shape;for(var i=0;i<shape.length;i++)if(!shape[i])return 1;return 0},
-  map:function(f){var r=[];each(this,function(x,i,p){r.push(f(x,i,p))});return new A(r,this.shape)},
-  map2:function(a,f){var r=[];each2(this,a,function(x,y,i){r.push(f(x,y,i))});return new A(r,this.shape)},
-  toArray:function(){var r=[];each(this,function(x){r.push(x)});return r},
-  toInt:function(m,M){var r=this.unwrap();if(r!==r|0||m!=null&&r<m||M!=null&&M<=r)domErr();return r},
-  toSimpleString:function(){
-    if(this.shape.length>1)rnkErr()
-    if(typeof this.data==='string'){
-      if(!this.shape.length)return this.data[this.offset]
-      if(!this.shape[0])return''
-      if(this.stride[0]===1)return this.data.slice(this.offset,this.offset+this.shape[0])
-      return this.toArray().join('')
-    }else{
-      var a=this.toArray()
-      for(var i=0;i<a.length;i++)typeof a[i]!=='string'&&domErr()
-      return a.join('')
-    }
-  },
-  isSingleton:function(){var s=this.shape;for(var i=0;i<s.length;i++)if(s[i]!==1)return 0;return 1},
-  isSimple:function(){return!this.shape.length&&!(this.data[this.offset]instanceof A)},
-  unwrap:function(){this.isSingleton()||lenErr();return this.data[this.offset]},
-  getPrototype:function(){return this.empty()||typeof this.data[this.offset]!=='string'?0:' '}, // todo
-  toString:function(){return format(this).join('\n')},
-  repr:function(){return'new A('+repr(this.data)+','+repr(this.shape)+','+repr(this.stride)+','+repr(this.offset)+')'}
-})
-const strideForShape=shape=>{
-  asrt(shape.length!=null)
-  if(!shape.length)return[]
-  var r=Array(shape.length)
-  r[r.length-1]=1
-  for(var i=r.length-2;i>=0;i--){
-    asrt(isInt(shape[i],0))
-    r[i]=r[i+1]*shape[i+1]
+const empty=x=>{for(var i=0;i<x.shape.length;i++)if(!x.shape[i])return 1;return 0}
+,map=(x,f)=>{var r=[];each(x,(y,i,p)=>r.push(f(y,i,p)));return new A(r,x.shape)}
+,map2=(x,y,f)=>{var r=[];each2(x,y,(xi,yi,i)=>r.push(f(xi,yi,i)));return new A(r,x.shape)}
+,toArray=x=>{var r=[];each(x,y=>r.push(y));return r}
+,toInt=(x,m,M)=>{var r=unwrap(x);if(r!==r|0||m!=null&&r<m||M!=null&&M<=r)domErr();return r}
+,toSimpleString=x=>{
+  if(x.shape.length>1)rnkErr()
+  if(typeof x.data==='string'){
+    if(!x.shape.length)return x.data[x.offset]
+    if(!x.shape[0])return''
+    if(x.stride[0]===1)return x.data.slice(x.offset,x.offset+x.shape[0])
+    return toArray(x).join('')
+  }else{
+    var a=toArray(x)
+    for(var i=0;i<a.length;i++)typeof a[i]!=='string'&&domErr()
+    return a.join('')
   }
+}
+,isSingleton=x=>{var s=x.shape;for(var i=0;i<s.length;i++)if(s[i]!==1)return 0;return 1}
+,isSimple=x=>!x.shape.length&&!(x.data[x.offset]instanceof A)
+,unwrap=x=>{isSingleton(x)||lenErr();return x.data[x.offset]}
+,getPrototype=x=>empty(x)||typeof x.data[x.offset]!=='string'?0:' ' // todo
+,strideForShape=s=>{
+  asrt(s.length!=null)
+  var r=Array(s.length),u=1
+  for(var i=r.length-1;i>=0;i--){asrt(isInt(s[i],0));r[i]=u;u*=s[i]}
   return r
 }
+
 A.zero =new A([0],[])
 A.one  =new A([1],[])
 A.zilde=new A([],[0])
