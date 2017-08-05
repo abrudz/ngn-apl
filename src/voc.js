@@ -1714,6 +1714,7 @@ const take=(om,al)=>{
 const first=x=>{var y=empty(x)?getPrototype(x):x.data[0];return y.isA?y:A([y],[])}
 
 voc['⍉']=(om,al)=>{
+  var n=om.shape.length
   if(al){
     // (2 2⍴⍳4)⍉2 2 2 2⍴⍳16 !!! RANK ERROR
     // 0⍉3 5 8 ←→ 3 5 8
@@ -1729,23 +1730,8 @@ voc['⍉']=(om,al)=>{
     // 0 1 0⍉3 3 3⍴⍳27 ←→ 3 3⍴0 3 6 10 13 16 20 23 26
     al.shape.length<=1||rnkErr()
     al.shape.length||(al=A([unwrap(al)]))
-    var n=om.shape.length
     al.shape[0]===n||lenErr()
-    var shape=[],stride=[],a=toArray(al)
-    for(var i=0;i<a.length;i++){
-      var x=a[i]
-      isInt(x,0)||domErr()
-      x<n||rnkErr()
-      if(shape[x]==null){
-        shape[x]=om.shape[i]
-        stride[x]=om.stride[i]
-      }else{
-        shape[x]=Math.min(shape[x],om.shape[i])
-        stride[x]+=om.stride[i]
-      }
-    }
-    for(var i=0;i<shape.length;i++)shape[i]!=null||rnkErr()
-    return A(om.data,shape,stride)
+    var a=toArray(al)
   }else{
     // ⍉2 3⍴1 2 3 6 7 8  ←→ 3 2⍴1 6 2 7 3 8
     // ⍴⍉2 3⍴1 2 3 6 7 8 ←→ 3 2
@@ -1753,8 +1739,23 @@ voc['⍉']=(om,al)=>{
     // ⍉2 3 4⍴⍳24        ←→ 4 3 2⍴0 12 4 16 8 20 1 13 5 17 9 21 2 14 6 18 10 22 3 15 7 19 11 23
     // ⍉⍬                ←→ ⍬
     // ⍉''               ←→ ''
-    return A(om.data,reversed(om.shape),reversed(om.stride))
+    var a=[];for(var i=n-1;i>=0;i--)a.push(i)
   }
+  var shape=[],stride=[]
+  for(var i=0;i<a.length;i++){
+    var x=a[i]
+    isInt(x,0)||domErr()
+    x<n||rnkErr()
+    if(shape[x]==null){
+      shape[x]=om.shape[i]
+      stride[x]=om.stride[i]
+    }else{
+      shape[x]=Math.min(shape[x],om.shape[i])
+      stride[x]+=om.stride[i]
+    }
+  }
+  for(var i=0;i<shape.length;i++)shape[i]!=null||rnkErr()
+  return A(om.data,shape,stride)
 }
 
 //  ({1}⍠{2})0 ←→ 1
