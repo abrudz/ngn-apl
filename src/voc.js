@@ -349,6 +349,8 @@ voc[',']=(om,al,axis)=>{
     // 'ab','c','def' ←→ 'abcdef'
     // (2 3⍴⍳6),2 2⍴⍳4 ←→ 2 5⍴0 1 2 0 1 3 4 5 2 3
     // (3 2⍴⍳6),2 2⍴⍳4 !!! LENGTH ERROR
+    // (2 3⍴⍳6),⍳2 ←→ 2 4⍴0 1 2 0 3 4 5 1
+    // (⍳2),2 3⍴⍳6 ←→ 2 4⍴0 0 1 2 1 3 4 5
     // (2 3⍴⍳6),9 ←→ 2 4⍴0 1 2 9 3 4 5 9
     // (2 3 4⍴⍳24),99 ←→ 2 3 5⍴0 1 2 3 99 4 5 6 7 99 8 9 10 11 99 12 13 14 15 99 16 17 18 19 99 20 21 22 23 99
     // ⍬,⍬ ←→ ⍬
@@ -363,21 +365,19 @@ voc[',']=(om,al,axis)=>{
     }else if(!al.shape.length){
       var s=om.shape.slice(0)
       if(isInt(axis))s[axis]=1
-      al=A([unwrap(al)],s,repeat([0],om.shape.length))
+      al=A(repeat([unwrap(al)],prod(s)),s)
     }else if(!om.shape.length){
       var s=al.shape.slice(0)
       if(isInt(axis))s[axis]=1
-      om=A([unwrap(om)],s,repeat([0],al.shape.length))
+      om=A(repeat([unwrap(om)],prod(s)),s)
     }else if(al.shape.length+1===om.shape.length){
       isInt(axis)||rnkErr()
-      var shape =al.shape .slice(0);shape .splice(axis,0,1)
-      var stride=al.stride.slice(0);stride.splice(axis,0,0)
-      al=A(al.data,shape,stride)
+      var shape=al.shape.slice(0);shape.splice(axis,0,1)
+      al=A(al.data,shape)
     }else if(al.shape.length===om.shape.length+1){
       isInt(axis)||rnkErr()
-      var shape =om.shape .slice(0);shape .splice(axis,0,1)
-      var stride=om.stride.slice(0);stride.splice(axis,0,0)
-      om=A(om.data,shape,stride)
+      var shape=om.shape.slice(0);shape.splice(axis,0,1)
+      om=A(om.data,shape)
     }else if(al.shape.length!==om.shape.length){
       rnkErr()
     }
@@ -814,7 +814,7 @@ voc['⍷']=(om,al)=>{
   // (2 3 0⍴0)⍷(3 4 5⍴0) ←→ 3 4 5⍴1
   // (2 3 4⍴0)⍷(3 4 0⍴0) ←→ 3 4 0⍴0
   // (2 3 0⍴0)⍷(3 4 0⍴0) ←→ 3 4 0⍴0
-  if(al.shape.length>om.shape.length)return A([0],om.shape,repeat([0],om.shape.length))
+  if(al.shape.length>om.shape.length)return A(new Float64Array(prod(om.shape)),om.shape)
   if(al.shape.length<om.shape.length){
     al=A( // prepend ones to the shape of ⍺
       al.data,
@@ -822,11 +822,11 @@ voc['⍷']=(om,al)=>{
       repeat([0],om.shape.length-al.shape.length).concat(al.stride)
     )
   }
-  if(empty(al))return A([1],om.shape,repeat([0],om.shape.length))
+  if(empty(al))return A(new Float64Array(prod(om.shape)).fill(1),om.shape)
   var findShape=[]
   for(var i=0;i<om.shape.length;i++){
     var d=om.shape[i]-al.shape[i]+1
-    if(d<=0)return A([0],om.shape,repeat([0],om.shape.length))
+    if(d<=0)return A(new Float64Array(prod(om.shape)),om.shape)
     findShape.push(d)
   }
   var stride=strideForShape(om.shape),data=repeat([0],prod(om.shape))
