@@ -13,13 +13,13 @@
 ⎕d←'0123456789'
 
 ~←~⍠{(~⍺∊⍵)/⍺}
-⍝ "ABCDEFGHIJKLMNOPQRSTUVWXYZ"~"AEIOU" ←→ 'BCDFGHJKLMNPQRSTVWXYZ'
+⍝ 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'~'AEIOU' ←→ 'BCDFGHJKLMNPQRSTVWXYZ'
 ⍝ 1 2 3 4 5 6~2 4 6                    ←→ 1 3 5
-⍝ "THIS IS TEXT"~" "                   ←→ 'THISISTEXT'
-⍝ "THIS" "AND" "THAT"~"T"              ←→ 'THIS' 'AND' 'THAT'
-⍝ "THIS" "AND" "THAT"~"AND"            ←→ 'THIS' 'AND' 'THAT'
-⍝ "THIS" "AND" "THAT"~⊂"AND"           ←→ 'THIS' 'THAT'
-⍝ "THIS" "AND" "THAT"~"TH" "AND"       ←→ 'THIS' 'THAT'
+⍝ 'THIS IS TEXT'~' '                   ←→ 'THISISTEXT'
+⍝ 'THIS' 'AND' 'THAT'~'T'              ←→ 'THIS' 'AND' 'THAT'
+⍝ 'THIS' 'AND' 'THAT'~'AND'            ←→ 'THIS' 'AND' 'THAT'
+⍝ 'THIS' 'AND' 'THAT'~⊂'AND'           ←→ 'THIS' 'THAT'
+⍝ 'THIS' 'AND' 'THAT'~'TH' 'AND'       ←→ 'THIS' 'THAT'
 ⍝ 11 12 13 14 15 16~2 3⍴1 2 3 14 5 6   ←→ 11 12 13 15 16
 ⍝ (2 2⍴⍳4)~2 !!! RANK ERROR
 
@@ -98,8 +98,8 @@ _atop←{⍶⍹⍵;⍶⍺⍹⍵}
 ⍝ ¯2 ¯1↓3 3⍴'ONEFATFLY' ←→ 1 2⍴'ON'
 ⍝ 1↓3 3⍴'ONEFATFLY'     ←→ 2 3⍴'FATFLY'
 ⍝ ⍬↓3 3⍴⍳9              ←→ 3 3⍴⍳9
-⍝ 1 1↓2 3 4⍴"ABCDEFGHIJKLMNOPQRSTUVWXYZ"   ←→ 1 2 4⍴'QRSTUVWX'
-⍝ ¯1 ¯1↓2 3 4⍴"ABCDEFGHIJKLMNOPQRSTUVWXYZ" ←→ 1 2 4⍴'ABCDEFGH'
+⍝ 1 1↓2 3 4⍴'ABCDEFGHIJKLMNOPQRSTUVWXYZ'   ←→ 1 2 4⍴'QRSTUVWX'
+⍝ ¯1 ¯1↓2 3 4⍴'ABCDEFGHIJKLMNOPQRSTUVWXYZ' ←→ 1 2 4⍴'ABCDEFGH'
 ⍝ 1↓0                   ←→ ⍬
 ⍝ 0 1↓2                 ←→ 1 0⍴0
 ⍝ 1 2↓3                 ←→ 0 0⍴0

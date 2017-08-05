@@ -41,7 +41,7 @@ const NOUN=1,VERB=2,ADV=3,CONJ=4
     }
   }
   ctgriseLambdas(ast)
-  var queue=[ast] // accumulates"body"nodes we encounter on the way
+  var queue=[ast] // accumulates "body" nodes we encounter on the way
   while(queue.length){
     var scopeNode=queue.shift(),vars=scopeNode.vars
     const visit=node=>{
@@ -229,15 +229,11 @@ const NOUN=1,VERB=2,ADV=3,CONJ=4
         // ⍴'x'    ←→ ⍬
         // ⍴'xx'   ←→ ,2
         // ⍴'a''b' ←→ ,3
-        // ⍴"a""b" ←→ ,3
-        // ⍴'a""b' ←→ ,4
         // ⍴'''a'  ←→ ,2
         // ⍴'a'''  ←→ ,2
-        // ''''    ←→ "'"
-        // ⍴"\f\t\n\r\u1234\xff" ←→ ,18
-        // "a      !!!
-        var d=node[1][0] // the delimiter: " or '
-        var s=node[1].slice(1,-1).replace(RegExp(d+d,'g'),d)
+        // ⍴''''   ←→ ⍬
+        // 'a      !!!
+        var s=node[1].slice(1,-1).replace(/''/g,"'")
         return[LDC,A(s,s.length===1?[]:[s.length])]
       case'N':
         // ∞ ←→ ¯

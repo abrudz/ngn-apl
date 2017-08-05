@@ -184,7 +184,7 @@ voc['|']=withId(0,perv({
 voc['⍀']=adv((om,al,axis)=>voc['\\'](om,al,axis||A.zero))
 
 // +\20 10 ¯5 7               ←→ 20 30 25 32
-// ,\"AB" "CD" "EF"           ←→ 'AB' 'ABCD' 'ABCDEF'
+// ,\'AB' 'CD' 'EF'           ←→ 'AB' 'ABCD' 'ABCDEF'
 // ×\2 3⍴5 2 3 4 7 6          ←→ 2 3⍴5 10 30 4 28 168
 // ∧\1 1 1 0 1 1              ←→ 1 1 1 0 0 0
 // -\1 2 3 4                  ←→ 1 ¯1 2 ¯2
@@ -195,8 +195,8 @@ voc['⍀']=adv((om,al,axis)=>voc['\\'](om,al,axis||A.zero))
 // M←2 3⍴1 2 3 4 5 6 ⋄ +⍀M    ←→ 2 3 ⍴ 1 2 3 5 7 9
 // M←2 3⍴1 2 3 4 5 6 ⋄ +\[0]M ←→ 2 3 ⍴ 1 2 3 5 7 9
 // ,\'ABC'                    ←→ 'A' 'AB' 'ABC'
-// T←"ONE(TWO) BOOK(S)" ⋄ ≠\T∊"()" ←→ 0 0 0 1 1 1 1 0 0 0 0 0 0 1 1 0
-// T←"ONE(TWO) BOOK(S)" ⋄ ((T∊"()")⍱≠\T∊"()")/T ←→ 'ONE BOOK'
+// T←'ONE(TWO) BOOK(S)' ⋄ ≠\T∊'()' ←→ 0 0 0 1 1 1 1 0 0 0 0 0 0 1 1 0
+// T←'ONE(TWO) BOOK(S)' ⋄ ((T∊'()')⍱≠\T∊'()')/T ←→ 'ONE BOOK'
 // 1 0 1\'ab'          ←→ 'a b'
 // 0 1 0 1 0\2 3       ←→ 0 2 0 3 0
 // (2 2⍴0)\'food'      !!! RANK ERROR
@@ -464,11 +464,11 @@ voc[',']=(om,al,axis)=>{
 var eq
 // 12=12               ←→ 1
 // 2=12                ←→ 0
-// "Q"="Q"             ←→ 1
-// 1="1"               ←→ 0
-// "1"=1               ←→ 0
+// 'Q'='Q'             ←→ 1
+// 1='1'               ←→ 0
+// '1'=1               ←→ 0
 // 11 7 2 9=11 3 2 6   ←→ 1 0 1 0
-// "STOAT"="TOAST"     ←→ 0 0 0 0 1
+// 'STOAT'='TOAST'     ←→ 0 0 0 0 1
 // 8=2+2+2+2           ←→ 1
 // (2 3⍴1 2 3 4 5 6)=2 3⍴3 3 3 5 5 5 ←→ 2 3⍴0 0 1 0 1 0
 // 3=2 3⍴1 2 3 4 5 6   ←→ 2 3⍴0 0 1 0 0 0
@@ -500,15 +500,15 @@ voc['≥']=withId(1,perv({dyad:real((y,x)=>+(x>=y))})),
 // 4 7.1 8≡4 7.2 8        ←→ 0
 // (3 4⍴⍳12)≡3 4⍴⍳12      ←→ 1
 // (3 4⍴⍳12)≡⊂3 4⍴⍳12     ←→ 0
-// ("ABC" "DEF")≡"ABCDEF" ←→ 0
-//! (⍳0)≡""               ←→ 0
+// ('ABC' 'DEF')≡'ABCDEF' ←→ 0
+//! (⍳0)≡''               ←→ 0
 // (2 0⍴0)≡(0 2⍴0)        ←→ 0
 //! (0⍴1 2 3)≡0⍴⊂2 2⍴⍳4   ←→ 0
 // ≡4                      ←→ 0
 // ≡⍳4                     ←→ 1
 // ≡2 2⍴⍳4                 ←→ 1
-// ≡"abc"1 2 3(23 55)      ←→ 2
-// ≡"abc"(2 4⍴"abc"2 3"k") ←→ 3
+// ≡'abc'1 2 3(23 55)      ←→ 2
+// ≡'abc'(2 4⍴'abc'2 3'k') ←→ 3
 voc['≡']=(om,al)=>al?A.bool[+match(om,al)]:A([depthOf(om)],[])
 
 const depthOf=x=>{
@@ -652,16 +652,16 @@ const innerProduct=(g,f)=>{ // A f.g B <-> f/¨(⊂[¯1+⍴⍴A]A)∘.g⊂[0]B
 }
 
 // ⍴¨(0 0 0 0)(0 0 0)             ←→ (,4)(,3)
-// ⍴¨"MONDAY" "TUESDAY"           ←→ (,6)(,7)
-// ⍴   (2 2⍴⍳4)(⍳10)97.3(3 4⍴"K") ←→ ,4
-// ⍴¨  (2 2⍴⍳4)(⍳10)97.3(3 4⍴"K") ←→ (2 2)(,10)⍬(3 4)
-// ⍴⍴¨ (2 2⍴⍳4)(⍳10)97.3(3 4⍴"K") ←→ ,4
-// ⍴¨⍴¨(2 2⍴⍳4)(⍳10)97.3(3 4⍴"K") ←→ (,2)(,1)(,0)(,2)
+// ⍴¨'MONDAY' 'TUESDAY'           ←→ (,6)(,7)
+// ⍴   (2 2⍴⍳4)(⍳10)97.3(3 4⍴'K') ←→ ,4
+// ⍴¨  (2 2⍴⍳4)(⍳10)97.3(3 4⍴'K') ←→ (2 2)(,10)⍬(3 4)
+// ⍴⍴¨ (2 2⍴⍳4)(⍳10)97.3(3 4⍴'K') ←→ ,4
+// ⍴¨⍴¨(2 2⍴⍳4)(⍳10)97.3(3 4⍴'K') ←→ (,2)(,1)(,0)(,2)
 // (1 2 3) ,¨ 4 5 6               ←→ (1 4)(2 5)(3 6)
 // 2 3↑¨'MONDAY' 'TUESDAY'        ←→ 'MO' 'TUE'
 // 2↑¨'MONDAY' 'TUESDAY'          ←→ 'MO' 'TU'
 // 2 3⍴¨1 2                       ←→ (1 1)(2 2 2)
-// 4 5⍴¨"THE" "CAT"               ←→ 'THET' 'CATCA'
+// 4 5⍴¨'THE' 'CAT'               ←→ 'THET' 'CATCA'
 // {1+⍵*2}¨2 3⍴⍳6                 ←→ 2 3⍴1 2 5 10 17 26
 voc['¨']=adv((f,g)=>{
   asrt(typeof f==='function');asrt(g==null)
@@ -736,8 +736,8 @@ voc['∊']=(om,al)=>{
     })
   }else{
     // ∊17                   ←→ ,17
-    // ⍴∊(1 2 3)"ABC"(4 5 6) ←→ ,9
-    // ∊2 2⍴(1+2 2⍴⍳4)"DEF"(1+2 3⍴⍳6)(7 8 9) ←→ 1 2 3 4,'DEF',1 2 3 4 5 6 7 8 9
+    // ⍴∊(1 2 3)'ABC'(4 5 6) ←→ ,9
+    // ∊2 2⍴(1+2 2⍴⍳4)'DEF'(1+2 3⍴⍳6)(7 8 9) ←→ 1 2 3 4,'DEF',1 2 3 4 5 6 7 8 9
     var r=[];enlist(om,r);return A(r)
   }
 }
@@ -836,12 +836,12 @@ voc['⍎']=(om,al)=>al?nyiErr():exec(toSimpleString(om))
 
 voc['⍷']=(om,al)=>{
   al||nyiErr()
-  // "AN"⍷"BANANA"                        ←→ 0 1 0 1 0 0
-  // "BIRDS" "NEST"⍷"BIRDS" "NEST" "SOUP" ←→ 1 0 0
-  // "ME"⍷"HOME AGAIN"                    ←→ 0 0 1 0 0 0 0 0 0 0
-  // "DAY"⍷7 9⍴'SUNDAY   MONDAY   TUESDAY  WEDNESDAYTHURSDAY FRIDAY   SATURDAY ' ←→ 7 9⍴0 0 0 1 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 1 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 1 0 0 0
-  // (2 2⍴"ABCD")⍷"ABCD" ←→ 4 ⍴ 0
-  // (1 2)(3 4)⍷"START"(1 2 3)(1 2)(3 4) ←→ 0 0 1 0
+  // 'AN'⍷'BANANA'                        ←→ 0 1 0 1 0 0
+  // 'BIRDS' 'NEST'⍷'BIRDS' 'NEST' 'SOUP' ←→ 1 0 0
+  // 'ME'⍷'HOME AGAIN'                    ←→ 0 0 1 0 0 0 0 0 0 0
+  // 'DAY'⍷7 9⍴'SUNDAY   MONDAY   TUESDAY  WEDNESDAYTHURSDAY FRIDAY   SATURDAY ' ←→ 7 9⍴0 0 0 1 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 1 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 1 0 0 0
+  // (2 2⍴'ABCD')⍷'ABCD' ←→ 4 ⍴ 0
+  // (1 2)(3 4)⍷'START'(1 2 3)(1 2)(3 4) ←→ 0 0 1 0
   // (2 2⍴7 8 12 13)⍷1+4 5⍴⍳20 ←→ 4 5⍴0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0
   // 1⍷⍳5                ←→ 0 1 0 0 0
   // 1 2⍷⍳5              ←→ 0 1 0 0 0
@@ -988,17 +988,17 @@ const format=a=>{ // as array of strings
 
 // ⍋13 8 122 4                  ←→ 3 1 0 2
 // a←13 8 122 4 ⋄ a[⍋a]         ←→ 4 8 13 122
-// ⍋"ZAMBIA"                    ←→ 1 5 3 4 2 0
-// s←"ZAMBIA" ⋄ s[⍋s]           ←→ 'AABIMZ'
-// t←3 3⍴"BOBALFZAK" ⋄ ⍋t       ←→ 1 0 2
+// ⍋'ZAMBIA'                    ←→ 1 5 3 4 2 0
+// s←'ZAMBIA' ⋄ s[⍋s]           ←→ 'AABIMZ'
+// t←3 3⍴'BOBALFZAK' ⋄ ⍋t       ←→ 1 0 2
 // t←3 3⍴4 5 6 1 1 3 1 1 2 ⋄ ⍋t ←→ 2 1 0
 // t←3 3⍴4 5 6 1 1 3 1 1 2 ⋄ t[⍋t;] ←→ 3 3⍴ 1 1 2 1 1 3 4 5 6
 // a←3 2 3⍴2 3 4 0 1 0 1 1 3 4 5 6 1 1 2 10 11 12 ⋄ a[⍋a;;] ←→ 3 2 3⍴1 1 2 10 11 12 1 1 3 4 5 6 2 3 4 0 1 0
-// a←3 2 5⍴"joe  doe  bob  jonesbob  zwart"  ⋄  a[⍋a;;] ←→ 3 2 5 ⍴ 'bob  jonesbob  zwartjoe  doe  '
-// "ZYXWVUTSRQPONMLKJIHGFEDCBA"⍋"ZAMBIA" ←→ 0 2 4 3 1 5
-// ⎕A←"ABCDEFGHIJKLMNOPQRSTUVWXYZ" ⋄ (⌽⎕A)⍋3 3⍴"BOBALFZAK" ←→ 2 0 1
-// a←6 4⍴"ABLEaBLEACREABELaBELACES" ⋄ a[(2 26⍴"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz")⍋a;] ←→ 6 4⍴'ABELaBELABLEaBLEACESACRE'
-// a←6 4⍴"ABLEaBLEACREABELaBELACES" ⋄ a[("AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz")⍋a;] ←→ 6 4⍴'ABELABLEACESACREaBELaBLE'
+// a←3 2 5⍴'joe  doe  bob  jonesbob  zwart'  ⋄  a[⍋a;;] ←→ 3 2 5 ⍴ 'bob  jonesbob  zwartjoe  doe  '
+// 'ZYXWVUTSRQPONMLKJIHGFEDCBA'⍋'ZAMBIA' ←→ 0 2 4 3 1 5
+// ⎕A←'ABCDEFGHIJKLMNOPQRSTUVWXYZ' ⋄ (⌽⎕A)⍋3 3⍴'BOBALFZAK' ←→ 2 0 1
+// a←6 4⍴'ABLEaBLEACREABELaBELACES' ⋄ a[(2 26⍴'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz')⍋a;] ←→ 6 4⍴'ABELaBELABLEaBLEACESACRE'
+// a←6 4⍴'ABLEaBLEACREABELaBELACES' ⋄ a[('AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz')⍋a;] ←→ 6 4⍴'ABELABLEACESACREaBELaBLE'
 // ⍋0 1 2 3 4 3 6 6 4 9 1 11 12 13 14 15 ←→ 0 1 10 2 3 5 4 8 6 7 9 11 12 13 14 15
 voc['⍋']=(om,al)=>grade(om,al,1),
 // ⍒3 1 8 ←→ 2 0 1
@@ -1050,12 +1050,12 @@ voc['⍳']=(om,al)=>{
   if(al){
     // 2 5 9 14 20⍳9                           ←→ 2
     // 2 5 9 14 20⍳6                           ←→ 5
-    // "GORSUCH"⍳"S"                           ←→ 3
-    // "ABCDEFGHIJKLMNOPQRSTUVWXYZ"⍳"CARP"     ←→ 2 0 17 15
-    // "ABCDEFGHIJKLMNOPQRSTUVWXYZ"⍳"PORK PIE" ←→ 15 14 17 10 26 15 8 4
-    // "MON" "TUES" "WED"⍳"MON" "THURS"        ←→ 0 3
+    // 'GORSUCH'⍳'S'                           ←→ 3
+    // 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'⍳'CARP'     ←→ 2 0 17 15
+    // 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'⍳'PORK PIE' ←→ 15 14 17 10 26 15 8 4
+    // 'MON' 'TUES' 'WED'⍳'MON' 'THURS'        ←→ 0 3
     // 1 3 2 0 3⍳⍳5                            ←→ 3 0 2 1 5
-    // "CAT" "DOG" "MOUSE"⍳"DOG" "BIRD"        ←→ 1 3
+    // 'CAT' 'DOG' 'MOUSE'⍳'DOG' 'BIRD'        ←→ 1 3
     // 123⍳123                                 !!! RANK ERROR
     // (2 2⍴123)⍳123                           !!! RANK ERROR
     // 123 123⍳123                             ←→ 0
@@ -1265,7 +1265,7 @@ voc['?']=(om,al)=>al?deal(om,al):roll(om)
 // ?∞   !!! DOMAIN ERROR
 var roll=perv({monad:om=>{isInt(om,1)||domErr();return Math.floor(Math.random()*om)}})
 
-// n←100 ⋄ (+/n?n)=(+/⍳n) ←→ 1 # a permutation (an "n?n" dealing) contains all 0...n
+// n←100 ⋄ (+/n?n)=(+/⍳n) ←→ 1 # a permutation (an 'n?n' dealing) contains all 0...n
 // n←100 ⋄ A←(n÷2)?n ⋄ ∧/(0≤A),A<n ←→ 1 # any number x in a dealing is 0 <= x < n
 // 0?100 ←→ ⍬
 // 0?0   ←→ ⍬
@@ -1332,7 +1332,7 @@ voc['⌽']=(om,al,axis)=>{
     // 1⌽1 2 3 4 5 6             ←→ 2 3 4 5 6 1
     // 3⌽'ABCDEFGH'              ←→ 'DEFGHABC'
     // 3⌽2 5⍴1 2 3 4 5 6 7 8 9 0 ←→ 2 5⍴4 5 1 2 3 9 0 6 7 8
-    // ¯2⌽"ABCDEFGH"             ←→ 'GHABCDEF'
+    // ¯2⌽'ABCDEFGH'             ←→ 'GHABCDEF'
     // 1⌽3 3⍴⍳9                  ←→ 3 3⍴1 2 0 4 5 3 7 8 6
     // 0⌽1 2 3 4                 ←→ 1 2 3 4
     // 0⌽1234                    ←→ 1234
@@ -1358,7 +1358,7 @@ voc['⌽']=(om,al,axis)=>{
   }else{
     // ⌽1 2 3 4 5 6                 ←→ 6 5 4 3 2 1
     // ⌽(1 2)(3 4)(5 6)             ←→ (5 6)(3 4)(1 2)
-    // ⌽"BOB WON POTS"              ←→ 'STOP NOW BOB'
+    // ⌽'BOB WON POTS'              ←→ 'STOP NOW BOB'
     // ⌽    2 5⍴1 2 3 4 5 6 7 8 9 0 ←→ 2 5⍴5 4 3 2 1 0 9 8 7 6
     // ⌽[0] 2 5⍴1 2 3 4 5 6 7 8 9 0 ←→ 2 5⍴6 7 8 9 0 1 2 3 4 5
     if(axis){
@@ -1507,7 +1507,7 @@ voc['/']=adv((om,al,axis)=>{
   }
 })
 
-// "a0 a1...⌷b" is equivalent to "b[a0;a1;...]"
+// 'a0 a1...⌷b' is equivalent to 'b[a0;a1;...]'
 //
 // 1⌷3 5 8                ←→ 5
 // (3 5 8)[1]             ←→ 5
@@ -1568,7 +1568,7 @@ voc['⌷']=(om,al,axes)=>{
 // ⍴(1 2 3)[1 2 3 0 5⍴0]               ←→ 1 2 3 0 5
 // (⍳3)[]                              ←→ ⍳3
 // ⍴(3 3⍴⍳9)[⍬;⍬]                      ←→ 0 0
-// " X"[(3 3⍴⍳9)∊1 3 6 7 8] ←→ 3 3⍴' X ','X  ','XXX'
+// ' X'[(3 3⍴⍳9)∊1 3 6 7 8] ←→ 3 3⍴' X ','X  ','XXX'
 voc._index=(alphaAndAxes,om)=>{
   var h=toArray(alphaAndAxes),al=h[0],axes=h[1]
   return voc['⌷'](om,al,axes)
@@ -1660,9 +1660,9 @@ voc['↑']=(om,al)=>al?take(om,al):first(om)
 // 5↑40 92 11       ←→ 40 92 11 0 0
 // ¯5↑40 92 11      ←→ 0 0 40 92 11
 // 3 3↑1 1⍴0        ←→ 3 3⍴0 0 0 0 0 0 0 0 0
-// 5↑"abc"          ←→ 'abc  '
-// ¯5↑"abc"         ←→ '  abc'
-// 3 3↑1 1⍴"a"      ←→ 3 3⍴'a        '
+// 5↑'abc'          ←→ 'abc  '
+// ¯5↑'abc'         ←→ '  abc'
+// 3 3↑1 1⍴'a'      ←→ 3 3⍴'a        '
 // 2 3↑1+4 3⍴⍳12    ←→ 2 3⍴1 2 3 4 5 6
 // ¯1 3↑1+4 3⍴⍳12   ←→ 1 3⍴10 11 12
 // 1 2↑1+4 3⍴⍳12    ←→ 1 2⍴1 2
