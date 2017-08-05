@@ -781,8 +781,8 @@ var Γ,lnΓ
 // ⍎123                 !!!
 voc['⍎']=(om,al)=>al?nyiErr():exec(toSimpleString(om))
 
-voc['⍷']=(om,al)=>{
-  al||nyiErr()
+voc['⍷']=(y,x)=>{
+  y||nyiErr()
   // 'ab'⍷'bababc'←→0 1 0 1 0 0
   // 'ab' 'cde'⍷'ab' 'cde' 'fg' ←→ 1 0 0
   // 'cd'⍷'abcd efghi'←→0 0 1 0 0 0 0 0 0 0
@@ -794,31 +794,20 @@ voc['⍷']=(om,al)=>{
   // (2 3 0⍴0)⍷3 4 5⍴0←→3 4 5⍴1
   // (2 3 4⍴0)⍷3 4 0⍴0←→3 4 0⍴0
   // (2 3 0⍴0)⍷3 4 0⍴0←→3 4 0⍴0
-  if(al.shape.length>om.shape.length)return A(new Float64Array(prod(om.shape)),om.shape)
-  if(al.shape.length<om.shape.length){
-    al=A( // prepend ones to the shape of ⍺
-      al.data,
-      repeat([1],om.shape.length-al.shape.length).concat(al.shape),
-      repeat([0],om.shape.length-al.shape.length).concat(al.stride)
-    )
-  }
-  if(empty(al))return A(new Float64Array(prod(om.shape)).fill(1),om.shape)
-  var findShape=[]
-  for(var i=0;i<om.shape.length;i++){
-    var d=om.shape[i]-al.shape[i]+1
-    if(d<=0)return A(new Float64Array(prod(om.shape)),om.shape)
-    findShape.push(d)
-  }
-  var stride=strideForShape(om.shape),data=repeat([0],prod(om.shape))
-  var p=0,q=0,indices=repeat([0],findShape.length)
+  const r=new Float64Array(prod(y.shape))
+  if(x.shape.length>y.shape.length)return A(r,y.shape)
+  if(x.shape.length<y.shape.length)x=A(x.data,repeat([1],y.shape.length-x.shape.length).concat(x.shape))
+  if(empty(x))return A(r.fill(1),y.shape)
+  var s=new Int32Array(y.shape.length) // find shape
+  for(var i=0;i<y.shape.length;i++){s[i]=y.shape[i]-x.shape[i]+1;if(s[i]<=0)return A(r,y.shape)}
+  var d=y.stride,p=0,i=new Int32Array(s.length)
   while(1){
-    data[q]=+match(al,A(om.data,al.shape,om.stride,p))
-    var a=findShape.length-1
-    while(a>=0&&indices[a]+1===findShape[a]){p-=indices[a]*om.stride[a];q-=indices[a]*stride[a];indices[a--]=0}
+    r[p]=+match(x,A(y.data,x.shape,d,p))
+    var a=s.length-1;while(a>=0&&i[a]+1===s[a]){p-=i[a]*d[a];i[a--]=0}
     if(a<0)break
-    p+=om.stride[a];q+=stride[a];indices[a]++
+    p+=d[a];i[a]++
   }
-  return A(data,om.shape)
+  return A(r,y.shape)
 }
 
 voc['⌊']=withId(Infinity,perv({
