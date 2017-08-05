@@ -21,7 +21,7 @@ if [ ! -e $f -o "$(find src -newer $f 2>/dev/null | wc -l)" -ne 0 ]; then
     process.stdout.write('//usr/bin/env node "\$0" \$@;exit \$?\n"use strict";\n'+
       'var preludeSrc='+JSON.stringify(require('fs').readFileSync('src/prelude.apl','utf8'))+';\\n')
 .
-  cat src/{util,err,arr,z,vm,prs,voc,compiler,apl}.js >>$f
+  cat src/{arr,z,vm,prs,voc,compiler,apl}.js >>$f
   chmod +x $f
 fi
 

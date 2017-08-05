@@ -1,53 +1,6 @@
 //usr/bin/env node "$0" $@;exit $?
 "use strict";
 var preludeSrc="⍬←()\n⍝ ⍬     ←→ 0⍴0\n⍝ ⍴⍬    ←→ ,0\n⍝# ⍬←5   !!!\n⍝ ⍳0    ←→ ⍬\n⍝ ⍴0    ←→ ⍬\n⍝ ⍬     ←→ ⍬\n⍝ ⍬⍬    ←→ ⍬ ⍬\n⍝ 1⍬2⍬3 ←→ 1 ⍬ 2 ⍬ 3\n\n⎕a←'ABCDEFGHIJKLMNOPQRSTUVWXYZ'\n⎕á←'ÁÂÃÇÈÊËÌÍÎÏÐÒÓÔÕÙÚÛÝþãìðòõ'\n⎕d←'0123456789'\n\n~←~⍠{(~⍺∊⍵)/⍺}\n⍝ 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'~'AEIOU' ←→ 'BCDFGHJKLMNPQRSTVWXYZ'\n⍝ 1 2 3 4 5 6~2 4 6                    ←→ 1 3 5\n⍝ 'THIS IS TEXT'~' '                   ←→ 'THISISTEXT'\n⍝ 'THIS' 'AND' 'THAT'~'T'              ←→ 'THIS' 'AND' 'THAT'\n⍝ 'THIS' 'AND' 'THAT'~'AND'            ←→ 'THIS' 'AND' 'THAT'\n⍝ 'THIS' 'AND' 'THAT'~⊂'AND'           ←→ 'THIS' 'THAT'\n⍝ 'THIS' 'AND' 'THAT'~'TH' 'AND'       ←→ 'THIS' 'THAT'\n⍝ 11 12 13 14 15 16~2 3⍴1 2 3 14 5 6   ←→ 11 12 13 15 16\n⍝ (2 2⍴⍳4)~2 !!! RANK ERROR\n\n_atop←{⍶⍹⍵;⍶⍺⍹⍵}\n⍝ (-⍟)2 3 ←→ -⍟2 3\n⍝ 2(-*)3 ←→ -2*3\n\n⊃←{\n  0=⍴⍴⍵:↑⍵\n  0=×/⍴⍵:⍵\n  shape←⍴⍵ ⋄ ⍵←,⍵\n  r←⌈/≢¨shapes←⍴¨⍵ ⍝ maximum rank of all shapes\n  max←↑⌈/shapes←(⍴ ↓ (r⍴1)∘,)¨shapes ⍝ maximum shape of rank adjusted shapes\n  (shape,max)⍴↑⍪/shapes{max↑⍺⍴⍵}¨⍵\n  ;\n  1<⍴⍴⍺:↗'RANK ERROR'\n  x←⍵\n  {\n    1<⍴⍴⍵:↗'RANK ERROR'\n    ⍵←,⍵\n    (⍴⍵)≠⍴⍴x:↗'RANK ERROR'\n    ∨/⍵≥⍴x:↗'INDEX ERROR'\n    x←⊃⍵⌷x\n  }¨⍺\n  x\n}\n⍝ ⊃3            ←→ 3\n⍝ ⊃(1 2)(3 4)   ←→ 2 2⍴1 2 3 4\n⍝ ⊃(1 2)(3 4 5) ←→ 2 3⍴1 2 0 3 4 5\n⍝ ⊃1 2          ←→ 1 2\n⍝ ⊃(1 2)3       ←→ 2 2⍴1 2 3 0\n⍝ ⊃1(2 3)       ←→ 2 2⍴1 0 2 3\n⍝ ⊃2 2⍴1(1 1 2⍴3 4)(5 6)(2 0⍴0) ←→ 2 2 1 2 2⍴1 0 0 0 3 4 0 0 5 6 0 0 0 0 0 0\n⍝ ⊃⍬            ←→ ⍬\n⍝ ⊃2 3 0⍴0      ←→ 2 3 0⍴0\n⍝ ⍬⊃3               ←→ 3\n⍝ 2⊃'PICK'          ←→ 'C'\n⍝ (⊂1 0)⊃2 2⍴'ABCD' ←→ 'C'\n⍝ 1⊃'foo' 'bar'     ←→ 'bar'\n⍝ 1 2⊃'foo' 'bar'   ←→ 'r'\n⍝ (2 2⍴0)⊃1 2       !!! RANK ERROR\n⍝ (⊂2 1⍴0)⊃2 2⍴0    !!! RANK ERROR\n⍝ (⊂2 2⍴0)⊃1 2      !!! RANK ERROR\n⍝ (⊂2 2)⊃1 2        !!! RANK ERROR\n⍝ (⊂0 2)⊃2 2⍴'ABCD' !!! INDEX ERROR\n\n⊂←⊂⍠{ ⍝ ⍺⊂⍵ definition\n  1<⍴⍴⍺:↗'RANK ERROR' ⋄ 1≠⍴⍴⍵:↗'NONCE ERROR' ⋄ ⍺←,⍺=0\n  keep←~1 1⍷⍺ ⋄ sel←keep/⍺ ⋄ dat←keep/⍵\n  {1=1↑sel:{sel←1↓sel ⋄ dat←1↓dat}⍬}⍬\n  {1=¯1↑sel:{sel←¯1↓sel ⋄ dat←¯1↓dat}⍬}⍬\n  sel←(⍴sel),⍨sel/⍳⍴sel ⋄ drop←0\n  sel{∆←drop↓⍺↑⍵ ⋄ drop←⍺+1 ⋄ ∆}¨⊂dat\n}\n⍝ a←' this is a test ' ⋄ (a≠' ')⊂a ←→ 'this' 'is' (,'a') 'test'\n\n↓←{\n  0=⍴⍴⍵:⍵ ⋄ ⊂[¯1+⍴⍴⍵]⍵\n  ;\n  1<⍴⍴⍺:↗'RANK ERROR'\n  a←,⍺\n  ⍵←{0=⍴⍴⍵:((⍴a)⍴1)⍴⍵⋄⍵}⍵\n  (⍴a)>⍴⍴⍵:↗'RANK ERROR'\n  a←(⍴⍴⍵)↑a\n  a←((a>0)×0⌊a-⍴⍵)+(a≤0)×0⌈a+⍴⍵\n  a↑⍵\n}\n⍝ ↓1 2 3 ←→ ⊂1 2 3\n⍝ ↓(1 2)(3 4) ←→ ⊂(1 2)(3 4)\n⍝ ↓2 2⍴⍳4 ←→ (0 1)(2 3)\n⍝ ↓2 3 4⍴⍳24 ←→ 2 3⍴(0 1 2 3)(4 5 6 7)(8 9 10 11)(12 13 14 15)(16 17 18 19)(20 21 22 23)\n⍝ 4↓'OVERBOARD'         ←→ 'BOARD'\n⍝ ¯5↓'OVERBOARD'        ←→ 'OVER'\n⍝ ⍴10↓'OVERBOARD'       ←→ ,0\n⍝ 0 ¯2↓3 3⍴'ONEFATFLY'  ←→ 3 1⍴'OFF'\n⍝ ¯2 ¯1↓3 3⍴'ONEFATFLY' ←→ 1 2⍴'ON'\n⍝ 1↓3 3⍴'ONEFATFLY'     ←→ 2 3⍴'FATFLY'\n⍝ ⍬↓3 3⍴⍳9              ←→ 3 3⍴⍳9\n⍝ 1 1↓2 3 4⍴'ABCDEFGHIJKLMNOPQRSTUVWXYZ'   ←→ 1 2 4⍴'QRSTUVWX'\n⍝ ¯1 ¯1↓2 3 4⍴'ABCDEFGHIJKLMNOPQRSTUVWXYZ' ←→ 1 2 4⍴'ABCDEFGH'\n⍝ 1↓0                   ←→ ⍬\n⍝ 0 1↓2                 ←→ 1 0⍴0\n⍝ 1 2↓3                 ←→ 0 0⍴0\n⍝ ⍬↓0                   ←→ 0\n\n⍪←{(≢⍵)(×/1↓⍴⍵)⍴⍵; ⍺,[0]⍵}\n⍝ ⍪2 3 4 ←→ 3 1⍴2 3 4\n⍝ ⍪0 ←→ 1 1⍴0\n⍝ ⍪2 2⍴2 3 4 5 ←→ 2 2⍴2 3 4 5\n⍝ ⍴⍪2 3⍴⍳6 ←→ 2 3\n⍝ ⍴⍪2 3 4⍴⍳24 ←→ 2 12\n⍝ (2 3⍴⍳6)⍪9 ←→ 3 3⍴(0 1 2 3 4 5 9 9 9)\n⍝ 1⍪2 ←→ 1 2\n\n⊢←{⍵}\n⍝ 123⊢456 ←→ 456\n⍝ ⊢456 ←→ 456\n\n⊣←{⍵;⍺}\n⍝ 123⊣456 ←→ 123\n⍝ ⊣456 ←→ 456\n\n≢←{⍬⍴(⍴⍵),1; ~⍺≡⍵}\n⍝ ≢0 ←→ 1\n⍝ ≢0 0 0 ←→ 3\n⍝ ≢⍬ ←→ 0\n⍝ ≢2 3⍴⍳6 ←→ 2\n⍝ 3≢3 ←→ 0\n\n,←{(×/⍴⍵)⍴⍵}⍠,\n⍝ ,2 3 4⍴'abcdefghijklmnopqrstuvwx' ←→ 'abcdefghijklmnopqrstuvwx'\n⍝ ,123 ←→ 1⍴123\n\n⌹←{\n  norm←{(⍵+.×+⍵)*0.5}\n\n  QR←{ ⍝ QR decomposition\n    n←(⍴⍵)[1]\n    1≥n:{t←norm,⍵ ⋄ (⍵÷t)(⍪t)}⍵\n    m←⌈n÷2\n    a0←((1↑⍴⍵),m)↑⍵\n    a1←(0,m)↓⍵\n    (q0 r0)←∇a0\n    c←(+⍉q0)+.×a1\n    (q1 r1)←∇a1-q0+.×c\n    (q0,q1)((r0,c)⍪((⌊n÷2),-n)↑r1)\n  }\n\n  Rinv←{ ⍝ Inverse of an upper triangular matrix\n    1=n←1↑⍴⍵:÷⍵\n    m←⌈n÷2\n    ai←∇(m,m)↑⍵\n    di←∇(m,m)↓⍵\n    b←(m,m-n)↑⍵\n    bx←-ai+.×b+.×di\n    (ai,bx)⍪((⌊n÷2),-n)↑di\n  }\n\n  0=⍴⍴⍵:÷⍵\n  1=⍴⍴⍵:,∇⍪⍵\n  2≠⍴⍴⍵:↗'RANK ERROR'\n  0∊≥/⍴⍵:↗'LENGTH ERROR'\n  (Q R)←QR ⍵\n  (Rinv R)+.×+⍉Q\n  ;\n  (⌹⍵)+.×⍺\n}\n⍝ ⌹2 ←→ .5\n⍝ ⌹2 2⍴4 3 3 2 ←→ 2 2⍴¯2 3 3 ¯4\n⍝ (4 4⍴12 1 4 10 ¯6 ¯5 4 7 ¯4 9 3 4 ¯2 ¯6 7 7)⌹93 81 93.5 120.5 ←→ .0003898888816687221 ¯.005029566573526544 .04730651764247189 .0705568912859835\n⍝ ⌹2 2 2⍴⍳8 !!! RANK ERROR\n⍝ ⌹2 3⍴⍳6 !!! LENGTH ERROR\n\n⍨←{⍵⍶⍵;⍵⍶⍺}\n⍝ 17-⍨23 ←→ 6\n⍝ 7⍴⍨2 3 ←→ 2 3⍴7\n⍝ +⍨2    ←→ 4\n⍝ -⍨123  ←→ 0\n";
-const asrt=x=>{
-  if(typeof x==='function'){
-    if(!x())throw Error('assertion failed: '+x)
-  }else{
-    if(!x)throw Error('assertion failed')
-  }
-}
-,isInt=(x,start,end)=>x===~~x&&(start==null||start<=x&&(end==null||x<end))
-,prod=x=>{var r=1;for(var i=0;i<x.length;i++)r*=x[i];return r}
-,all=x=>{for(var i=0;i<x.length;i++)if(!x[i])return;return 1}
-,extend=(x,y)=>{for(var k in y)x[k]=y[k];return x}
-,fmtNum=x=>(''+x).replace('Infinity','∞').replace(/-/g,'¯')
-,repeat=(x,n)=>{ // catenates "n" instances of a string or array "x"
-  asrt(x.length!=null)
-  asrt(isInt(n,0))
-  if(!n)return x.slice(0,0)
-  var m=n*x.length;while(x.length*2<m)x=x.concat(x)
-  return x.concat(x.slice(0,m-x.length))
-}
-,arrEq=(x,y)=>{
-  if(x.length!==y.length)return 0
-  for(var i=0;i<x.length;i++)if(x[i]!==y[i])return 0
-  return 1
-}
-,reversed=x=>{
-  if(x instanceof Array)return x.slice(0).reverse()
-  var i=-1,j=x.length,y=new x.constructor(x.length);y.set(x)
-  while(++i<--j){var h=y[i];y[i]=y[j];y[j]=h}
-  return y
-}
-const err=(name,m,o)=>{ // m:message, o:options
-  m=m||''
-  if(o&&o.aplCode&&o.offset!=null){
-    var a=o.aplCode.slice(0,o.offset).split('\n')
-    var l=a.length,c=1+(a[a.length-1]||'').length // line and column
-    m+='\n'+(o.file||'-')+':'+l+':'+c+o.aplCode.split('\n')[l-1]+'_'.repeat(c-1)+'^'
-  }
-  var e=Error(m);e.name=name;for(var k in o)e[k]=o[k]
-  throw e
-}
-,synErr=(m,o)=>err('SYNTAX ERROR',m,o)
-,domErr=(m,o)=>err('DOMAIN ERROR',m,o)
-,lenErr=(m,o)=>err('LENGTH ERROR',m,o)
-,rnkErr=(m,o)=>err(  'RANK ERROR',m,o)
-,idxErr=(m,o)=>err( 'INDEX ERROR',m,o)
-,nyiErr=(m,o)=>err( 'NONCE ERROR',m,o)
-,valErr=(m,o)=>err( 'VALUE ERROR',m,o)
 const A=(data,shape,stride,offset)=>{
   const x={isA:1, data:data, shape:shape||[data.length], stride:stride, offset:offset||0}
   x.stride=x.stride||strideForShape(x.shape)
@@ -70,7 +23,7 @@ const A=(data,shape,stride,offset)=>{
   return r
 }
 ,each=(a,f)=>{
-  if(empty(a))return
+  if(!prod(a.shape))return
   var data=a.data,shape=a.shape,stride=a.stride,lastAxis=shape.length-1,p=a.offset,i=[],axis=shape.length
   while(--axis>=0)i.push(0)
   while(1){
@@ -86,7 +39,7 @@ const A=(data,shape,stride,offset)=>{
 }
 ,empty=x=>{for(var i=0;i<x.shape.length;i++)if(!x.shape[i])return 1;return 0}
 ,map=(x,f)=>{const n=prod(x.shape),r=Array(n);for(var i=0;i<n;i++)r[i]=f(x.data[i]);return A(r,x.shape)}
-,toArray=x=>{var r=[];each(x,y=>r.push(y));return r}
+,toArray=x=>{const n=prod(x.shape),r=Array(n);for(var i=0;i<n;i++)r[i]=x.data[i];return r}
 ,toInt=(x,m,M)=>{var r=unwrap(x);if(r!==r|0||m!=null&&r<m||M!=null&&M<=r)domErr();return r}
 ,toSimpleString=x=>{
   if(x.shape.length>1)rnkErr()
@@ -105,6 +58,39 @@ const A=(data,shape,stride,offset)=>{
 ,isSimple=x=>!x.shape.length&&!(x.data[0].isA)
 ,unwrap=x=>{isSingleton(x)||lenErr();return x.data[0]}
 ,getPrototype=x=>empty(x)||typeof x.data[0]!=='string'?0:' ' // todo
+,asrt=x=>{if(typeof x==='function'){if(!x())throw Error('assertion failed: '+x)}
+               else                     {if(!x)  throw Error('assertion failed'    )}}
+,isInt=(x,m,M)=>x===~~x&&(m==null||m<=x&&(M==null||x<M))
+,prod=x=>{var r=1;for(var i=0;i<x.length;i++)r*=x[i];return r}
+,extend=(x,y)=>{for(var k in y)x[k]=y[k];return x}
+,fmtNum=x=>(''+x).replace('Infinity','∞').replace(/-/g,'¯')
+,repeat=(x,n)=>{
+  if(!n)return x.slice(0,0)
+  var m=n*x.length;while(x.length*2<m)x=x.concat(x)
+  return x.concat(x.slice(0,m-x.length))
+}
+,arrEq=(x,y)=>{
+  if(x.length!==y.length)return 0
+  for(var i=0;i<x.length;i++)if(x[i]!==y[i])return 0
+  return 1
+}
+,err=(name,m,o)=>{
+  m=m||''
+  if(o&&o.aplCode&&o.offset!=null){
+    var a=o.aplCode.slice(0,o.offset).split('\n')
+    var l=a.length,c=1+(a[a.length-1]||'').length // line and column
+    m+='\n'+(o.file||'-')+':'+l+':'+c+o.aplCode.split('\n')[l-1]+'_'.repeat(c-1)+'^'
+  }
+  var e=Error(m);e.name=name;for(var k in o)e[k]=o[k]
+  throw e
+}
+,synErr=(m,o)=>err('SYNTAX ERROR',m,o)
+,domErr=(m,o)=>err('DOMAIN ERROR',m,o)
+,lenErr=(m,o)=>err('LENGTH ERROR',m,o)
+,rnkErr=(m,o)=>err(  'RANK ERROR',m,o)
+,idxErr=(m,o)=>err( 'INDEX ERROR',m,o)
+,nyiErr=(m,o)=>err( 'NONCE ERROR',m,o)
+,valErr=(m,o)=>err( 'VALUE ERROR',m,o)
 
 A.zero =A([0],[])
 A.one  =A([1],[])
@@ -1336,10 +1322,10 @@ const format=a=>{ // as array of strings
     for(var j=0;j<nCols;j++){
       var c=cols[j]
       var t=grid[i][j]
-      var left =repeat(' ',c.leftMargin +(t.align==='right')*(c.width-t[0].length))
-      var right=repeat(' ',c.rightMargin+(t.align!=='right')*(c.width-t[0].length))
+      var left =' '.repeat(c.leftMargin +(t.align==='right')*(c.width-t[0].length))
+      var right=' '.repeat(c.rightMargin+(t.align!=='right')*(c.width-t[0].length))
       for(var k=0;k<t.length;k++)t[k]=left+t[k]+right
-      var bottom=repeat(' ',t[0].length)
+      var bottom=' '.repeat(t[0].length)
       for(var h=r.height+r.bottomMargin-t.length;h>0;h--)t.push(bottom)
     }
     var nk=r.height+r.bottomMargin

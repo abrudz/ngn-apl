@@ -55,6 +55,39 @@ const A=(data,shape,stride,offset)=>{
 ,isSimple=x=>!x.shape.length&&!(x.data[0].isA)
 ,unwrap=x=>{isSingleton(x)||lenErr();return x.data[0]}
 ,getPrototype=x=>empty(x)||typeof x.data[0]!=='string'?0:' ' // todo
+,asrt=x=>{if(typeof x==='function'){if(!x())throw Error('assertion failed: '+x)}
+               else                     {if(!x)  throw Error('assertion failed'    )}}
+,isInt=(x,m,M)=>x===~~x&&(m==null||m<=x&&(M==null||x<M))
+,prod=x=>{var r=1;for(var i=0;i<x.length;i++)r*=x[i];return r}
+,extend=(x,y)=>{for(var k in y)x[k]=y[k];return x}
+,fmtNum=x=>(''+x).replace('Infinity','∞').replace(/-/g,'¯')
+,repeat=(x,n)=>{
+  if(!n)return x.slice(0,0)
+  var m=n*x.length;while(x.length*2<m)x=x.concat(x)
+  return x.concat(x.slice(0,m-x.length))
+}
+,arrEq=(x,y)=>{
+  if(x.length!==y.length)return 0
+  for(var i=0;i<x.length;i++)if(x[i]!==y[i])return 0
+  return 1
+}
+,err=(name,m,o)=>{
+  m=m||''
+  if(o&&o.aplCode&&o.offset!=null){
+    var a=o.aplCode.slice(0,o.offset).split('\n')
+    var l=a.length,c=1+(a[a.length-1]||'').length // line and column
+    m+='\n'+(o.file||'-')+':'+l+':'+c+o.aplCode.split('\n')[l-1]+'_'.repeat(c-1)+'^'
+  }
+  var e=Error(m);e.name=name;for(var k in o)e[k]=o[k]
+  throw e
+}
+,synErr=(m,o)=>err('SYNTAX ERROR',m,o)
+,domErr=(m,o)=>err('DOMAIN ERROR',m,o)
+,lenErr=(m,o)=>err('LENGTH ERROR',m,o)
+,rnkErr=(m,o)=>err(  'RANK ERROR',m,o)
+,idxErr=(m,o)=>err( 'INDEX ERROR',m,o)
+,nyiErr=(m,o)=>err( 'NONCE ERROR',m,o)
+,valErr=(m,o)=>err( 'VALUE ERROR',m,o)
 
 A.zero =A([0],[])
 A.one  =A([1],[])
