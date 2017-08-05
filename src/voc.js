@@ -37,9 +37,7 @@ const voc={}
   }
 }
 ,numApprox=(x,y)=>x===y||Math.abs(x-y)<1e-11
-,approx=(x,y)=>{
-  // approx() is like match(), but it is tolerant to precision errors;
-  // used for comparing expected and actual results in doctests
+,approx=(x,y)=>{ // like match(), but imprecision-tolerant
   if(x.isA){
     if(!(y.isA))return 0
     if(x.shape.length!==y.shape.length)return 0
@@ -81,15 +79,8 @@ const voc={}
 ,cps =f=>{f.cps =1;return f}
 
 voc['+']=withId(0,perv({
-  // +4            ←→ 4
-  // ++4           ←→ 4
-  // +4 5          ←→ 4 5
-  // +((5 6)(7 1)) ←→ (5 6)(7 1)
-  // + (5 6)(7 1)  ←→ (5 6)(7 1)
-  // +1j¯2         ←→ 1j2
-  monad:numeric(x=>x,Z.cjg),
-  // 1+2                      ←→ 3
-  // 2 3+5 8                  ←→ 7 11
+  monad:numeric(x=>x,Z.cjg),                // +0((1j¯2 ¯3j4)¯5.6) ←→ 0((1j2 ¯3j¯4)¯5.6)
+  // 1(2 3)+(4 5)6 ←→ (5 6)(8 9)
   // (2 3⍴1 2 3 4 5 6)+    ¯2 ←→ 2 3 ⍴ ¯1 0 1 2 3 4
   // (2 3⍴1 2 3 4 5 6)+  2⍴¯2 !!! RANK ERROR
   // (2 3⍴1 2 3 4 5 6)+2 3⍴¯2 ←→ 2 3 ⍴ ¯1 0 1 2 3 4
@@ -102,60 +93,32 @@ voc['+']=withId(0,perv({
   dyad:numeric((y,x)=>x+y,(y,x)=>Z.add(x,y))
 }))
 voc['-']=withId(0,perv({
-  // -4     ←→ ¯4
-  // -1 2 3 ←→ ¯1 ¯2 ¯3
-  // -1j2   ←→ ¯1j¯2
+  // -4(1 2 3)1j2 ←→ ¯4(¯1 ¯2 ¯3)¯1j¯2
   monad:numeric(x=>-x,Z.neg),
-  // 1-3     ←→ ¯2
-  // 5-¯3    ←→ 8
-  // 5j2-3j8 ←→ 2j¯6
-  // 5-3j8   ←→ 2j¯8
-  // -/⍬     ←→ 0
+  // 1-3←→¯2 ⍙ 5j2-3j8←→2j¯6 ⍙ -/⍬←→0
   dyad:numeric((y,x)=>x-y,(y,x)=>Z.sub(x,y))
 }))
 voc['×']=withId(1,perv({
-  // ×¯2 ¯1 0 1 2 ←→ ¯1 ¯1 0 1 1
-  // ×¯           ←→ 1
-  // ×¯¯          ←→ ¯1
-  // ×3j¯4        ←→ .6j¯.8
+  // ×¯2 ¯1 0 1 2 ¯ ¯¯ 3j¯4 ←→ ¯1 ¯1 0 1 1 1 ¯1 .6j¯.8
   monad:numeric(x=>(x>0)-(x<0),x=>{var d=Math.sqrt(x.re*x.re+x.im*x.im);return simplify(x.re/d,x.im/d)}),
-  // 7×8       ←→ 56
-  // 1j¯2×¯2j3 ←→ 4j7
-  // 2×1j¯2    ←→ 2j¯4
-  // ×/⍬       ←→ 1
+  // 7×8←→56 ⍙ 1j¯2×¯2j3←→4j7 ⍙ 2×1j¯2←→2j¯4 ⍙ ×/⍬←→1
   dyad:numeric((y,x)=>x*y,(y,x)=>Z.mul(x,y))
 }))
 voc['÷']=withId(1,perv({
-  // ÷2   ←→ .5
-  // ÷2j3 ←→ 0.15384615384615385J¯0.23076923076923078
-  // 0÷0  !!! DOMAIN ERROR
+  // ÷2←→.5 ⍙ ÷2j3←→0.15384615384615385J¯0.23076923076923078 ⍙ 0÷0!!!DOMAIN ERROR
   monad:numeric(x=>1/x,
                 x=>{var d=x.re*x.re+x.im*x.im;return simplify(x.re/d,-x.im/d)}),
-  // 27÷9     ←→ 3
-  // 4j7÷1j¯2 ←→ ¯2j3
-  // 0j2÷0j1  ←→ 2
-  // 5÷2j1    ←→ 2j¯1
-  // ÷/⍬      ←→ 1
+  // 27÷9←→3 ⍙ 4j7÷1j¯2←→¯2j3 ⍙ 0j2÷0j1←→2 ⍙ 5÷2j1←→2j¯1 ⍙ ÷/⍬←→1
   dyad:numeric((y,x)=>x/y,(y,x)=>Z.div(x,y))
 }))
 voc['*']=withId(1,perv({
-  // *2   ←→ 7.38905609893065
-  // *2j3 ←→ ¯7.315110094901103J1.0427436562359045
+  // *2←→7.38905609893065 ⍙ *2j3←→¯7.315110094901103J1.0427436562359045
   monad:numeric(Math.exp,Z.exp),
-  // 2*3 ←→ 8
-  // 3*2 ←→ 9
-  // ¯2*3 ←→ ¯8
-  // ¯3*2 ←→ 9
-  // ¯1*.5 ←→ 0j1
-  // 1j2*3j4 ←→ .129009594074467j.03392409290517014
-  // */⍬ ←→ 1
+  // 2 3 ¯2 ¯3*3 2 3 2←→8 9 ¯8 9 ⍙ ¯1*.5←→0j1 ⍙ */⍬←→1 ⍙ 1j2*3j4 ←→ .129009594074467j.03392409290517014
   dyad:(y,x)=>Z.pow(x,y)
 }))
 voc['⍟']=perv({
-  // ⍟123 ←→ 4.812184355372417
-  // ⍟0 ←→ ¯¯
-  // ⍟¯1 ←→ 0j1×○1
-  // ⍟123j456 ←→ 6.157609243895447J1.3073297857599793
+  // ⍟123←→4.812184355372417 ⍙ ⍟0←→¯¯ ⍙ ⍟¯1←→0j1×○1 ⍙ ⍟123j456←→6.157609243895447J1.3073297857599793
   monad:Z.log,
   // 12⍟34 ←→ 1.419111870829036
   // 12⍟¯34 ←→ 1.419111870829036j1.26426988871305
@@ -165,8 +128,7 @@ voc['⍟']=perv({
               ?Math.log(y)/Math.log(x):Z.div(Z.log(y),Z.log(x))
 })
 voc['|']=withId(0,perv({
-  // |¯8 0 8 ¯3.5 ←→ 8 0 8 3.5
-  // |5j12 ←→ 13
+  // |¯8 0 8 ¯3.5←→8 0 8 3.5 ⍙ |5j12←→13
   monad:numeric(x=>Math.abs(x),Z.mag),
   // 3|5 ←→ 2
   // 1j2|3j4 ←→ ¯1j1
@@ -1762,10 +1724,4 @@ voc['⍉']=(om,al)=>{
   return A(om.data,shape,stride)
 }
 
-//  ({1}⍠{2})0 ←→ 1
-// 0({1}⍠{2})0 ←→ 2
-voc['⍠']=conj((f,g)=>{
-  asrt(typeof f==='function')
-  asrt(typeof g==='function')
-  return(om,al,axis)=>(al?f:g)(om,al,axis)
-})
+voc['⍠']=conj((f,g)=>(om,al,axis)=>(al?f:g)(om,al,axis)) // ({1}⍠{2})0 ←→ 1 ⍙ 0({1}⍠{2})0 ←→ 2
