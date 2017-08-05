@@ -34,25 +34,8 @@ const A=(data,shape,stride,offset)=>{
     p+=stride[axis]
   }
 }
-,each2=(a,b,f)=>{
-  var data =a.data,shape =a.shape,stride =a.stride
-  var data1=b.data,shape1=b.shape,stride1=b.stride
-  shape.length!==shape1.length&&rnkErr()
-  shape!=''+shape1&&lenErr()
-  if(empty(a))return
-  var lastAxis=shape.length-1,p=0,q=0
-  var i=Array(shape.length);for(var j=0;j<i.length;j++)i[j]=0
-  while(1){
-    f(data[p],data1[q],i)
-    var axis = lastAxis
-    while(axis>=0&&i[axis]+1===shape[axis]){p-=i[axis]*stride[axis];q-=i[axis]*stride1[axis];i[axis--]=0}
-    if(axis<0)break
-    i[axis]++;p+=stride[axis];q+=stride1[axis]
-  }
-}
 ,empty=x=>{for(var i=0;i<x.shape.length;i++)if(!x.shape[i])return 1;return 0}
 ,map=(x,f)=>{var r=[];each(x,(y,i,p)=>r.push(f(y,i,p)));return A(r,x.shape)}
-,map2=(x,y,f)=>{var r=[];each2(x,y,(xi,yi,i)=>r.push(f(xi,yi,i)));return A(r,x.shape)}
 ,toArray=x=>{var r=[];each(x,y=>r.push(y));return r}
 ,toInt=(x,m,M)=>{var r=unwrap(x);if(r!==r|0||m!=null&&r<m||M!=null&&M<=r)domErr();return r}
 ,toSimpleString=x=>{

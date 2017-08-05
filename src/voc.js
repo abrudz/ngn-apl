@@ -13,7 +13,10 @@ const voc={}
       case 21:case 31:return map(x,xi=>f2(xi,y))
       case 23:        const xi=x.data[0];return map(y,yi=>f2(xi,yi))
       case 32:case 22:const yi=y.data[0];return map(x,xi=>f2(xi,yi))
-      case 33:        x.shape.length!==y.shape.length&&rnkErr();x.shape!=''+y.shape&&lenErr();return map2(x,y,f2)
+      case 33:        {x.shape.length!==y.shape.length&&rnkErr();x.shape!=''+y.shape&&lenErr()
+                       const n=x.data.length,r=Array(n)
+                       for(var i=0;i<n;i++)r[i]=f2(x.data[i],y.data[i])
+                       return A(r,x.shape)}
       default:        asrt(0)
     }
   }
@@ -24,8 +27,9 @@ const voc={}
   (typeof x!=='number'||y!=null&&typeof y!=='number'?g(Zify(x),y==null?y:Zify(y),axis):f(x,y,axis))
 ,match=(x,y)=>{
   if(x.isA){
-    if(!(y.isA)||x.shape!=''+y.shape)return 0
-    var r=1;each2(x,y,(xi,yi)=>{r&=match(xi,yi)});return r
+    if(!y.isA||x.shape!=''+y.shape)return 0
+    var r=1,n=prod(x.shape);for(var i=0;i<n;i++)r&=match(x.data[i],y.data[i])
+    return r
   }else{
     if(y.isA)return 0
     if(x instanceof Z&&y instanceof Z)return x.re===y.re&&x.im===y.im
@@ -40,7 +44,8 @@ const voc={}
     if(!(y.isA))return 0
     if(x.shape.length!==y.shape.length)return 0
     if(x.shape!=''+y.shape)return 0
-    var r=1;each2(x,y,(xi,yi)=>{r&=approx(xi,yi)});return r
+    var r=1,n=prod(x.shape);for(var i=0;i<n;i++)r&=approx(x.data[i],y.data[i])
+    return r
   }else{
     if(y.isA)return 0
     if(x==null||y==null)return 0
@@ -672,12 +677,12 @@ voc['¨']=adv((f,g)=>{
         return r.shape.length?r:unwrap(r)
       })
     }else if(arrEq(al.shape,om.shape)){
-      return map2(om,al,(x,y)=>{
-        x.isA||(x=A([x],[]))
-        y.isA||(y=A([y],[]))
-        var r=f(x,y);asrt(r.isA)
-        return r.shape.length?r:unwrap(r)
-      })
+      const n=al.data.length,r=Array(n)
+      for(var i=0;i<n;i++){
+        const x=al.data[i],y=om.data[i],z=f(y.isA?y:A([y],[]),x.isA?x:A([x],[]))
+        r[i]=z.shape.length?z:unwrap(z)
+      }
+      return A(r,al.shape)
     }else if(isSingleton(al)){
       var y=al.data[0].isA?unwrap(al):al
       return map(om,x=>{
@@ -1600,16 +1605,19 @@ voc._substitute=args=>{
   var subs=voc['⌷'](voc['⍳'](A(om.shape)),al,A(axes))
   if(isSingleton(value))value=A([value],subs.shape,repeat([0],subs.shape.length))
   var data=toArray(om),stride=strideForShape(om.shape)
-  each2(subs,value,(u,v)=>{
+  subs.shape.length!==value.shape.length&&rnkErr();''+subs.shape!=''+value.shape&&lenErr()
+  const ni=prod(subs.shape)
+  for(var i=0;i<ni;i++){
+    var u=subs.data[i], v=value.data[i]
     if(v.isA&&!v.shape.length)v=unwrap(v)
     if(u.isA){
       var p=0,ua=toArray(u)
-      for(var i=0;i<ua.length;i++)p+=ua[i]*stride[i]
+      for(var j=0;j<ua.length;j++)p+=ua[j]*stride[j]
       data[p]=v
     }else{
       data[u]=v
     }
-  })
+  }
   return A(data,om.shape)
 }
 
