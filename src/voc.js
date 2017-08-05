@@ -1099,20 +1099,23 @@ voc['⍳']=(om,al)=>{
 // ⍴⊃⊂⊂1 2 3     ←→ ⍬
 voc['⊂']=(om,al,axes)=>{
   asrt(!al)
-  if(axes==null){
-    axes=[];for(var i=0;i<om.shape.length;i++)axes.push(i)
-  }else{
-    axes=getAxisList(axes,om.shape.length)
-  }
   if(isSimple(om))return om
-  var unitShape =axes.map(k=>om.shape [k])
-  var unitStride=axes.map(k=>om.stride[k])
-  var resultAxes=[];for(var k=0;k<om.shape.length;k++)axes.indexOf(k)<0&&resultAxes.push(k)
-  var shape =resultAxes.map(k=>om.shape [k])
-  var stride=resultAxes.map(k=>om.stride[k])
-  var data=[]
-  each(A(om.data,shape,stride,om.offset),(x,indices,p)=>{data.push(A(om.data,unitShape,unitStride,p))})
-  return A(data,shape)
+  if(axes==null){axes=[];for(var i=0;i<om.shape.length;i++)axes.push(i)}else{axes=getAxisList(axes,om.shape.length)}
+  var rAxes=[],axisMask=new Uint8Array(om.shape.length)
+  for(var k=0;k<om.shape.length;k++){if(axes.indexOf(k)<0){rAxes.push(k)}else{axisMask[k]=1}}
+  var rs=rAxes.map(k=>om.shape[k]), rd=strideForShape(rs)
+  var us=axes .map(k=>om.shape[k]), ud=strideForShape(us), un=prod(us)
+  var allAxes=rAxes.concat(axes)
+  var a=Array(prod(rs))
+  for(var i=0;i<a.length;i++){a[i]=typeof om.data==='string'||om.data instanceof Array?Array(un):new Float64Array(un)}
+  const f=(k,l,p,q,t)=>{
+    if(k+l>=om.shape.length){a[p][q]=om.data[t]}
+    else if(axisMask[k+l]){for(var i=0;i<us[l];i++)f(k,l+1,p,q+i*ud[l],t+i*om.stride[axes[l]])}
+    else                  {for(var i=0;i<rs[k];i++)f(k+1,l,p+i*rd[k],q,t+i*om.stride[rAxes[k]])}
+  }
+  f(0,0,0,0,0)
+  for(var i=0;i<a.length;i++)a[i]=A(a[i],us)
+  return A(a,rs)
 }
 
 // ~0 1 ←→ 1 0

@@ -5,7 +5,13 @@ const A=(data,shape,stride,offset)=>{
   asrt(!x.data.length||isInt(x.offset,0,x.data.length))
   for(var i=0;i<x.shape.length;i++)asrt(isInt(x.shape[i],0))
   if(x.data.length)for(var i=0;i<x.stride.length;i++)asrt(isInt(x.stride[i],-x.data.length,x.data.length+1))
-  return x
+  return norm(x)
+}
+,norm=x=>{
+  if(''+x.stride===''+strideForShape(x.shape)&&!x.offset)return x
+  if(typeof x.data==='string'){var r='';each(x,u=>r+=u);return A(r,x.shape)}
+  if(!(x.data instanceof Float64Array||x.data instanceof Array))nyiErr()
+  var r=new(x.data.constructor)(prod(x.shape)),i=0;each(x,u=>r[i++]=u);return A(r,x.shape)
 }
 ,strideForShape=s=>{
   asrt(s.length!=null)

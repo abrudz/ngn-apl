@@ -1,4 +1,10 @@
-const asrt=x=>{if(!x)throw Error('assertion failed')}
+const asrt=x=>{
+  if(typeof x==='function'){
+    if(!x())throw Error('assertion failed: '+x)
+  }else{
+    if(!x)throw Error('assertion failed')
+  }
+}
 ,isInt=(x,start,end)=>x===~~x&&(start==null||start<=x&&(end==null||x<end))
 ,prod=x=>{var r=1;for(var i=0;i<x.length;i++)r*=x[i];return r}
 ,all=x=>{for(var i=0;i<x.length;i++)if(!x[i])return;return 1}
