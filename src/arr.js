@@ -35,7 +35,7 @@ const A=(data,shape,stride,offset)=>{
   }
 }
 ,empty=x=>{for(var i=0;i<x.shape.length;i++)if(!x.shape[i])return 1;return 0}
-,map=(x,f)=>{var r=[];each(x,(y,i,p)=>r.push(f(y,i,p)));return A(r,x.shape)}
+,map=(x,f)=>{const n=prod(x.shape),r=Array(n);for(var i=0;i<n;i++)r[i]=f(x.data[i]);return A(r,x.shape)}
 ,toArray=x=>{var r=[];each(x,y=>r.push(y));return r}
 ,toInt=(x,m,M)=>{var r=unwrap(x);if(r!==r|0||m!=null&&r<m||M!=null&&M<=r)domErr();return r}
 ,toSimpleString=x=>{
