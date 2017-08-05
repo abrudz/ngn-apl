@@ -215,17 +215,13 @@ voc['\\']=adv((om,al,axis)=>{
       asrt(al==null)
       if(!om.shape.length)return om
       axis=axis?toInt(axis,0,om.shape.length):om.shape.length-1
-      return map(om,(x,indices,p)=>{
-        x.isA||(x=A.scalar(x))
-        for(var j=0,nj=indices[axis];j<nj;j++){
-          p-=om.stride[axis]
-          var y=om.data[p]
-          y.isA||(y=A.scalar(y))
-          x=f(x,y)
-        }
-        x.shape.length||(x=unwrap(x))
-        return x
-      })
+      const ni=prod(om.shape.slice(0,axis)), nj=om.shape[axis], nk=prod(om.shape.slice(axis+1)), r=Array(ni*nj*nk)
+      if(r.length)for(var i=0;i<ni;i++)for(var j=0;j<nj;j++)for(var k=0;k<nk;k++){
+        var x=om.data[(i*nj+j)*nk+k];x=x.isA?x:A.scalar(x)
+        for(var l=j-1;l>=0;l--){var y=om.data[(i*nj+l)*nk+k];x=f(x,y.isA?y:A.scalar(y))}
+        r[(i*nj+j)*nk+k]=x.shape.length?x:unwrap(x)
+      }
+      return A(r,om.shape)
     }
   }else{
     om.shape.length||nyiErr()
