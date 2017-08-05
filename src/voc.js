@@ -971,10 +971,10 @@ const format=a=>{ // as array of strings
     for(var j=0;j<nCols;j++){
       var c=cols[j]
       var t=grid[i][j]
-      var left =repeat(' ',c.leftMargin +(t.align==='right')*(c.width-t[0].length))
-      var right=repeat(' ',c.rightMargin+(t.align!=='right')*(c.width-t[0].length))
+      var left =' '.repeat(c.leftMargin +(t.align==='right')*(c.width-t[0].length))
+      var right=' '.repeat(c.rightMargin+(t.align!=='right')*(c.width-t[0].length))
       for(var k=0;k<t.length;k++)t[k]=left+t[k]+right
-      var bottom=repeat(' ',t[0].length)
+      var bottom=' '.repeat(t[0].length)
       for(var h=r.height+r.bottomMargin-t.length;h>0;h--)t.push(bottom)
     }
     var nk=r.height+r.bottomMargin

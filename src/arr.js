@@ -20,7 +20,7 @@ const A=(data,shape,stride,offset)=>{
   return r
 }
 ,each=(a,f)=>{
-  if(empty(a))return
+  if(!prod(a.shape))return
   var data=a.data,shape=a.shape,stride=a.stride,lastAxis=shape.length-1,p=a.offset,i=[],axis=shape.length
   while(--axis>=0)i.push(0)
   while(1){
@@ -36,7 +36,7 @@ const A=(data,shape,stride,offset)=>{
 }
 ,empty=x=>{for(var i=0;i<x.shape.length;i++)if(!x.shape[i])return 1;return 0}
 ,map=(x,f)=>{const n=prod(x.shape),r=Array(n);for(var i=0;i<n;i++)r[i]=f(x.data[i]);return A(r,x.shape)}
-,toArray=x=>{var r=[];each(x,y=>r.push(y));return r}
+,toArray=x=>{const n=prod(x.shape),r=Array(n);for(var i=0;i<n;i++)r[i]=x.data[i];return r}
 ,toInt=(x,m,M)=>{var r=unwrap(x);if(r!==r|0||m!=null&&r<m||M!=null&&M<=r)domErr();return r}
 ,toSimpleString=x=>{
   if(x.shape.length>1)rnkErr()
