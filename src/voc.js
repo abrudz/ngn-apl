@@ -11,8 +11,8 @@ const voc={}
       case 11:        var r=h.dyad(x,y);typeof r==='number'&&r!==r&&domErr();return r
       case 12:case 13:return map(y,yi=>f2(x,yi))
       case 21:case 31:return map(x,xi=>f2(xi,y))
-      case 23:        const xi=x.data[x.offset];return map(y,yi=>f2(xi,yi))
-      case 32:case 22:const yi=y.data[y.offset];return map(x,xi=>f2(xi,yi))
+      case 23:        const xi=x.data[0];return map(y,yi=>f2(xi,yi))
+      case 32:case 22:const yi=y.data[0];return map(x,xi=>f2(xi,yi))
       case 33:        x.shape.length!==y.shape.length&&rnkErr();x.shape!=''+y.shape&&lenErr();return map2(x,y,f2)
       default:        asrt(0)
     }
@@ -231,7 +231,7 @@ voc['\\']=adv((om,al,axis)=>{
     i===om.shape[axis]||lenErr()
     var data=[]
     if(shape[axis]&&!empty(om)){
-      var filler=getPrototype(om),p=om.offset,indices=repeat([0],shape.length)
+      var filler=getPrototype(om),p=0,indices=repeat([0],shape.length)
       while(1){
         data.push(b[indices[axis]]==null?filler:om.data[p+b[indices[axis]]*om.stride[axis]])
         var i=shape.length-1
@@ -409,12 +409,12 @@ voc[',']=(om,al,axis)=>{
       isInt(axis)||rnkErr()
       var shape =al.shape .slice(0);shape .splice(axis,0,1)
       var stride=al.stride.slice(0);stride.splice(axis,0,0)
-      al=A(al.data,shape,stride,al.offset)
+      al=A(al.data,shape,stride)
     }else if(al.shape.length===om.shape.length+1){
       isInt(axis)||rnkErr()
       var shape =om.shape .slice(0);shape .splice(axis,0,1)
       var stride=om.stride.slice(0);stride.splice(axis,0,0)
-      om=A(om.data,shape,stride,om.offset)
+      om=A(om.data,shape,stride)
     }else if(al.shape.length!==om.shape.length){
       rnkErr()
     }
@@ -429,7 +429,7 @@ voc[',']=(om,al,axis)=>{
 
     var rStride=stride;if(!isInt(axis)){rStride=stride.slice(0);rStride.splice(Math.ceil(axis),1)}
     if(!empty(al)){
-      var r=0,p=al.offset // r:pointer in data (the result), p:pointer in al.data
+      var r=0,p=0 // r:pointer in data (the result), p:pointer in al.data
       var pIndices=repeat([0],al.shape.length)
       while(1){
         data[r]=al.data[p]
@@ -443,7 +443,7 @@ voc[',']=(om,al,axis)=>{
     }
     if(!empty(om)){
       var r=isInt(axis)?stride[axis]*al.shape[axis]:stride[Math.ceil(axis)] // pointer in data (the result)
-      var q=om.offset // pointer in ⍵.data
+      var q=0 // pointer in ⍵.data
       var pIndices=repeat([0],om.shape.length)
       while(1){
         data[r]=om.data[q]
@@ -856,8 +856,7 @@ voc['⍷']=(om,al)=>{
     al=A( // prepend ones to the shape of ⍺
       al.data,
       repeat([1],om.shape.length-al.shape.length).concat(al.shape),
-      repeat([0],om.shape.length-al.shape.length).concat(al.stride),
-      al.offset
+      repeat([0],om.shape.length-al.shape.length).concat(al.stride)
     )
   }
   if(empty(al))return A([1],om.shape,repeat([0],om.shape.length))
@@ -868,7 +867,7 @@ voc['⍷']=(om,al)=>{
     findShape.push(d)
   }
   var stride=strideForShape(om.shape),data=repeat([0],prod(om.shape))
-  var p=om.offset,q=0,indices=repeat([0],findShape.length)
+  var p=0,q=0,indices=repeat([0],findShape.length)
   while(1){
     data[q]=+match(al,A(om.data,al.shape,om.stride,p))
     var a=findShape.length-1
@@ -1012,7 +1011,7 @@ const grade=(om,al,dir)=>{
   om.shape.length||rnkErr()
   var r=[];for(var i=0;i<om.shape[0];i++)r.push(i)
   return A(r.sort((i,j)=>{
-    var p=om.offset,indices=repeat([0],om.shape.length)
+    var p=0,indices=repeat([0],om.shape.length)
     while(1){
       var x=om.data[p+i*om.stride[0]],tx=typeof x
       var y=om.data[p+j*om.stride[0]],ty=typeof y
@@ -1346,7 +1345,7 @@ voc['⌽']=(om,al,axis)=>{
     var n=om.shape[axis]
     step=(n+step%n)%n // force % to handle negatives properly
     if(empty(om)||!step)return om
-    var data=[],shape=om.shape,stride=om.stride,p=om.offset,indices=repeat([0],shape.length)
+    var data=[],shape=om.shape,stride=om.stride,p=0,indices=repeat([0],shape.length)
     while(1){
       data.push(om.data[p+((indices[axis]+step)%shape[axis]-indices[axis])*stride[axis]])
       var a=shape.length-1
@@ -1371,8 +1370,7 @@ voc['⌽']=(om,al,axis)=>{
     }
     if(!om.shape.length)return om
     var stride=om.stride.slice(0);stride[axis]=-stride[axis]
-    var offset=om.offset+(om.shape[axis]-1)*om.stride[axis]
-    return A(om.data,om.shape,stride,offset)
+    return A(om.data,om.shape,stride,(om.shape[axis]-1)*om.stride[axis])
   }
 }
 
@@ -1423,10 +1421,10 @@ voc['/']=adv((om,al,axis)=>{
 
       if(empty(om)){
         var z=f.identity;z!=null||domErr();asrt(!z.shape.length)
-        return A(z.data,rShape,repeat([0],rShape.length),z.offset)
+        return A(z.data,rShape,repeat([0],rShape.length))
       }
 
-      var data=[],indices=repeat([0],shape.length),p=om.offset
+      var data=[],indices=repeat([0],shape.length),p=0
       while(1){
         if(isBackwards){
           var x=om.data[p];x.isA||(x=A.scalar(x))
@@ -1491,7 +1489,7 @@ voc['/']=adv((om,al,axis)=>{
 
     var data=[]
     if(shape[axis]&&!empty(om)){
-      var filler=getPrototype(om),p=om.offset,indices=repeat([0],shape.length)
+      var filler=getPrototype(om),p=0,indices=repeat([0],shape.length)
       while(1){
         data.push(b[indices[axis]]==null?filler:om.data[p+b[indices[axis]]*om.stride[axis]])
         var i=shape.length-1
@@ -1627,14 +1625,13 @@ const indexAtSingleAxis=(om,sub,ax)=>{
     var subStride=strideForShape(sub.shape)
     for(var i=0;i<subStride.length;i++)subStride[i]*=d*om.stride[ax]
     stride.splice.apply(stride,[ax,1].concat(subStride))
-    var offset=om.offset+u[0]*om.stride[ax]
-    return A(om.data,shape,stride,offset)
+    return A(om.data,shape,stride,u[0]*om.stride[ax])
   }else{
     var shape1=om.shape.slice(0);shape1.splice(ax,1)
     var stride1=om.stride.slice(0);stride1.splice(ax,1)
     var data=[]
     each(sub,x=>{
-      var chunk=A(om.data,shape1,stride1,om.offset+x*om.stride[ax])
+      var chunk=A(om.data,shape1,stride1,x*om.stride[ax])
       data.push.apply(data,toArray(chunk))
     })
     var shape = shape1.slice(0)
@@ -1685,7 +1682,7 @@ const take=(om,al)=>{
     var stride=Array(shape.length);stride[stride.length-1]=1
     for(var i=stride.length-2;i>=0;i--)stride[i]=stride[i+1]*shape[i+1]
     var data=repeat([getPrototype(om)],prod(shape))
-    var copyShape=shape.slice(0),p=om.offset,q=0
+    var copyShape=shape.slice(0),p=0,q=0
     for(var i=0;i<a.length;i++){
       var x=a[i];copyShape[i]=Math.min(om.shape[i],Math.abs(x))
       if(x<0){if(x<-om.shape[i]){q-=(x+om.shape[i])*stride[i]}else{p+=(x+om.shape[i])*om.stride[i]}}
@@ -1703,7 +1700,7 @@ const take=(om,al)=>{
     }
     return A(data,shape,stride)
   }else{
-    var offset=om.offset;for(var i=0;i<a.length;i++)if(a[i]<0)offset+=(om.shape[i]+a[i])*om.stride[i]
+    var offset=0;for(var i=0;i<a.length;i++)if(a[i]<0)offset+=(om.shape[i]+a[i])*om.stride[i]
     return A(om.data,shape,om.stride,offset)
   }
 }
@@ -1714,7 +1711,7 @@ const take=(om,al)=>{
 // ↑123            ←→ 123
 // ↑⍬              ←→ 0
 //! ↑''             ←→ ' '
-const first=x=>{var y=empty(x)?getPrototype(x):x.data[x.offset];return y.isA?y:A([y],[])}
+const first=x=>{var y=empty(x)?getPrototype(x):x.data[0];return y.isA?y:A([y],[])}
 
 voc['⍉']=(om,al)=>{
   if(al){
@@ -1748,7 +1745,7 @@ voc['⍉']=(om,al)=>{
       }
     }
     for(var i=0;i<shape.length;i++)shape[i]!=null||rnkErr()
-    return A(om.data,shape,stride,om.offset)
+    return A(om.data,shape,stride)
   }else{
     // ⍉2 3⍴1 2 3 6 7 8  ←→ 3 2⍴1 6 2 7 3 8
     // ⍴⍉2 3⍴1 2 3 6 7 8 ←→ 3 2
@@ -1756,7 +1753,7 @@ voc['⍉']=(om,al)=>{
     // ⍉2 3 4⍴⍳24        ←→ 4 3 2⍴0 12 4 16 8 20 1 13 5 17 9 21 2 14 6 18 10 22 3 15 7 19 11 23
     // ⍉⍬                ←→ ⍬
     // ⍉''               ←→ ''
-    return A(om.data,reversed(om.shape),reversed(om.stride),om.offset)
+    return A(om.data,reversed(om.shape),reversed(om.stride))
   }
 }
 

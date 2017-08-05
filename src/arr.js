@@ -40,7 +40,7 @@ const A=(data,shape,stride,offset)=>{
   shape.length!==shape1.length&&rnkErr()
   shape!=''+shape1&&lenErr()
   if(empty(a))return
-  var lastAxis=shape.length-1,p=a.offset,q=b.offset
+  var lastAxis=shape.length-1,p=0,q=0
   var i=Array(shape.length);for(var j=0;j<i.length;j++)i[j]=0
   while(1){
     f(data[p],data1[q],i)
@@ -58,9 +58,9 @@ const A=(data,shape,stride,offset)=>{
 ,toSimpleString=x=>{
   if(x.shape.length>1)rnkErr()
   if(typeof x.data==='string'){
-    if(!x.shape.length)return x.data[x.offset]
+    if(!x.shape.length)return x.data[0]
     if(!x.shape[0])return''
-    if(x.stride[0]===1)return x.data.slice(x.offset,x.offset+x.shape[0])
+    if(x.stride[0]===1)return x.data.slice(0,x.shape[0])
     return toArray(x).join('')
   }else{
     var a=toArray(x)
@@ -69,9 +69,9 @@ const A=(data,shape,stride,offset)=>{
   }
 }
 ,isSingleton=x=>{var s=x.shape;for(var i=0;i<s.length;i++)if(s[i]!==1)return 0;return 1}
-,isSimple=x=>!x.shape.length&&!(x.data[x.offset].isA)
-,unwrap=x=>{isSingleton(x)||lenErr();return x.data[x.offset]}
-,getPrototype=x=>empty(x)||typeof x.data[x.offset]!=='string'?0:' ' // todo
+,isSimple=x=>!x.shape.length&&!(x.data[0].isA)
+,unwrap=x=>{isSingleton(x)||lenErr();return x.data[0]}
+,getPrototype=x=>empty(x)||typeof x.data[0]!=='string'?0:' ' // todo
 
 A.zero =A([0],[])
 A.one  =A([1],[])
