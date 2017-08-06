@@ -1,38 +1,16 @@
-const A=(a,s,stride,offset)=>{
-  const x={isA:1, a:a, s:s||[a.length], stride:stride, offset:offset||0}
-  x.stride=x.stride||strideForShape(x.s)
+const A=(a,s)=>{
+  const x={isA:1,a:a,s:s||[a.length],stride:strideForShape(s||[a.length]),offset:0}
   asrt(x.a.length!=null);asrt(x.s.length!=null);asrt(x.stride.length===x.s.length)
   asrt(!x.a.length||isInt(x.offset,0,x.a.length))
   for(var i=0;i<x.s.length;i++)asrt(isInt(x.s[i],0))
   if(x.a.length)for(var i=0;i<x.stride.length;i++)asrt(isInt(x.stride[i],-x.a.length,x.a.length+1))
-  return norm(x)
-}
-,norm=x=>{
-  if(''+x.stride===''+strideForShape(x.s)&&!x.offset)return x
-  if(typeof x.a==='string'){var r='';each(x,u=>r+=u);return A(r,x.s)}
-  if(!(x.a instanceof Float64Array||x.a instanceof Array))nyiErr()
-  var r=new(x.a.constructor)(prd(x.s)),i=0;each(x,u=>r[i++]=u);return A(r,x.s)
+  return x
 }
 ,strideForShape=s=>{
   asrt(s.length!=null)
   var r=Array(s.length),u=1
   for(var i=r.length-1;i>=0;i--){asrt(isInt(s[i],0));r[i]=u;u*=s[i]}
   return r
-}
-,each=(a,f)=>{
-  if(!prd(a.s))return
-  var data=a.a,s=a.s,stride=a.stride,lastAxis=s.length-1,p=a.offset,i=[],axis=s.length
-  while(--axis>=0)i.push(0)
-  while(1){
-    f(data[p],i,p)
-    axis=lastAxis
-    while(axis>=0&&i[axis]+1===s[axis]){
-      p-=i[axis]*stride[axis];i[axis--]=0
-    }
-    if(axis<0)break
-    i[axis]++
-    p+=stride[axis]
-  }
 }
 ,empty=x=>{for(var i=0;i<x.s.length;i++)if(!x.s[i])return 1;return 0}
 ,map=(x,f)=>{const n=prd(x.s),r=Array(n);for(var i=0;i<n;i++)r[i]=f(x.a[i]);return A(r,x.s)}
