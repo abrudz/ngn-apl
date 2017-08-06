@@ -5,8 +5,8 @@ const voc={}
     let r=f1(x);typeof r==='number'&&r!==r&&domErr();return r
   }
   let g2=!f2?nyiErr:(x,y)=>{
-    let tx=x.isA?(isSingleton(x)?20:30):10
-    let ty=y.isA?(isSingleton(y)? 2: 3): 1
+    let tx=x.isA?(x.a.length===1?20:30):10
+    let ty=y.isA?(y.a.length===1? 2: 3): 1
     switch(tx+ty){ // todo: use the larger shape when tx=10 and ty=1
       case 11:        let r=f2(x,y);typeof r==='number'&&r!==r&&domErr();return r
       case 12:case 13:return map(y,yi=>g2(x,yi))
@@ -191,7 +191,7 @@ voc['\\']=adv((y,x,axis)=>{
     for(let j=0;j<a.length;j++){isInt(a[j],0,2)||domErr();b.push(a[j]>0?i++:null)}
     i===y.s[axis]||lenErr()
     let data=[],xd=strideForShape(y.s)
-    if(shape[axis]&&!empty(y)){
+    if(shape[axis]&&y.a.length){
       let filler=getPrototype(y),p=0,indices=repeat([0],shape.length)
       while(1){
         data.push(b[indices[axis]]==null?filler:y.a[p+b[indices[axis]]*xd[axis]])
@@ -328,7 +328,7 @@ voc[',']=(y,x,axis)=>{
   let stride=Array(s.length);stride[s.length-1]=1
   for(let i=s.length-1;i>0;i--)stride[i-1]=stride[i]*s[i]
   let d=stride;if(!isInt(axis)){d=stride.slice(0);d.splice(Math.ceil(axis),1)}
-  if(!empty(x)){ // p:pointer in result, q:pointer in x.a
+  if(x.a.length){ // p:pointer in result, q:pointer in x.a
     let p=0,q=0,i=new Int32Array(x.s.length),xd=strideForShape(x.s)
     while(1){
       r[p]=x.a[q]
@@ -337,7 +337,7 @@ voc[',']=(y,x,axis)=>{
       q+=xd[a];p+=d[a];i[a]++
     }
   }
-  if(!empty(y)){ // p:pointer in result, q:pointer in y.a
+  if(y.a.length){ // p:pointer in result, q:pointer in y.a
     let p=isInt(axis)?stride[axis]*x.s[axis]:stride[Math.ceil(axis)],q=0,i=new Int32Array(y.s.length),yd=strideForShape(y.s)
     while(1){
       r[p]=y.a[q]
@@ -519,11 +519,11 @@ voc['¨']=adv((f,g)=>{
       const n=y.a.length,r=Array(n)
       for(var i=0;i<n;i++){const u=y.a[i],v=f(u.isA?u:A([u],[]));asrt(v.isA);r[i]=v.s.length?v:unwrap(v)}
       return A(r,y.s)
-    }else if(isSingleton(x)){
+    }else if(x.a.length===1){
       const n=y.a.length,r=Array(n),u=x.a[0].isA?x.a[0]:A([x.a[0]],[])
       for(let i=0;i<n;i++){const v=y.a[i],w=f(v.isA?v:A([v],[]),u);r[i]=w.s.length?w:unwrap(w)}
       return A(r,y.s)
-    }else if(isSingleton(y)){
+    }else if(y.a.length===1){
       const n=x.a.length,r=Array(n),v=y.a[0].isA?y.a[0]:A([y.a[0]],[])
       for(let i=0;i<n;i++){const u=x.a[i],w=f(v,u.isA?u:A([u],[]));r[i]=w.s.length?w:unwrap(w)}
       return A(r,x.s)
@@ -643,7 +643,7 @@ voc['⍷']=(y,x)=>{
   const r=new Float64Array(y.a.length)
   if(x.s.length>y.s.length)return A(r,y.s)
   if(x.s.length<y.s.length)x=A(x.a,repeat([1],y.s.length-x.s.length).concat(x.s))
-  if(empty(x))return A(r.fill(1),y.s)
+  if(!x.a.length)return A(r.fill(1),y.s)
   const s=new Int32Array(y.s.length) // find shape
   for(let i=0;i<y.s.length;i++){s[i]=y.s[i]-x.s[i]+1;if(s[i]<=0)return A(r,y.s)}
   let d=strideForShape(y.s),i=new Int32Array(s.length),j=new Int32Array(s.length),nk=x.a.length,p=0
@@ -709,8 +709,8 @@ const format=a=>{ // as array of strings
   if(t==='string')return[a]
   if(t==='number'){let r=[fmtNum(a)];r.align='right';return r}
   if(t==='function')return['#procedure']
-  if(!(a.isA))return[''+a]
-  if(empty(a))return['']
+  if(!a.isA)return[''+a]
+  if(!a.a.length)return['']
 
   let sa=a.s
   a=toArray(a)
@@ -817,7 +817,7 @@ voc['⍁']=conj((f,x)=>{
   if(f.isA){let h=f;f=x;x=h}
   asrt(typeof f==='function')
   asrt(x.isA)
-  isSingleton(x)||rnkErr()
+  x.a.length===1||rnkErr()
   if(x.s.length)x=A.scalar(unwrap(x))
   return withId(x,(y,x,axis)=>f(y,x,axis))
 })
@@ -1045,7 +1045,7 @@ voc['⌽']=(y,x,axis)=>{
     if(!step)return y
     let n=y.s[axis]
     step=(n+step%n)%n // force % to handle negatives properly
-    if(empty(y)||!step)return y
+    if(!y.a.length||!step)return y
     let r=[],d=strideForShape(y.s),p=0,i=repeat([0],y.s.length)
     while(1){
       r.push(y.a[p+((i[axis]+step)%y.s[axis]-i[axis])*d[axis]])
@@ -1061,7 +1061,7 @@ voc['⌽']=(y,x,axis)=>{
     // ⌽    2 5⍴1 2 3 4 5 6 7 8 9 0 ←→ 2 5⍴5 4 3 2 1 0 9 8 7 6
     // ⌽[0] 2 5⍴1 2 3 4 5 6 7 8 9 0 ←→ 2 5⍴6 7 8 9 0 1 2 3 4 5
     if(axis){
-      isSingleton(axis)||lenErr()
+      axis.a.length===1||lenErr()
       axis=unwrap(axis)
       isInt(axis)||domErr()
       0<=axis&&axis<y.s.length||idxErr()
@@ -1111,7 +1111,7 @@ voc['/']=adv((y,x,axis)=>{
         rShape=rShape.slice(0);rShape.splice(axis,1)
       }
 
-      if(empty(y)){
+      if(!y.a.length){
         let z=f.identity;z!=null||domErr();asrt(!z.s.length)
         return A(repeat([z.a[0]],prd(rShape)),rShape)
       }
@@ -1180,7 +1180,7 @@ voc['/']=adv((y,x,axis)=>{
     if(n===1)for(let i=0;i<b.length;i++)b[i]=b[i]==null?b[i]:0
 
     let data=[],d=strideForShape(y.s)
-    if(shape[axis]&&!empty(y)){
+    if(shape[axis]&&y.a.length){
       let filler=getPrototype(y),p=0,indices=repeat([0],shape.length)
       while(1){
         data.push(b[indices[axis]]==null?filler:y.a[p+b[indices[axis]]*d[axis]])
@@ -1283,7 +1283,7 @@ voc._substitute=args=>{
     axes=[];for(let i=0;i<a.length;i++)a.push(i)
   }
   let subs=voc['⌷'](voc['⍳'](A(y.s)),x,A(axes))
-  if(isSingleton(value))value=A(repeat([value],subs.a.length),subs.s)
+  if(value.a.length===1)value=A(repeat([value],subs.a.length),subs.s)
   let data=toArray(y),stride=strideForShape(y.s)
   subs.s.length!==value.s.length&&rnkErr();''+subs.s!=''+value.s&&lenErr()
   const ni=subs.a.length
@@ -1335,7 +1335,7 @@ const take=(x,y)=>{
 }
 
 // ↑(1 2 3)(4 5 6)←→1 2 3 ⍙ ↑(1 2)(3 4 5)←→1 2 ⍙ ↑'ab'←→'a' ⍙ ↑123←→123 ⍙ ↑⍬←→0
-const first=x=>{let y=empty(x)?getPrototype(x):x.a[0];return y.isA?y:A([y],[])}
+const first=x=>{let y=x.a.length?x.a[0]:getPrototype(x);return y.isA?y:A([y],[])}
 
 voc['⍉']=(y,x)=>{
   let a

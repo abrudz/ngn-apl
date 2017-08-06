@@ -1,14 +1,10 @@
-const A=(a,s)=>{
-  if(s)asrt(a.length===prd(s))
-  return {isA:1,a:a,s:s||[a.length]}
-}
+const A=(a,s)=>{s&&asrt(a.length===prd(s));return{isA:1,a:a,s:s||[a.length]}}
 ,strideForShape=s=>{
   asrt(s.length!=null)
   let r=Array(s.length),u=1
   for(let i=r.length-1;i>=0;i--){asrt(isInt(s[i],0));r[i]=u;u*=s[i]}
   return r
 }
-,empty=x=>{for(let i=0;i<x.s.length;i++)if(!x.s[i])return 1;return 0}
 ,map=(x,f)=>{const n=x.a.length,r=Array(n);for(let i=0;i<n;i++)r[i]=f(x.a[i]);return A(r,x.s)}
 ,toArray=x=>{const n=x.a.length,r=Array(n);for(let i=0;i<n;i++)r[i]=x.a[i];return r}
 ,toInt=(x,m,M)=>{let r=unwrap(x);if(r!==r|0||m!=null&&r<m||M!=null&&M<=r)domErr();return r}
@@ -25,10 +21,9 @@ const A=(a,s)=>{
     return a.join('')
   }
 }
-,isSingleton=x=>{let s=x.s;for(let i=0;i<s.length;i++)if(s[i]!==1)return 0;return 1}
-,isSimple=x=>!x.s.length&&!(x.a[0].isA)
-,unwrap=x=>{isSingleton(x)||lenErr();return x.a[0]}
-,getPrototype=x=>empty(x)||typeof x.a[0]!=='string'?0:' ' // todo
+,isSimple=x=>!x.s.length&&!x.a[0].isA
+,unwrap=x=>{x.a.length===1||lenErr();return x.a[0]}
+,getPrototype=x=>!x.a.length||typeof x.a[0]!=='string'?0:' ' // todo
 ,asrt=x=>{if(typeof x==='function'){if(!x())throw Error('assertion failed: '+x)}
                else                     {if(!x)  throw Error('assertion failed'    )}}
 ,isInt=(x,m,M)=>x===~~x&&(m==null||m<=x&&(M==null||x<M))
