@@ -1,14 +1,14 @@
 const voc={}
-,perv=h=>{
-  var f1=!h.monad?nyiErr:x=>{
+,perv=(monad,dyad)=>{
+  var f1=!monad?nyiErr:x=>{
     if(x.isA)return map(x,f1)
-    var r=h.monad(x);typeof r==='number'&&r!==r&&domErr();return r
+    var r=monad(x);typeof r==='number'&&r!==r&&domErr();return r
   }
-  var f2=!h.dyad?nyiErr:(x,y)=>{
+  var f2=!dyad?nyiErr:(x,y)=>{
     var tx=x.isA?(isSingleton(x)?20:30):10
     var ty=y.isA?(isSingleton(y)? 2: 3): 1
     switch(tx+ty){ // todo: use the larger shape when tx=10 and ty=1
-      case 11:        var r=h.dyad(x,y);typeof r==='number'&&r!==r&&domErr();return r
+      case 11:        var r=dyad(x,y);typeof r==='number'&&r!==r&&domErr();return r
       case 12:case 13:return map(y,yi=>f2(x,yi))
       case 21:case 31:return map(x,xi=>f2(xi,y))
       case 23:        const xi=x.data[0];return map(y,yi=>f2(xi,yi))
@@ -78,8 +78,8 @@ const voc={}
 ,conj=f=>{f.conj=1;return f}
 ,cps =f=>{f.cps =1;return f}
 
-voc['+']=withId(0,perv({
-  monad:numeric(x=>x,Z.cjg),                // +0((1j¯2 ¯3j4)¯5.6) ←→ 0((1j2 ¯3j¯4)¯5.6)
+voc['+']=withId(0,perv(
+  numeric(x=>x,Z.cjg),                // +0((1j¯2 ¯3j4)¯5.6) ←→ 0((1j2 ¯3j¯4)¯5.6)
   // 1(2 3)+(4 5)6 ←→ (5 6)(8 9)
   // (2 3⍴1 2 3 4 5 6)+    ¯2 ←→ 2 3⍴¯1 0 1 2 3 4
   // (2 3⍴1 2 3 4 5 6)+  2⍴¯2 !!! RANK ERROR
@@ -90,46 +90,44 @@ voc['+']=withId(0,perv({
   // +/⍬                      ←→ 0
   // ¯+¯¯                     !!! DOMAIN ERROR
   // 1j¯+2j¯¯                 !!! DOMAIN ERROR
-  dyad:numeric((y,x)=>x+y,(y,x)=>Z.add(x,y))
-}))
-voc['-']=withId(0,perv({
+  numeric((y,x)=>x+y,(y,x)=>Z.add(x,y))
+))
+voc['-']=withId(0,perv(
   // -4(1 2 3)1j2 ←→ ¯4(¯1 ¯2 ¯3)¯1j¯2
-  monad:numeric(x=>-x,Z.neg),
+  numeric(x=>-x,Z.neg),
   // 1-3←→¯2 ⍙ 5j2-3j8←→2j¯6 ⍙ -/⍬←→0
-  dyad:numeric((y,x)=>x-y,(y,x)=>Z.sub(x,y))
-}))
-voc['×']=withId(1,perv({
+  numeric((y,x)=>x-y,(y,x)=>Z.sub(x,y))
+))
+voc['×']=withId(1,perv(
   // ×¯2 ¯1 0 1 2 ¯ ¯¯ 3j¯4 ←→ ¯1 ¯1 0 1 1 1 ¯1 .6j¯.8
-  monad:numeric(x=>(x>0)-(x<0),x=>{var d=Math.sqrt(x.re*x.re+x.im*x.im);return simplify(x.re/d,x.im/d)}),
+  numeric(x=>(x>0)-(x<0),x=>{var d=Math.sqrt(x.re*x.re+x.im*x.im);return simplify(x.re/d,x.im/d)}),
   // 7×8←→56 ⍙ 1j¯2×¯2j3←→4j7 ⍙ 2×1j¯2←→2j¯4 ⍙ ×/⍬←→1
-  dyad:numeric((y,x)=>x*y,(y,x)=>Z.mul(x,y))
-}))
-voc['÷']=withId(1,perv({
+  numeric((y,x)=>x*y,(y,x)=>Z.mul(x,y))
+))
+voc['÷']=withId(1,perv(
   // ÷2←→.5 ⍙ ÷2j3←→0.15384615384615385J¯0.23076923076923078 ⍙ 0÷0!!!DOMAIN ERROR
-  monad:numeric(x=>1/x,
+  numeric(x=>1/x,
                 x=>{var d=x.re*x.re+x.im*x.im;return simplify(x.re/d,-x.im/d)}),
   // 27÷9←→3 ⍙ 4j7÷1j¯2←→¯2j3 ⍙ 0j2÷0j1←→2 ⍙ 5÷2j1←→2j¯1 ⍙ ÷/⍬←→1
-  dyad:numeric((y,x)=>x/y,(y,x)=>Z.div(x,y))
-}))
-voc['*']=withId(1,perv({
+  numeric((y,x)=>x/y,(y,x)=>Z.div(x,y))
+))
+voc['*']=withId(1,perv(
   // *2←→7.38905609893065 ⍙ *2j3←→¯7.315110094901103J1.0427436562359045
-  monad:numeric(Math.exp,Z.exp),
+  numeric(Math.exp,Z.exp),
   // 2 3 ¯2 ¯3*3 2 3 2←→8 9 ¯8 9 ⍙ ¯1*.5←→0j1 ⍙ */⍬←→1 ⍙ 1j2*3j4 ←→ .129009594074467j.03392409290517014
-  dyad:(y,x)=>Z.pow(x,y)
-}))
-voc['⍟']=perv({
+  (y,x)=>Z.pow(x,y)
+))
+voc['⍟']=perv(
   // ⍟123←→4.812184355372417 ⍙ ⍟0←→¯¯ ⍙ ⍟¯1←→0j1×○1 ⍙ ⍟123j456←→6.157609243895447J1.3073297857599793
-  monad:Z.log,
-  // 12⍟34 ←→ 1.419111870829036
-  // 12⍟¯34 ←→ 1.419111870829036j1.26426988871305
+  Z.log,
+  // 12⍟34 ¯34←→1.419111870829036 1.419111870829036j1.26426988871305
   // ¯12⍟¯34 ←→ 1.1612974763994781j¯.2039235425372641
   // 1j2⍟3j4 ←→ 1.2393828252698689J¯0.5528462880299602
-  dyad:(y,x)=>typeof x==='number'&&typeof y==='number'&&x>0&&y>0
-              ?Math.log(y)/Math.log(x):Z.div(Z.log(y),Z.log(x))
-})
-voc['|']=withId(0,perv({
+  (y,x)=>typeof x==='number'&&typeof y==='number'&&x>0&&y>0?Math.log(y)/Math.log(x):Z.div(Z.log(y),Z.log(x))
+)
+voc['|']=withId(0,perv(
   // |¯8 0 8 ¯3.5←→8 0 8 3.5 ⍙ |5j12←→13
-  monad:numeric(x=>Math.abs(x),Z.mag),
+  numeric(x=>Math.abs(x),Z.mag),
   // 3|5 ←→ 2
   // 1j2|3j4 ←→ ¯1j1
   // 7 ¯7∘.|31 28 ¯30        ←→ 2 3⍴3 0 5 ¯4 0 ¯2
@@ -140,8 +138,8 @@ voc['|']=withId(0,perv({
   // 10|4j3 ←→ 4j3
   // 4j6|7j10 ←→ 3j4
   // ¯10 7j10 0.3|17 5 10 ←→ ¯3 ¯5j7 0.1
-  dyad:(y,x)=>Z.residue(x,y)
-}))
+  (y,x)=>Z.residue(x,y)
+))
 
 voc['⍀']=adv((om,al,axis)=>voc['\\'](om,al,axis||A.zero))
 
@@ -210,11 +208,11 @@ voc['\\']=adv((om,al,axis)=>{
     return A(data,shape)
   }
 })
-voc['○']=perv({
+voc['○']=perv(
   // ○2     ←→ 6.283185307179586
   // ○2J2   ←→ 6.283185307179586J6.283185307179586
   // ○'ABC' !!! DOMAIN ERROR
-  monad:numeric(x=>Math.PI*x,x=>new Z(Math.PI*x.re,Math.PI*x.im)),
+  numeric(x=>Math.PI*x,x=>new Z(Math.PI*x.re,Math.PI*x.im)),
   // ¯12○2          ←→ ¯0.4161468365471J0.9092974268257
   // ¯12○2j3        ←→ ¯0.02071873100224J0.04527125315609
   // ¯11○2          ←→ 0j2
@@ -277,7 +275,7 @@ voc['○']=perv({
   // 1○'a'          !!! DOMAIN ERROR
   // 99○1           !!! DOMAIN ERROR
   // 99○1j2         !!! DOMAIN ERROR
-  dyad:(x,i)=>{
+  (x,i)=>{
     if(typeof x==='number'){
       switch(i){
         case-12:return Z.exp(simplify(0,x))
@@ -342,7 +340,7 @@ voc['○']=perv({
       domErr()
     }
   }
-})
+)
 voc[',']=(om,al,axis)=>{
   if(al){
     // 10,66←→10 66 ⍙ ⍬,⍬←→⍬ ⍙ ⍬,1←→,1 ⍙ 1,⍬←→,1 ⍙ 'ab','c','def'←→'abcdef'
@@ -426,21 +424,21 @@ voc[',']=(om,al,axis)=>{
 // 3=2 3⍴1 2 3 4 5 6←→2 3⍴0 0 1 0 0 0
 // 3=(2 3⍴1 2 3 4 5 6)(2 3⍴3 3 3 5 5 5)←→(2 3⍴0 0 1 0 0 0)(2 3⍴1 1 1 0 0 0)
 var eq
-voc['=']=withId(1,perv({dyad:eq=(y,x)=>+(x instanceof Z&&y instanceof Z?x.re===y.re&&x.im===y.im:x===y)}))
+voc['=']=withId(1,perv(null,eq=(y,x)=>+(x instanceof Z&&y instanceof Z?x.re===y.re&&x.im===y.im:x===y)))
 
 // 3≢5 ←→ 1
 // 8≠8 ←→ 0
 // ≠/⍬ ←→ 0
-voc['≠']=withId(0,perv({dyad:(y,x)=>1-eq(y,x)}))
+voc['≠']=withId(0,perv(null,(y,x)=>1-eq(y,x)))
 
 // </⍬ ←→ 0
 // >/⍬ ←→ 0
 // ≤/⍬ ←→ 1
 // ≥/⍬ ←→ 1
-voc['<']=withId(0,perv({dyad:real((y,x)=>+(x< y))}))
-voc['>']=withId(0,perv({dyad:real((y,x)=>+(x> y))}))
-voc['≤']=withId(1,perv({dyad:real((y,x)=>+(x<=y))}))
-voc['≥']=withId(1,perv({dyad:real((y,x)=>+(x>=y))}))
+voc['<']=withId(0,perv(null,real((y,x)=>+(x< y))))
+voc['>']=withId(0,perv(null,real((y,x)=>+(x> y))))
+voc['≤']=withId(1,perv(null,real((y,x)=>+(x<=y))))
+voc['≥']=withId(1,perv(null,real((y,x)=>+(x>=y))))
 
 // 3≡3                    ←→ 1
 // 3≡,3                   ←→ 0
@@ -691,20 +689,11 @@ voc['∊']=(om,al)=>{
 
 const enlist=(x,r)=>{x.isA?each(x,y=>enlist(y,r)):r.push(x)}
 var Beta
-voc['!']=withId(1,perv({
+voc['!']=withId(1,perv(
 
-  // !5    ←→ 120
-  // !21   ←→ 51090942171709440000
-  // !0    ←→ 1
-  // !1.5  ←→ 1.3293403881791
-  // !¯1.5 ←→ ¯3.544907701811
-  // !¯2.5 ←→ 2.3632718012074
-  // !¯200.5 ←→ 0
-  // !¯1   !!! DOMAIN ERROR
-  // !¯200 !!! DOMAIN ERROR
-  monad:real(x=>
-    !isInt(x)?Γ(x+1):x<0?domErr():x<smallFactorials.length?smallFactorials[x]:Math.round(Γ(x+1))
-  ),
+  // !0 5 21←→1 120 51090942171709440000 ⍙ !1.5 ¯1.5 ¯2.5←→1.3293403881791 ¯3.544907701811 2.3632718012074
+  // !¯200.5←→0 ⍙ !¯1 !!! DOMAIN ERROR ⍙ !¯200 !!! DOMAIN ERROR
+  real(x=>!isInt(x)?Γ(x+1):x<0?domErr():x<smallFactorials.length?smallFactorials[x]:Math.round(Γ(x+1))),
 
   // 2!4       ←→ 6
   // 3!20      ←→ 1140
@@ -729,7 +718,7 @@ voc['!']=withId(1,perv({
   // ¯3!¯5 ←→ 0   #    1   1   1      0
   //
   // 0.5!¯1 !!! DOMAIN ERROR
-  dyad:Beta=real((n,k)=>{
+  Beta=real((n,k)=>{
     var r
     switch(256*negInt(k)+16*negInt(n)+negInt(n-k)){
       case 0x000:r=Math.exp(lnΓ(n+1)-lnΓ(k+1)-lnΓ(n-k+1))            ;break
@@ -743,7 +732,7 @@ voc['!']=withId(1,perv({
     }
     return isInt(n)&&isInt(k)?Math.round(r):r
   })
-}))
+))
 
 const negInt=x=>isInt(x)&&x<0
 var smallFactorials=[1];(_=>{var x=1;for(var i=1;i<=25;i++)smallFactorials.push(x*=i)})()
@@ -810,27 +799,25 @@ voc['⍷']=(y,x)=>{
   return A(r,y.shape)
 }
 
-voc['⌊']=withId(Infinity,perv({
+voc['⌊']=withId(Infinity,perv(
   // ⌊123 12.3 ¯12.3 ¯123 ←→ 123 12 ¯13 ¯123
   // ⌊'a' !!! DOMAIN ERROR
   // ⌊12j3 1.2j2.3 1.2j¯2.3 ¯1.2j2.3 ¯1.2j¯2.3 ←→ 12j3 1j2 1j¯3 ¯1j2 ¯1j¯3
   // ⌊0 5 ¯5 (○1) ¯1.5 ←→ 0 5 ¯5 3 ¯2
-  monad:Z.floor,
-  // 3⌊5 ←→ 3
-  // ⌊/⍬ ←→ ¯
-  dyad:real((y,x)=>Math.min(y,x))
-}))
+  Z.floor,
+  // 3⌊5←→3 ⍙ ⌊/⍬←→¯
+  real((y,x)=>Math.min(y,x))
+))
 
-voc['⌈']=withId(-Infinity,perv({
+voc['⌈']=withId(-Infinity,perv(
   // ⌈123 12.3 ¯12.3 ¯123 ←→ 123 13 ¯12 ¯123
   // ⌈'a'   !!! DOMAIN ERROR
   // ⌈12j3 1.2j2.3 1.2j¯2.3 ¯1.2j2.3 ¯1.2j¯2.3 ←→ 12j3 1j3 1j¯2 ¯1j3 ¯1j¯2
   // ⌈0 5 ¯5(○1)¯1.5 ←→ 0 5 ¯5 4 ¯1
-  monad:Z.ceil,
-  // 3⌈5 ←→ 5
-  // ⌈/⍬ ←→ ¯¯
-  dyad:real((y,x)=>Math.max(y,x))
-}))
+  Z.ceil,
+  // 3⌈5←→5 ⍙ ⌈/⍬←→¯¯
+  real((y,x)=>Math.max(y,x))
+))
 
 // Fork: `(fgh)⍵ ← → (f⍵)g(h⍵)` ; `⍺(fgh)⍵ ← → (⍺f⍵)g(⍺h⍵)`
 // (+/÷⍴)4 5 10 7 ←→ ,6.5
@@ -1049,15 +1036,10 @@ voc['⊂']=(om,al,axes)=>{
   return A(a,rs)
 }
 
-// ~0 1 ←→ 1 0
-// ~2   !!! DOMAIN ERROR
-voc['~']=perv({monad:x=>+!bool(x)})
+// ~0 1←→1 0 ⍙ ~2 !!! DOMAIN ERROR
+voc['~']=perv(x=>+!bool(x))
 
-// 1∨1               ←→ 1
-// 1∨0               ←→ 1
-// 0∨1               ←→ 1
-// 0∨0               ←→ 0
-// 0 0 1 1 ∨ 0 1 0 1 ←→ 0 1 1 1
+// 0 0 1 1∨0 1 0 1←→0 1 1 1
 // 12∨18             ←→ 6 ⍝ 12=2×2×3, 18=2×3×3
 // 299∨323           ←→ 1 ⍝ 299=13×23, 323=17×19
 // 12345∨12345       ←→ 12345
@@ -1074,7 +1056,7 @@ voc['~']=perv({monad:x=>+!bool(x)})
 // 135j¯14∨155j34    ←→ 5j12
 // 2 3 4∨0j1 1j2 2j3 ←→ 1 1 1
 // 2j2 2j4∨5j5 4j4   ←→ 1j1 2
-voc['∨']=withId(0,perv({dyad:(y,x)=>Z.isint(x)&&Z.isint(y)?Z.gcd(x,y):domErr()}))
+voc['∨']=withId(0,perv(null,(y,x)=>Z.isint(x)&&Z.isint(y)?Z.gcd(x,y):domErr()))
 
 // 0 0 1 1∧0 1 0 1                ←→ 0 0 0 1
 // t←3 3⍴1 1 1 0 0 0 1 0 1 ⋄ 1∧t  ←→ 3 3⍴1 1 1 0 0 0 1 0 1
@@ -1095,15 +1077,15 @@ voc['∨']=withId(0,perv({dyad:(y,x)=>Z.isint(x)&&Z.isint(y)?Z.gcd(x,y):domErr()
 // 135j¯14∧155j34                 ←→ 805j¯1448
 // 2 3 4∧0j1 1j2 2j3              ←→ 0j2 3j6 8j12
 // 2j2 2j4∧5j5 4j4                ←→ 10j10 ¯4j12
-voc['∧']=withId(1,perv({dyad:(y,x)=>Z.isint(x)&&Z.isint(y)?Z.lcm(x,y):domErr()}))
+voc['∧']=withId(1,perv(null,(y,x)=>Z.isint(x)&&Z.isint(y)?Z.lcm(x,y):domErr()))
 
 // 0 0 1 1⍱0 1 0 1 ←→ 1 0 0 0
 // 0⍱2 !!! DOMAIN ERROR
-voc['⍱']=perv({dyad:real((y,x)=>+!(bool(x)|bool(y)))})
+voc['⍱']=perv(null,real((y,x)=>+!(bool(x)|bool(y))))
 
 // 0 0 1 1⍲0 1 0 1 ←→ 1 1 1 0
 // 0⍲2 !!! DOMAIN ERROR
-voc['⍲']=perv({dyad:real((y,x)=>+!(bool(x)&bool(y)))})
+voc['⍲']=perv(null,real((y,x)=>+!(bool(x)&bool(y))))
 
 // ({⍵+1}⍣5)3 ←→ 8
 // ({⍵+1}⍣0)3 ←→ 3
@@ -1194,7 +1176,7 @@ voc['?']=(om,al)=>al?deal(om,al):roll(om)
 // ?'a' !!! DOMAIN ERROR
 // ?1j2 !!! DOMAIN ERROR
 // ?∞   !!! DOMAIN ERROR
-var roll=perv({monad:om=>{isInt(om,1)||domErr();return Math.floor(Math.random()*om)}})
+var roll=perv(om=>{isInt(om,1)||domErr();return Math.floor(Math.random()*om)})
 
 // n←100 ⋄ (+/n?n)=(+/⍳n) ←→ 1 # a permutation (an 'n?n' dealing) contains all 0...n
 // n←100 ⋄ A←(n÷2)?n ⋄ ∧/(0≤A),A<n ←→ 1 # any number x in a dealing is 0 <= x < n
