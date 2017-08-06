@@ -28,7 +28,7 @@ const voc={}
 ,match=(x,y)=>{
   if(x.isA){
     if(!y.isA||x.s!=''+y.s)return 0
-    let r=1,n=prd(x.s);for(let i=0;i<n;i++)r&=match(x.a[i],y.a[i])
+    let r=1,n=x.a.length;for(let i=0;i<n;i++)r&=match(x.a[i],y.a[i])
     return r
   }else{
     if(y.isA)return 0
@@ -42,7 +42,7 @@ const voc={}
     if(!(y.isA))return 0
     if(x.s.length!==y.s.length)return 0
     if(x.s!=''+y.s)return 0
-    let r=1,n=prd(x.s);for(let i=0;i<n;i++)r&=approx(x.a[i],y.a[i])
+    let r=1,n=x.a.length;for(let i=0;i<n;i++)r&=approx(x.a[i],y.a[i])
     return r
   }else{
     if(y.isA)return 0
@@ -380,7 +380,7 @@ voc['≡']=(y,x)=>x?A.bool[+match(y,x)]:A([depthOf(y)],[])
 
 const depthOf=x=>{
   if(!x.isA||!x.s.length&&!x.a[0].isA)return 0
-  let r=0,n=prd(x.s);for(let i=0;i<n;i++)r=Math.max(r,depthOf(x.a[i]));return r+1
+  let r=0,n=x.a.length;for(let i=0;i<n;i++)r=Math.max(r,depthOf(x.a[i]));return r+1
 }
 
 // (÷∘-)2     ←→ ¯0.5
@@ -404,17 +404,17 @@ voc['∪']=(y,x)=>{
     // 1 2∪2 2⍴3 !!! RANK ERROR ⍙ (2 2⍴3)∪4 5 !!! RANK ERROR
     // 'ab' 'c'(0 1)∪'ab' 'de' ←→ 'ab' 'c'(0 1)'de'
     if(x.s.length>1||y.s.length>1)rnkErr()
-    let r=[],n=prd(y.s);for(let i=0;i<n;i++)contains(x.a,y.a[i])||r.push(y.a[i]);return A(x.a.concat(r))
+    let r=[],n=y.a.length;for(let i=0;i<n;i++)contains(x.a,y.a[i])||r.push(y.a[i]);return A(x.a.concat(r))
   }else{
     // ∪3 17←→3 17 ⍙ ∪⍬←→⍬ ⍙ ∪17←→,17 ⍙ ∪3 17 17 17 ¯3 17 0←→3 17 ¯3 0
     if(y.s.length>1)rnkErr()
-    let r=[],n=prd(y.s);for(let i=0;i<n;i++)contains(r,y.a[i])||r.push(y.a[i]);return A(r)
+    let r=[],n=y.a.length;for(let i=0;i<n;i++)contains(r,y.a[i])||r.push(y.a[i]);return A(r)
   }
 }
 voc['∩']=(y,x)=>{
   if(x){ // 'abca'∩'dac'←→'aca' ⍙ 1'2'3∩⍳5←→1 3 ⍙ 1∩2←→⍬ ⍙ 1∩2 3⍴4 !!! RANK ERROR
     if(x.s.length>1||y.s.length>1)rnkErr()
-    let r=[],n=prd(x.s);for(let i=0;i<n;i++)contains(y.a,x.a[i])&&r.push(x.a[i]);return A(r)
+    let r=[],n=x.a.length;for(let i=0;i<n;i++)contains(y.a,x.a[i])&&r.push(x.a[i]);return A(r)
   }else{
     nyiErr() // ∩1 !!! NONCE ERROR
   }
@@ -516,19 +516,19 @@ voc['¨']=adv((f,g)=>{
   asrt(typeof f==='function');asrt(g==null)
   return(y,x)=>{
     if(!x){
-      const n=prd(y.s),r=Array(n)
+      const n=y.a.length,r=Array(n)
       for(var i=0;i<n;i++){const u=y.a[i],v=f(u.isA?u:A([u],[]));asrt(v.isA);r[i]=v.s.length?v:unwrap(v)}
       return A(r,y.s)
     }else if(isSingleton(x)){
-      const n=prd(y.s),r=Array(n),u=x.a[0].isA?x.a[0]:A([x.a[0]],[])
+      const n=y.a.length,r=Array(n),u=x.a[0].isA?x.a[0]:A([x.a[0]],[])
       for(let i=0;i<n;i++){const v=y.a[i],w=f(v.isA?v:A([v],[]),u);r[i]=w.s.length?w:unwrap(w)}
       return A(r,y.s)
     }else if(isSingleton(y)){
-      const n=prd(x.s),r=Array(n),v=y.a[0].isA?y.a[0]:A([y.a[0]],[])
+      const n=x.a.length,r=Array(n),v=y.a[0].isA?y.a[0]:A([y.a[0]],[])
       for(let i=0;i<n;i++){const u=x.a[i],w=f(v,u.isA?u:A([u],[]));r[i]=w.s.length?w:unwrap(w)}
       return A(r,x.s)
     }else{
-      const n=prd(x.s),r=Array(n);arrEq(x.s,y.s)||lenErr()
+      const n=x.a.length,r=Array(n);arrEq(x.s,y.s)||lenErr()
       for(let i=0;i<n;i++){const u=x.a[i],v=y.a[i],w=f(v.isA?v:A([v],[]),u.isA?u:A([u],[]));r[i]=w.s.length?w:unwrap(w)}
       return A(r,x.s)
     }
@@ -569,7 +569,7 @@ voc['∊']=(y,x)=>{
   }
 }
 
-const enlist=(x,r)=>{if(x.isA){const n=prd(x.s);for(let i=0;i<n;i++)enlist(x.a[i],r)}else{r.push(x)}}
+const enlist=(x,r)=>{if(x.isA){const n=x.a.length;for(let i=0;i<n;i++)enlist(x.a[i],r)}else{r.push(x)}}
 let Beta
 voc['!']=withId(1,perv(
 
@@ -640,13 +640,13 @@ voc['⍷']=(y,x)=>{
   // (2 3 0⍴0)⍷3 4 5⍴0←→3 4 5⍴1
   // (2 3 4⍴0)⍷3 4 0⍴0←→3 4 0⍴0
   // (2 3 0⍴0)⍷3 4 0⍴0←→3 4 0⍴0
-  const r=new Float64Array(prd(y.s))
+  const r=new Float64Array(y.a.length)
   if(x.s.length>y.s.length)return A(r,y.s)
   if(x.s.length<y.s.length)x=A(x.a,repeat([1],y.s.length-x.s.length).concat(x.s))
   if(empty(x))return A(r.fill(1),y.s)
   const s=new Int32Array(y.s.length) // find shape
   for(let i=0;i<y.s.length;i++){s[i]=y.s[i]-x.s[i]+1;if(s[i]<=0)return A(r,y.s)}
-  let d=strideForShape(y.s),i=new Int32Array(s.length),j=new Int32Array(s.length),nk=prd(x.s),p=0
+  let d=strideForShape(y.s),i=new Int32Array(s.length),j=new Int32Array(s.length),nk=x.a.length,p=0
   while(1){
     let q=p;r[q]=1;j.fill(0)
     for(let k=0;k<nk;k++){
@@ -838,7 +838,7 @@ voc['⍳']=(y,x)=>{
     // ⍬⍳123 234                               ←→ 0 0
     // 123 234⍳⍬                               ←→ ⍬
     x.s.length===1||rnkErr()
-    const m=prd(x.s),n=prd(y.s),r=new Float64Array(n)
+    const m=x.a.length,n=y.a.length,r=new Float64Array(n)
     for(let i=0;i<n;i++){r[i]=x.s[0];for(let j=0;j<m;j++)if(match(y.a[i],x.a[j])){r[i]=j;break}}
     return A(r,y.s)
   }else{
@@ -1015,7 +1015,7 @@ voc['⍴']=(y,x)=>{
     // 2 5⍴¨⊂1 2 3←→(1 2)(1 2 3 1 2) ⍙ ⍴1 2 3⍴0←→1 2 3 ⍙ ⍴⍴1 2 3⍴0←→,3 ⍙ 2 3⍴⍳5←→2 3⍴0 1 2 3 4 0
     // ⍬⍴123←→123 ⍙ ⍬⍴⍬←→0 ⍙ 2 3⍴⍬←→2 3⍴0 ⍙ 2 3⍴⍳7←→2 3⍴0 1 2 3 4 5
     x.s.length<=1||rnkErr()
-    let s=toArray(x),n=prd(s),m=prd(y.s),a=y.a
+    let s=toArray(x),n=prd(s),m=y.a.length,a=y.a
     for(let i=0;i<s.length;i++)isInt(s[i],0)||domErr
     if(!m){m=1;a=[0]}
     let r=Array(n);for(let i=0;i<n;i++)r[i]=a[i%m]
@@ -1232,7 +1232,7 @@ voc['⌷']=(y,x,axes)=>{
 }
 const indexAtSingleAxis=(x,y,ax)=>{ // y:subscript
   asrt(x.isA&&y.isA&&isInt(ax)&&0<=ax&&ax<x.s.length)
-  const ni=prd(x.s.slice(0,ax)),nj0=x.s[ax],nj=prd(y.s),nk=prd(x.s.slice(ax+1))
+  const ni=prd(x.s.slice(0,ax)),nj0=x.s[ax],nj=y.a.length,nk=prd(x.s.slice(ax+1))
        ,s=x.s.slice(0,ax).concat(y.s).concat(x.s.slice(ax+1)),n=ni*nj*nk,r=Array(n)
   for(let j=0;j<nj;j++){const u=y.a[j];isInt(u)||domErr();0<=u&&u<nj0||idxErr()}
   let l=0;for(let i=0;i<ni;i++)for(let j=0;j<nj;j++)for(let k=0;k<nk;k++)r[l++]=x.a[(i*nj0+y.a[j])*nk+k]
@@ -1283,10 +1283,10 @@ voc._substitute=args=>{
     axes=[];for(let i=0;i<a.length;i++)a.push(i)
   }
   let subs=voc['⌷'](voc['⍳'](A(y.s)),x,A(axes))
-  if(isSingleton(value))value=A(repeat([value],prd(subs.s)),subs.s)
+  if(isSingleton(value))value=A(repeat([value],subs.a.length),subs.s)
   let data=toArray(y),stride=strideForShape(y.s)
   subs.s.length!==value.s.length&&rnkErr();''+subs.s!=''+value.s&&lenErr()
-  const ni=prd(subs.s)
+  const ni=subs.a.length
   for(let i=0;i<ni;i++){
     let u=subs.a[i], v=value.a[i]
     if(v.isA&&!v.s.length)v=unwrap(v)

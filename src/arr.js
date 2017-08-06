@@ -1,7 +1,6 @@
 const A=(a,s)=>{
-  if(s){asrt(a.length===prd(s));for(let i=0;i<s.length;i++)asrt(isInt(s[i],0))}
-  const x={isA:1,a:a,s:s||[a.length]}
-  return x
+  if(s)asrt(a.length===prd(s))
+  return {isA:1,a:a,s:s||[a.length]}
 }
 ,strideForShape=s=>{
   asrt(s.length!=null)
@@ -10,8 +9,8 @@ const A=(a,s)=>{
   return r
 }
 ,empty=x=>{for(let i=0;i<x.s.length;i++)if(!x.s[i])return 1;return 0}
-,map=(x,f)=>{const n=prd(x.s),r=Array(n);for(let i=0;i<n;i++)r[i]=f(x.a[i]);return A(r,x.s)}
-,toArray=x=>{const n=prd(x.s),r=Array(n);for(let i=0;i<n;i++)r[i]=x.a[i];return r}
+,map=(x,f)=>{const n=x.a.length,r=Array(n);for(let i=0;i<n;i++)r[i]=f(x.a[i]);return A(r,x.s)}
+,toArray=x=>{const n=x.a.length,r=Array(n);for(let i=0;i<n;i++)r[i]=x.a[i];return r}
 ,toInt=(x,m,M)=>{let r=unwrap(x);if(r!==r|0||m!=null&&r<m||M!=null&&M<=r)domErr();return r}
 ,toSimpleString=x=>{
   if(x.s.length>1)rnkErr()
