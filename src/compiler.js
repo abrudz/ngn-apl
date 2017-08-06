@@ -1,6 +1,5 @@
 const NOUN=1,VERB=2,ADV=3,CONJ=4
-,exec=(s,o)=>{ // s:APL code, o:options
-  o=o||{}
+,exec=(s,o={})=>{ // s:APL code, o:options
   let ast=parse(s,o),code=compileAST(ast,o),env=[prelude.env[0].slice(0)]
   for(let k in ast.vars)env[0][ast.vars[k].slot]=o.ctx[k]
   let r=vm(code,env)
@@ -14,8 +13,7 @@ const NOUN=1,VERB=2,ADV=3,CONJ=4
 ,repr=x=>x===null||['string','number','boolean'].indexOf(typeof x)>=0?JSON.stringify(x):
          x instanceof Array?'['+x.map(repr).join(',')+']':
          x.repr?x.repr():'{'+Object.keys(x).map(k=>repr(k)+':'+repr(x[k])).join(',')+'}'
-,compileAST=(ast,o)=>{
-  o=o||{}
+,compileAST=(ast,o={})=>{
   ast.scopeDepth=0
   ast.nSlots=prelude?prelude.nSlots:0
   ast.vars=prelude?Object.create(prelude.vars):{}
@@ -85,13 +83,14 @@ const NOUN=1,VERB=2,ADV=3,CONJ=4
           }
           return node.ctg||VERB
         case'S':case'N':case'J':case'⍬':return NOUN
-        case'[':
+        case'[':{
           for(let i=2;i<node.length;i++)if(node[i]&&visit(node[i])!==NOUN)err(node,'Indices must be nouns.')
           return visit(node[1])
-        case'.':
+        }
+        case'.':{
           let a=node.slice(1),h=Array(a.length)
           for(let i=a.length-1;i>=0;i--)h[i]=visit(a[i])
-          // Form vectors from sequences of data
+          // strands
           let i=0
           while(i<a.length-1){
             if(h[i]===NOUN&&h[i+1]===NOUN){
@@ -102,42 +101,29 @@ const NOUN=1,VERB=2,ADV=3,CONJ=4
               i++
             }
           }
-          // Apply adverbs and conjunctions
-          // ⌽¨⍣3⊢(1 2)3(4 5 6) ←→ (2 1)3(6 5 4)
+          // adverbs and conjunctions
           i=0
-          while(i<a.length){
+          while(i<a.length){ // ⌽¨⍣3⊢(1 2)3(4 5 6)←→(2 1)3(6 5 4)
             if(h[i]===VERB&&i+1<a.length&&h[i+1]===ADV){
-              a.splice(i,2,['A'].concat(a.slice(i,i+2)))
-              h.splice(i,2,VERB)
+              a.splice(i,2,['A'].concat(a.slice(i,i+2)));h.splice(i,2,VERB)
             }else if((h[i]===NOUN||h[i]===VERB||h[i]===CONJ)&&i+2<a.length&&h[i+1]===CONJ&&(h[i+2]===NOUN||h[i+2]===VERB)){
-              // allow conjunction-conjunction-something to accommodate ∘.f syntax
-              a.splice(i,3,['C'].concat(a.slice(i,i+3)))
-              h.splice(i,3,VERB)
+              a.splice(i,3,['C'].concat(a.slice(i,i+3)));h.splice(i,3,VERB) // allow CONJ,CONJ,... for ∘.f
             }else{
               i++
             }
           }
-          // Atops
-          if(h.length===2&&h[0]!==NOUN&&h[1]!==NOUN){a=[['T'].concat(a)];h=[VERB]}
-          // Forks
-          if(h.length>=3&&h.length%2&&h.indexOf(NOUN)<0){a=[['F'].concat(a)];h=[VERB]}
+          if(h.length===2&&h[0]!==NOUN&&h[1]!==NOUN){a=[['T'].concat(a)];h=[VERB]}     // atops
+          if(h.length>=3&&h.length%2&&h.indexOf(NOUN)<0){a=[['F'].concat(a)];h=[VERB]} // forks
           if(h[h.length-1]!==NOUN){
             if(h.length>1)err(a[h.length-1],'Trailing function in expression')
           }else{
-            // Apply monadic and dyadic functions
-            while(h.length>1){
-              if(h.length===2||h[h.length-3]!==NOUN){
-                a.splice(-2,9e9,['M'].concat(a.slice(-2)))
-                h.splice(-2,9e9,NOUN)
-              }else{
-                a.splice(-3,9e9,['D'].concat(a.slice(-3)))
-                h.splice(-3,9e9,NOUN)
-              }
+            while(h.length>1){ // monadic and dyadic verbs
+              if(h.length===2||h[h.length-3]!==NOUN){a.splice(-2,9e9,['M'].concat(a.slice(-2)));h.splice(-2,9e9,NOUN)}
+              else                                  {a.splice(-3,9e9,['D'].concat(a.slice(-3)));h.splice(-3,9e9,NOUN)}
             }
           }
-          node.splice(0,9e9,a[0])
-          extend(node,a[0])
-          return h[0]
+          node.splice(0,9e9,a[0]);extend(node,a[0]);return h[0]
+        }
       }
       asrt(0)
     }
@@ -162,8 +148,7 @@ const NOUN=1,VERB=2,ADV=3,CONJ=4
           rhsCtg===NOUN||err(node,'Indexed assignment can be used only for nouns.')
           visitLHS(node[1],rhsCtg);for(let i=2;i<node.length;i++)node[i]&&visit(node[i])
           break
-        default:
-          err(node,'Invalid LHS node type: '+JSON.stringify(node[0]))
+        default:asrt(0)
       }
       return rhsCtg
     }
@@ -172,19 +157,12 @@ const NOUN=1,VERB=2,ADV=3,CONJ=4
   const render=node=>{
     switch(node[0]){
       case'B':
-        if(node.length===1){
-          // {}0 ←→ ⍬
-          return[LDC,A.zilde,RET]
-        }else{
-          let a=[];for(let i=1;i<node.length;i++){a.push.apply(a,render(node[i]));a.push(POP)}
-          a[a.length-1]=RET
-          return a
-        }
+        if(node.length===1)return[LDC,A.zilde,RET] // {}0 ←→ ⍬
+        let a=[];for(let i=1;i<node.length;i++){a.push.apply(a,render(node[i]));a.push(POP)}
+        a[a.length-1]=RET
+        return a
       case':':{let x=render(node[1]),y=render(node[2]);return x.concat(JEQ,y.length+2,POP,y,RET)}
-      case'←':
-        // A←5     ←→ 5
-        // A×A←2 5 ←→ 4 25
-        return render(node[2]).concat(renderLHS(node[1]))
+      case'←':return render(node[2]).concat(renderLHS(node[1])) // a←5←→5 ⍙ a×a←2 5←→4 25
       case'X':{
         // r←3 ⋄ get_c←{2×○r} ⋄ get_S←{○r*2} ⋄ before←.01×⌊100×r c S ⋄ r←r+1 ⋄ after←.01×⌊100×r c S ⋄ before after ←→ (3 18.84 28.27)(4 25.13 50.26)
         // {⍺}0 !!! VALUE ERROR
@@ -194,7 +172,7 @@ const NOUN=1,VERB=2,ADV=3,CONJ=4
         let s=node[1],vars=node.scopeNode.vars,v
         return s==='⍫'?[CON]:
                (v=vars['get_'+s])&&v.ctg===VERB?[LDC,A.zero,GET,v.scopeDepth,v.slot,MON]:
-                 [GET, vars[s].scopeDepth, vars[s].slot]
+                 [GET,vars[s].scopeDepth,vars[s].slot]
       }
       case'{':{
         // {1 + 1} 1                    ←→ 2
@@ -225,21 +203,16 @@ const NOUN=1,VERB=2,ADV=3,CONJ=4
         }
         return node.ctg===VERB?f:[LAM,f.length+1].concat(f,RET)
       }
-      case'S': // ⍴''←→,0 ⍙ ⍴'x'←→⍬ ⍙ ⍴'xx'←→,2 ⍙ ⍴'a''b'←→,3 ⍙ ⍴'''a'←→,2 ⍙ ⍴'a'''←→,2 ⍙ ⍴''''←→⍬ ⍙ 'a !!!
-        {let s=node[1].slice(1,-1).replace(/''/g,"'");return[LDC,A(s,s.length===1?[]:[s.length])]}
-      case'N':
-        // ∞ ←→ ¯
-        // ¯∞ ←→ ¯¯
-        // ¯∞j¯∞ ←→ ¯¯j¯¯
-        // ∞∞ ←→ ¯ ¯
-        // ∞¯ ←→ ¯ ¯
+      case'S':{ // ⍴''←→,0 ⍙ ⍴'x'←→⍬ ⍙ ⍴'xx'←→,2 ⍙ ⍴'a''b'←→,3 ⍙ ⍴'''a'←→,2 ⍙ ⍴'a'''←→,2 ⍙ ⍴''''←→⍬ ⍙ 'a !!!
+        let s=node[1].slice(1,-1).replace(/''/g,"'");return[LDC,A(s,s.length===1?[]:[s.length])]
+      }
+      case'N':{ // ∞←→¯ ⍙ ¯∞←→¯¯ ⍙ ¯∞j¯∞←→¯¯j¯¯ ⍙ ∞∞←→¯ ¯ ⍙ ∞¯←→¯ ¯
         let a=node[1].replace(/[¯∞]/g,'-').split(/j/i).map(x=>x==='-'?Infinity:x==='--'?-Infinity:parseFloat(x))
-        let v=a[1]?new Z(a[0],a[1]):a[0]
-        return[LDC,A([v],[])]
-      case'J':
-        // 123 + «456 + 789» ←→ 1368
-        let f=Function('return(_w,_a)=>('+node[1].replace(/^«|»$/g,'')+')')()
-        return[EMB,(_w,_a)=>aplify(f(_w,_a))]
+        return[LDC,A([a[1]?new Z(a[0],a[1]):a[0]],[])]
+      }
+      case'J':{ // 123 + «456 + 789» ←→ 1368
+        let f=Function('return(_w,_a)=>('+node[1].replace(/^«|»$/g,'')+')')();return[EMB,(_w,_a)=>aplify(f(_w,_a))]
+      }
       case'[':{ // ⍴ x[⍋x←6?40] ←→ ,6
         let v=node.scopeNode.vars._index,axes=[],a=[],c
         for(let i=2;i<node.length;i++)if(c=node[i]){axes.push(i-2);a.push.apply(a,render(c))}
@@ -276,20 +249,22 @@ const NOUN=1,VERB=2,ADV=3,CONJ=4
   }
   const renderLHS=node=>{
     switch(node[0]){
-      case'X':
+      case'X':{
         let name=node[1],vars=node.scopeNode.vars,v=vars['set_'+name]
         return v&&v.ctg===VERB?[GET,v.scopeDepth,v.slot,MON]:[SET,vars[name].scopeDepth,vars[name].slot]
-      case'.': // strand assignment
-        // (a b) ← 1 2 ⋄ a           ←→ 1
-        // (a b) ← 1 2 ⋄ b           ←→ 2
-        // (a b) ← +                 !!!
-        // (a b c) ← 3 4 5 ⋄ a b c   ←→ 3 4 5
-        // (a b c) ← 6     ⋄ a b c   ←→ 6 6 6
-        // (a b c) ← 7 8   ⋄ a b c   !!!
-        // ((a b)c)←3(4 5) ⋄ a b c   ←→ 3 3 (4 5)
+      }
+      case'.':{
+        // (a b)←1 2⋄a←→1
+        // (a b)←1 2⋄b←→2
+        // (a b)←+ !!!
+        // (a b c)←3 4 5⋄a b c←→3 4 5
+        // (a b c)←6⋄a b c←→6 6 6
+        // (a b c)←7 8⋄a b c !!!
+        // ((a b)c)←3(4 5)⋄a b c←→3 3(4 5)
         let n=node.length-1,a=[SPL,n]
         for(let i=1;i<node.length;i++){a.push.apply(a,renderLHS(node[i]));a.push(POP)}
         return a
+      }
       case'[':{ // indexed assignment
         let axes=[],a=[],v=node.scopeNode.vars._substitute
         for(let i=2;i<node.length;i++)if(node[i]){axes.push(i-2);a.push.apply(a,render(node[i]))}
@@ -316,8 +291,7 @@ let prelude
   const ast=parse(preludeSrc)
   const code=compileAST(ast) //creates ast.vars as a side effect
   const vars={};for(let k in ast.vars)vars[k]=ast.vars[k] //flatten prototype chain
-  prelude={code:code,nSlots:ast.nSlots,vars:vars}
-
+  prelude={code,nSlots:ast.nSlots,vars}
   let env=prelude.env=[[]]
   for(let k in prelude.vars)env[0][prelude.vars[k].slot]=voc[k]
   vm(prelude.code,env)

@@ -25,7 +25,7 @@ const A=(a,s)=>{s&&asrt(a.length===prd(s));return{isA:1,a:a,s:s||[a.length]}}
 ,unwrap=x=>{x.a.length===1||lenErr();return x.a[0]}
 ,getPrototype=x=>!x.a.length||typeof x.a[0]!=='string'?0:' ' // todo
 ,asrt=x=>{if(typeof x==='function'){if(!x())throw Error('assertion failed: '+x)}
-               else                     {if(!x)  throw Error('assertion failed'    )}}
+          else                     {if(!x)  throw Error('assertion failed'    )}}
 ,isInt=(x,m,M)=>x===~~x&&(m==null||m<=x&&(M==null||x<M))
 ,prd=x=>{let r=1;for(let i=0;i<x.length;i++)r*=x[i];return r}
 ,extend=(x,y)=>{for(let k in y)x[k]=y[k];return x}
@@ -40,8 +40,7 @@ const A=(a,s)=>{s&&asrt(a.length===prd(s));return{isA:1,a:a,s:s||[a.length]}}
   for(let i=0;i<x.length;i++)if(x[i]!==y[i])return 0
   return 1
 }
-,err=(name,m,o)=>{
-  m=m||''
+,err=(name,m='',o)=>{
   if(o&&o.aplCode&&o.offset!=null){
     let a=o.aplCode.slice(0,o.offset).split('\n')
     let l=a.length,c=1+(a[a.length-1]||'').length // line and column

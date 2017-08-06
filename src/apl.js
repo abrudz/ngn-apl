@@ -1,10 +1,9 @@
 let apl=this.apl=(s,o)=>apl.ws(o)(s) // s:apl code; o:options
 extend(apl,{format:format,approx:approx,parse:parse,compileAST:compileAST,repr:repr})
-apl.ws=opts=>{
-  opts=opts||{}
+apl.ws=(o={})=>{
   const ctx=Object.create(voc)
-  if(opts.in )ctx['get_⎕']=ctx['get_⍞']=_=>{let s=opts.in();asrt(typeof s==='string');return new A(s)}
-  if(opts.out)ctx['set_⎕']=ctx['set_⍞']=x=>{opts.out(format(x).join('\n')+'\n')}
+  if(o.in )ctx['get_⎕']=ctx['get_⍞']=_=>{let s=o.in();asrt(typeof s==='string');return new A(s)}
+  if(o.out)ctx['set_⎕']=ctx['set_⍞']=x=>{o.out(format(x).join('\n')+'\n')}
   return aplCode=>exec(aplCode,{ctx:ctx})
 }
 const readline=(prompt,f)=>{
