@@ -5,19 +5,15 @@ const voc={}
     let r=f1(x);typeof r==='number'&&r!==r&&domErr();return r
   }
   let g2=!f2?nyiErr:(x,y)=>{
-    let tx=x.isA?(x.a.length===1?20:30):10
-    let ty=y.isA?(y.a.length===1? 2: 3): 1
-    switch(tx+ty){ // todo: use the larger shape when tx=10 and ty=1
-      case 11:        let r=f2(x,y);typeof r==='number'&&r!==r&&domErr();return r
+    switch((!x.isA?10:x.a.length===1?20:30)+(!y.isA?1:y.a.length===1?2:3)){
+      case 11:{let r=f2(x,y);typeof r==='number'&&r!==r&&domErr();return r}
       case 12:case 13:return map(y,yi=>g2(x,yi))
       case 21:case 31:return map(x,xi=>g2(xi,y))
-      case 23:        const xi=x.a[0];return map(y,yi=>g2(xi,yi))
-      case 32:case 22:const yi=y.a[0];return map(x,xi=>g2(xi,yi))
-      case 33:        {x.s.length!==y.s.length&&rnkErr();x.s!=''+y.s&&lenErr()
-                       const n=x.a.length,r=Array(n)
-                       for(let i=0;i<n;i++)r[i]=g2(x.a[i],y.a[i])
-                       return A(r,x.s)}
-      default:        asrt(0)
+      case 22:return A([g2(x.a[0],y.a[0])],x.s.length>y.s.length?x.s:y.s) // (1 1⍴2)+1 1 1⍴3←→1 1 1⍴5
+      case 23:{const xi=x.a[0];return map(y,yi=>g2(xi,yi))}
+      case 32:{const yi=y.a[0];return map(x,xi=>g2(xi,yi))}
+      case 33:{x.s.length!==y.s.length&&rnkErr();x.s!=''+y.s&&lenErr()
+               const n=x.a.length,r=Array(n);for(let i=0;i<n;i++)r[i]=g2(x.a[i],y.a[i]);return A(r,x.s)}
     }
   }
   return(y,x)=>{asrt(y.isA);asrt(!x||x.isA);return(x?g2:g1)(y,x)}
@@ -39,7 +35,7 @@ const voc={}
 ,numApprox=(x,y)=>x===y||Math.abs(x-y)<1e-11
 ,approx=(x,y)=>{ // like match(), but imprecision-tolerant
   if(x.isA){
-    if(!(y.isA))return 0
+    if(!y.isA)return 0
     if(x.s.length!==y.s.length)return 0
     if(x.s!=''+y.s)return 0
     let r=1,n=x.a.length;for(let i=0;i<n;i++)r&=approx(x.a[i],y.a[i])
