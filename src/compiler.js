@@ -3,7 +3,7 @@ const NOUN=1,VERB=2,ADV=3,CONJ=4
   o=o||{}
   let ast=parse(s,o),code=compileAST(ast,o),env=[prelude.env[0].slice(0)]
   for(let k in ast.vars)env[0][ast.vars[k].slot]=o.ctx[k]
-  let r=vm({code:code,env:env})
+  let r=vm(code,env)
   for(let k in ast.vars){
     let v=ast.vars[k],x=o.ctx[k]=env[0][v.slot]
     if(v.ctg===ADV)x.adv=1
@@ -320,6 +320,6 @@ let prelude
 
   let env=prelude.env=[[]]
   for(let k in prelude.vars)env[0][prelude.vars[k].slot]=voc[k]
-  vm({code:prelude.code,env:env})
+  vm(prelude.code,env)
   for(let k in prelude.vars)voc[k]=env[0][prelude.vars[k].slot]
 })()

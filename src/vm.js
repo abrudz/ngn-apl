@@ -1,8 +1,7 @@
 const LDC=1,VEC=2,GET=3,SET=4,MON=5,DYA=6,LAM=7,RET=8,POP=9,SPL=10,JEQ=11,EMB=12,CON=13
 ,Proc=function(code,addr,size,env){this.code=code;this.addr=addr;this.size=size;this.env=env;this.toString=_=>'#procedure'}
-,toFn=p=>(x,y)=>vm({code:p.code,env:p.env.concat([[x,p,y,null]]),pc:p.addr})
-,vm=o=>{
-  let code=o.code,env=o.env,stk=o.stk||[],pc=o.pc||0
+,toFn=p=>(x,y)=>vm(p.code,p.env.concat([[x,p,y,null]]),p.addr)
+,vm=(code,env,pc=0,stk=[])=>{
   asrt(code instanceof Array);asrt(env instanceof Array);for(let i=0;i<env.length;i++)asrt(env[i]instanceof Array)
   while(1){
     switch(code[pc++]){
@@ -20,7 +19,7 @@ const LDC=1,VEC=2,GET=3,SET=4,MON=5,DYA=6,LAM=7,RET=8,POP=9,SPL=10,JEQ=11,EMB=12
         if(typeof f==='function'){
           if(w instanceof Proc)w=toFn(w)
           if(f.cps){
-            f(w,undefined,undefined,r=>{stk.push(r);vm({code:code,env:env,stk:stk,pc:pc})})
+            f(w,undefined,undefined,r=>{stk.push(r);vm(code,env,pc,stk)})
             return
           }else{
             stk.push(f(w))
@@ -36,7 +35,7 @@ const LDC=1,VEC=2,GET=3,SET=4,MON=5,DYA=6,LAM=7,RET=8,POP=9,SPL=10,JEQ=11,EMB=12
           if(w instanceof Proc)w=toFn(w)
           if(a instanceof Proc)a=toFn(a)
           if(f.cps){
-            f(w,a,undefined,r=>{stk.push(r);vm({code:code,env:env,stk:stk,pc:pc})})
+            f(w,a,undefined,r=>{stk.push(r);vm(code,env,pc,stk)})
             return
           }else{
             stk.push(f(w,a))
