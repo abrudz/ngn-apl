@@ -190,18 +190,18 @@ voc['\\']=adv((om,al,axis)=>{
     let a=toArray(al),b=[],i=0,shape=om.s.slice(0);shape[axis]=a.length
     for(let j=0;j<a.length;j++){isInt(a[j],0,2)||domErr();b.push(a[j]>0?i++:null)}
     i===om.s[axis]||lenErr()
-    let data=[]
+    let data=[],xd=strideForShape(om.s)
     if(shape[axis]&&!empty(om)){
       let filler=getPrototype(om),p=0,indices=repeat([0],shape.length)
       while(1){
-        data.push(b[indices[axis]]==null?filler:om.a[p+b[indices[axis]]*om.stride[axis]])
+        data.push(b[indices[axis]]==null?filler:om.a[p+b[indices[axis]]*xd[axis]])
         let i=shape.length-1
         while(i>=0&&indices[i]+1===shape[i]){
-          if(i!==axis)p-=om.stride[i]*indices[i]
+          if(i!==axis)p-=xd[i]*indices[i]
           indices[i--]=0
         }
         if(i<0)break
-        if(i!==axis)p+=om.stride[i]
+        if(i!==axis)p+=xd[i]
         indices[i]++
       }
     }
@@ -329,21 +329,21 @@ voc[',']=(y,x,axis)=>{
   for(let i=s.length-1;i>0;i--)stride[i-1]=stride[i]*s[i]
   let d=stride;if(!isInt(axis)){d=stride.slice(0);d.splice(Math.ceil(axis),1)}
   if(!empty(x)){ // p:pointer in result, q:pointer in x.a
-    let p=0,q=0,i=new Int32Array(x.s.length)
+    let p=0,q=0,i=new Int32Array(x.s.length),xd=strideForShape(x.s)
     while(1){
       r[p]=x.a[q]
-      let a=i.length-1;while(a>=0&&i[a]+1===x.s[a]){q-=i[a]*x.stride[a];p-=i[a]*d[a];i[a--]=0}
+      let a=i.length-1;while(a>=0&&i[a]+1===x.s[a]){q-=i[a]*xd[a];p-=i[a]*d[a];i[a--]=0}
       if(a<0)break
-      q+=x.stride[a];p+=d[a];i[a]++
+      q+=xd[a];p+=d[a];i[a]++
     }
   }
   if(!empty(y)){ // p:pointer in result, q:pointer in y.a
-    let p=isInt(axis)?stride[axis]*x.s[axis]:stride[Math.ceil(axis)],q=0,i=new Int32Array(y.s.length)
+    let p=isInt(axis)?stride[axis]*x.s[axis]:stride[Math.ceil(axis)],q=0,i=new Int32Array(y.s.length),yd=strideForShape(y.s)
     while(1){
       r[p]=y.a[q]
-      let a=i.length-1;while(a>=0&&i[a]+1===y.s[a]){q-=i[a]*y.stride[a];p-=i[a]*d[a];i[a--]=0}
+      let a=i.length-1;while(a>=0&&i[a]+1===y.s[a]){q-=i[a]*yd[a];p-=i[a]*d[a];i[a--]=0}
       if(a<0)break
-      q+=y.stride[a];p+=d[a];i[a]++
+      q+=yd[a];p+=d[a];i[a]++
     }
   }
   return A(r,s)
@@ -659,7 +659,7 @@ voc['⍷']=(y,x)=>{
   if(empty(x))return A(r.fill(1),y.s)
   const s=new Int32Array(y.s.length) // find shape
   for(let i=0;i<y.s.length;i++){s[i]=y.s[i]-x.s[i]+1;if(s[i]<=0)return A(r,y.s)}
-  let d=y.stride,i=new Int32Array(s.length),j=new Int32Array(s.length),nk=prd(x.s),p=0
+  let d=strideForShape(y.s),i=new Int32Array(s.length),j=new Int32Array(s.length),nk=prd(x.s),p=0
   while(1){
     let q=p;r[q]=1;j.fill(0)
     for(let k=0;k<nk;k++){
@@ -800,11 +800,12 @@ const grade=(om,al,dir)=>{
   }
   om.s.length||rnkErr()
   let r=[];for(let i=0;i<om.s[0];i++)r.push(i)
+  const d=strideForShape(om.s)
   return A(r.sort((i,j)=>{
     let p=0,indices=repeat([0],om.s.length)
     while(1){
-      let x=om.a[p+i*om.stride[0]],tx=typeof x
-      let y=om.a[p+j*om.stride[0]],ty=typeof y
+      let x=om.a[p+i*d[0]],tx=typeof x
+      let y=om.a[p+j*d[0]],ty=typeof y
       if(tx<ty)return-dir
       if(tx>ty)return dir
       if(h[x]!=null)x=h[x]
@@ -812,9 +813,9 @@ const grade=(om,al,dir)=>{
       if(x<y)return-dir
       if(x>y)return dir
       let a=indices.length-1
-      while(a>0&&indices[a]+1===om.s[a]){p-=om.stride[a]*indices[a];indices[a--]=0}
+      while(a>0&&indices[a]+1===om.s[a]){p-=d[a]*indices[a];indices[a--]=0}
       if(a<=0)break
-      p+=om.stride[a];indices[a]++
+      p+=d[a];indices[a]++
     }
     return(i>j)-(i<j)
   }))
@@ -885,12 +886,12 @@ voc['⊂']=(om,al,axes)=>{
   let rs=rAxes.map(k=>om.s[k]), rd=strideForShape(rs)
   let us=axes .map(k=>om.s[k]), ud=strideForShape(us), un=prd(us)
   let allAxes=rAxes.concat(axes)
-  let a=Array(prd(rs))
+  let a=Array(prd(rs)),d=strideForShape(om.s)
   for(let i=0;i<a.length;i++){a[i]=typeof om.a==='string'||om.a instanceof Array?Array(un):new Float64Array(un)}
   const f=(k,l,p,q,t)=>{
     if(k+l>=om.s.length){a[p][q]=om.a[t]}
-    else if(axisMask[k+l]){for(let i=0;i<us[l];i++)f(k,l+1,p,q+i*ud[l],t+i*om.stride[axes[l]])}
-    else                  {for(let i=0;i<rs[k];i++)f(k+1,l,p+i*rd[k],q,t+i*om.stride[rAxes[k]])}
+    else if(axisMask[k+l]){for(let i=0;i<us[l];i++)f(k,l+1,p,q+i*ud[l],t+i*d[axes[l]])}
+    else                  {for(let i=0;i<rs[k];i++)f(k+1,l,p+i*rd[k],q,t+i*d[rAxes[k]])}
   }
   f(0,0,0,0,0)
   for(let i=0;i<a.length;i++)a[i]=A(a[i],us)
@@ -1147,27 +1148,27 @@ voc['/']=adv((om,al,axis)=>{
         return A(repeat([z.a[0]],prd(rShape)),rShape)
       }
 
-      let data=[],indices=repeat([0],shape.length),p=0,x
+      let data=[],indices=repeat([0],shape.length),p=0,x,d=strideForShape(om.s)
       while(1){
         if(isBackwards){
           x=om.a[p];x.isA||(x=A.scalar(x))
           for(let i=1;i<n;i++){
-            let y=om.a[p+i*om.stride[axis]];y.isA||(y=A.scalar(y))
+            let y=om.a[p+i*d[axis]];y.isA||(y=A.scalar(y))
             x=f(x,y)
           }
         }else{
-          x=om.a[p+(n-1)*om.stride[axis]];x.isA||(x=A.scalar(x))
+          x=om.a[p+(n-1)*d[axis]];x.isA||(x=A.scalar(x))
           for(let i=n-2;i>=0;i--){
-            let y=om.a[p+i*om.stride[axis]];y.isA||(y=A.scalar(y))
+            let y=om.a[p+i*d[axis]];y.isA||(y=A.scalar(y))
             x=f(x,y)
           }
         }
         x.s.length||(x=unwrap(x))
         data.push(x)
         let a=indices.length-1
-        while(a>=0&&indices[a]+1===shape[a]){p-=indices[a]*om.stride[a];indices[a--]=0}
+        while(a>=0&&indices[a]+1===shape[a]){p-=indices[a]*d[a];indices[a--]=0}
         if(a<0)break
-        p+=om.stride[a];indices[a]++
+        p+=d[a];indices[a]++
       }
       return A(data,rShape)
     }
@@ -1210,18 +1211,18 @@ voc['/']=adv((om,al,axis)=>{
     }
     if(n===1)for(let i=0;i<b.length;i++)b[i]=b[i]==null?b[i]:0
 
-    let data=[]
+    let data=[],d=strideForShape(om.s)
     if(shape[axis]&&!empty(om)){
       let filler=getPrototype(om),p=0,indices=repeat([0],shape.length)
       while(1){
-        data.push(b[indices[axis]]==null?filler:om.a[p+b[indices[axis]]*om.stride[axis]])
+        data.push(b[indices[axis]]==null?filler:om.a[p+b[indices[axis]]*d[axis]])
         let i=shape.length-1
         while(i>=0&&indices[i]+1===shape[i]){
-          if(i!==axis)p-=om.stride[i]*indices[i]
+          if(i!==axis)p-=d[i]*indices[i]
           indices[i--]=0
         }
         if(i<0)break
-        if(i!==axis)p+=om.stride[i]
+        if(i!==axis)p+=d[i]
         indices[i]++
       }
     }
@@ -1348,18 +1349,18 @@ const take=(x,y)=>{
   let d=Array(s.length);d[d.length-1]=1
   for(let i=d.length-1;i>0;i--)d[i-1]=d[i]*s[i]
   let r=repeat([getPrototype(x)],prd(s))
-  let cs=s.slice(0),p=0,q=0 // cs:shape to copy
+  let cs=s.slice(0),p=0,q=0,xd=strideForShape(x.s) // cs:shape to copy
   for(let i=0;i<a.length;i++){
     let u=a[i];cs[i]=Math.min(x.s[i],Math.abs(u))
-    if(u<0){if(u<-x.s[i]){q-=(u+x.s[i])*d[i]}else{p+=(u+x.s[i])*x.stride[i]}}
+    if(u<0){if(u<-x.s[i]){q-=(u+x.s[i])*d[i]}else{p+=(u+x.s[i])*xd[i]}}
   }
   if(prd(cs)){
     let ci=new Int32Array(cs.length) // ci:indices for copying
     while(1){
       r[q]=x.a[p];let axis=cs.length-1
-      while(axis>=0&&ci[axis]+1===cs[axis]){p-=ci[axis]*x.stride[axis];q-=ci[axis]*d[axis];ci[axis--]=0}
+      while(axis>=0&&ci[axis]+1===cs[axis]){p-=ci[axis]*xd[axis];q-=ci[axis]*d[axis];ci[axis--]=0}
       if(axis<0)break
-      p+=x.stride[axis];q+=d[axis];ci[axis]++
+      p+=xd[axis];q+=d[axis];ci[axis]++
     }
   }
   return A(r,s)

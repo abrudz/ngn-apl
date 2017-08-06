@@ -1,9 +1,6 @@
 const A=(a,s)=>{
-  const x={isA:1,a:a,s:s||[a.length],stride:strideForShape(s||[a.length]),offset:0}
-  asrt(x.a.length!=null);asrt(x.s.length!=null);asrt(x.stride.length===x.s.length)
-  asrt(!x.a.length||isInt(x.offset,0,x.a.length))
-  for(let i=0;i<x.s.length;i++)asrt(isInt(x.s[i],0))
-  if(x.a.length)for(let i=0;i<x.stride.length;i++)asrt(isInt(x.stride[i],-x.a.length,x.a.length+1))
+  if(s){asrt(a.length===prd(s));for(let i=0;i<s.length;i++)asrt(isInt(s[i],0))}
+  const x={isA:1,a:a,s:s||[a.length]}
   return x
 }
 ,strideForShape=s=>{
@@ -21,7 +18,7 @@ const A=(a,s)=>{
   if(typeof x.a==='string'){
     if(!x.s.length)return x.a[0]
     if(!x.s[0])return''
-    if(x.stride[0]===1)return x.a.slice(0,x.s[0])
+    if(x.s.length===1)return x.a.slice(0,x.s[0])
     return toArray(x).join('')
   }else{
     let a=toArray(x)
