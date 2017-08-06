@@ -24,6 +24,7 @@ if [ ! -e $f -o "$(find src -newer $f 2>/dev/null | wc -l)" -ne 0 ]; then
   cat src/{arr,z,vm,prs,voc,compiler,apl}.js >>$f
   chmod +x $f
 fi
+echo "$f: $(stat -c%s $f) bytes"
 
 #web demo
 #todo: echo -n 'var aplTests = ' ; node test/collectdoctests.js
