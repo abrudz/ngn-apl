@@ -12,10 +12,10 @@ const ltr='_A-Za-zªµºÀ-ÖØ-öø-ˁˆ-ˑˠ-ˤˬˮͰ-ʹͶ-ͷͺ-ͽΆΈ-ΊΌΎ-
 ,parse=(s,o)=>{
   // tokens are {t:type,v:value,o:offset,s:aplCode}
   // "stk" tracks bracket nesting and causes 'L' tokens to be dropped when the latest unclosed bracket is '(' or '['
-  var i=0,tokens=[],stk=['{'],ns=s.length // i:offset in s
+  let i=0,tokens=[],stk=['{'],ns=s.length // i:offset in s
   while(i<ns){
-    var m,t,v,s1=s.slice(i) // m:match object, t:type, v:value, s1:remaining source code
-    for(var j=0;j<td.length;j++)if(m=s1.match(td[j][1])){v=m[0];t=td[j][0];t==='.'&&(t=v);break}
+    let m,t,v,s1=s.slice(i) // m:match object, t:type, v:value, s1:remaining source code
+    for(let j=0;j<td.length;j++)if(m=s1.match(td[j][1])){v=m[0];t=td[j][0];t==='.'&&(t=v);break}
     t||synErr('Unrecognized token',{file:o?o.file:null,o:i,s:s})
     if(t!=='-'){
       if('([{'.includes(t)){stk.push(t)}else if(')]}'.includes(t)){stk.pop()}
@@ -36,25 +36,25 @@ const ltr='_A-Za-zªµºÀ-ÖØ-öø-ˁˆ-ˑˠ-ˤˬˮͰ-ʹͶ-ͷͺ-ͽΆΈ-ΊΌΎ-
   // '[' index    a[b]
   // '←' assign   a←b
   // '.' expr     a b
-  var i=1,token=tokens[0] // single-token lookahead
+  i=1;let token=tokens[0] // single-token lookahead
   const consume=x=>x.includes(token.t)?token=tokens[i++]:0
   ,demand=x=>{token.t===x?(token=tokens[i++]):prsErr('Expected token of type '+x+' but got '+token.t)}
   ,prsErr=x=>{synErr(x,{file:o.file,offset:token.o,aplCode:s})}
   ,body=_=>{
-    var r=['B']
+    let r=['B']
     while(1){
       if('$};'.includes(token.t))return r
       while(consume('⋄L')){}
       if('$};'.includes(token.t))return r
-      var e=expr()
+      let e=expr()
       if(consume(':'))e=[':',e,expr()]
       r.push(e)
     }
   }
   ,expr=_=>{
-    var r=['.'],item
+    let r=['.'],item
     while(1){
-      var token0=token
+      let token0=token
       if(consume('NSXJ')){item=[token0.t,token0.v]}
       else if(consume('(')){if(consume(')')){item=['⍬']}else{item=expr();demand(')')}}
       else if(consume('{')){item=['{',body()];while(consume(';')){item.push(body())};demand('}')}

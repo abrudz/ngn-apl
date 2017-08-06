@@ -1,11 +1,11 @@
 const NOUN=1,VERB=2,ADV=3,CONJ=4
 ,exec=(s,o)=>{ // s:APL code, o:options
   o=o||{}
-  var ast=parse(s,o),code=compileAST(ast,o),env=[prelude.env[0].slice(0)]
-  for(var k in ast.vars)env[0][ast.vars[k].slot]=o.ctx[k]
-  var r=vm({code:code,env:env})
-  for(var k in ast.vars){
-    var v=ast.vars[k],x=o.ctx[k]=env[0][v.slot]
+  let ast=parse(s,o),code=compileAST(ast,o),env=[prelude.env[0].slice(0)]
+  for(let k in ast.vars)env[0][ast.vars[k].slot]=o.ctx[k]
+  let r=vm({code:code,env:env})
+  for(let k in ast.vars){
+    let v=ast.vars[k],x=o.ctx[k]=env[0][v.slot]
     if(v.ctg===ADV)x.adv=1
     if(v.ctg===CONJ)x.conj=1
   }
@@ -20,7 +20,7 @@ const NOUN=1,VERB=2,ADV=3,CONJ=4
   ast.nSlots=prelude?prelude.nSlots:0
   ast.vars=prelude?Object.create(prelude.vars):{}
   o.ctx=o.ctx||Object.create(voc)
-  for(var key in o.ctx)if(!ast.vars[key]){
+  for(let key in o.ctx)if(!ast.vars[key]){
     const value=o.ctx[key]
     const varInfo=ast.vars[key]={ctg:NOUN,slot:ast.nSlots++,scopeDepth:ast.scopeDepth}
     if(typeof value==='function'||value instanceof Proc){
@@ -33,24 +33,24 @@ const NOUN=1,VERB=2,ADV=3,CONJ=4
   const ctgriseLambdas=node=>{
     switch(node[0]){
       case'B':case':':case'←':case'[':case'{':case'.':case'⍬':
-        var r=VERB;for(var i=1;i<node.length;i++)if(node[i])r=Math.max(r,ctgriseLambdas(node[i]))
+        let r=VERB;for(let i=1;i<node.length;i++)if(node[i])r=Math.max(r,ctgriseLambdas(node[i]))
         if(node[0]==='{'){node.ctg=r;return VERB}else{return r}
       case'S':case'N':case'J':return 0
-      case'X':var s=node[1];return s==='⍺⍺'||s==='⍶'||s==='∇∇'?ADV:s==='⍵⍵'||s==='⍹'?CONJ:VERB
+      case'X':let s=node[1];return s==='⍺⍺'||s==='⍶'||s==='∇∇'?ADV:s==='⍵⍵'||s==='⍹'?CONJ:VERB
       default:asrt(0)
     }
   }
   ctgriseLambdas(ast)
-  var queue=[ast] // accumulates "body" nodes we encounter on the way
+  let queue=[ast] // accumulates "body" nodes we encounter on the way
   while(queue.length){
-    var scopeNode=queue.shift(),vars=scopeNode.vars
+    let scopeNode=queue.shift(),vars=scopeNode.vars
     const visit=node=>{
       node.scopeNode=scopeNode
       switch(node[0]){
-        case':':var r=visit(node[1]);visit(node[2]);return r
+        case':':{let r=visit(node[1]);visit(node[2]);return r}
         case'←':return visitLHS(node[1],visit(node[2]))
         case'X':
-          var name=node[1],v=vars['get_'+name],r
+          let name=node[1],v=vars['get_'+name],r
           if(v&&v.ctg===VERB){
             return NOUN
           }else{
@@ -60,8 +60,8 @@ const NOUN=1,VERB=2,ADV=3,CONJ=4
                 {file:o.file,offset:node.offset,aplCode:o.aplCode})
           }
         case'{':
-          for(var i=1;i<node.length;i++){
-            var d,v
+          for(let i=1;i<node.length;i++){
+            let d,v
             queue.push(extend(node[i],{
               scopeNode:scopeNode,
               scopeDepth:d=scopeNode.scopeDepth+1+(node.ctg!==VERB),
@@ -86,16 +86,16 @@ const NOUN=1,VERB=2,ADV=3,CONJ=4
           return node.ctg||VERB
         case'S':case'N':case'J':case'⍬':return NOUN
         case'[':
-          for(var i=2;i<node.length;i++)if(node[i]&&visit(node[i])!==NOUN)err(node,'Indices must be nouns.')
+          for(let i=2;i<node.length;i++)if(node[i]&&visit(node[i])!==NOUN)err(node,'Indices must be nouns.')
           return visit(node[1])
         case'.':
-          var a=node.slice(1),h=Array(a.length)
-          for(var i=a.length-1;i>=0;i--)h[i]=visit(a[i])
+          let a=node.slice(1),h=Array(a.length)
+          for(let i=a.length-1;i>=0;i--)h[i]=visit(a[i])
           // Form vectors from sequences of data
-          var i=0
+          let i=0
           while(i<a.length-1){
             if(h[i]===NOUN&&h[i+1]===NOUN){
-              var j=i+2;while(j<a.length&&h[j]===NOUN)j++
+              let j=i+2;while(j<a.length&&h[j]===NOUN)j++
               a.splice(i,j-i,['V'].concat(a.slice(i,j)))
               h.splice(i,j-i,NOUN)
             }else{
@@ -104,8 +104,8 @@ const NOUN=1,VERB=2,ADV=3,CONJ=4
           }
           // Apply adverbs and conjunctions
           // ⌽¨⍣3⊢(1 2)3(4 5 6) ←→ (2 1)3(6 5 4)
-          var i=0
-          while(i < a.length){
+          i=0
+          while(i<a.length){
             if(h[i]===VERB&&i+1<a.length&&h[i+1]===ADV){
               a.splice(i,2,['A'].concat(a.slice(i,i+2)))
               h.splice(i,2,VERB)
@@ -145,7 +145,7 @@ const NOUN=1,VERB=2,ADV=3,CONJ=4
       node.scopeNode=scopeNode
       switch(node[0]){
         case'X':
-          var name=node[1];if(name==='∇'||name==='⍫')err(node,'Assignment to '+name+' is not allowed.')
+          let name=node[1];if(name==='∇'||name==='⍫')err(node,'Assignment to '+name+' is not allowed.')
           if(vars[name]){
             if(vars[name].ctg!==rhsCtg){
               err(node,'Inconsistent usage of symbol '+name+', it is assigned both nouns and verbs.')
@@ -156,18 +156,18 @@ const NOUN=1,VERB=2,ADV=3,CONJ=4
           break
         case'.':
           rhsCtg===NOUN||err(node,'Strand assignment can be used only for nouns.')
-          for(var i=1;i<node.length;i++)visitLHS(node[i],rhsCtg)
+          for(let i=1;i<node.length;i++)visitLHS(node[i],rhsCtg)
           break
         case'[':
           rhsCtg===NOUN||err(node,'Indexed assignment can be used only for nouns.')
-          visitLHS(node[1],rhsCtg);for(var i=2;i<node.length;i++)node[i]&&visit(node[i])
+          visitLHS(node[1],rhsCtg);for(let i=2;i<node.length;i++)node[i]&&visit(node[i])
           break
         default:
           err(node,'Invalid LHS node type: '+JSON.stringify(node[0]))
       }
       return rhsCtg
     }
-    for(var i=1;i<scopeNode.length;i++)visit(scopeNode[i])
+    for(let i=1;i<scopeNode.length;i++)visit(scopeNode[i])
   }
   const render=node=>{
     switch(node[0]){
@@ -176,26 +176,27 @@ const NOUN=1,VERB=2,ADV=3,CONJ=4
           // {}0 ←→ ⍬
           return[LDC,A.zilde,RET]
         }else{
-          var a=[];for(var i=1;i<node.length;i++){a.push.apply(a,render(node[i]));a.push(POP)}
+          let a=[];for(let i=1;i<node.length;i++){a.push.apply(a,render(node[i]));a.push(POP)}
           a[a.length-1]=RET
           return a
         }
-      case':':var x=render(node[1]),y=render(node[2]);return x.concat(JEQ,y.length+2,POP,y,RET)
+      case':':{let x=render(node[1]),y=render(node[2]);return x.concat(JEQ,y.length+2,POP,y,RET)}
       case'←':
         // A←5     ←→ 5
         // A×A←2 5 ←→ 4 25
         return render(node[2]).concat(renderLHS(node[1]))
-      case'X':
+      case'X':{
         // r←3 ⋄ get_c←{2×○r} ⋄ get_S←{○r*2} ⋄ before←.01×⌊100×r c S ⋄ r←r+1 ⋄ after←.01×⌊100×r c S ⋄ before after ←→ (3 18.84 28.27)(4 25.13 50.26)
         // {⍺}0 !!! VALUE ERROR
         // {x}0 ⋄ x←0 !!! VALUE ERROR
         // {⍫1⋄2}⍬ ←→ 1
         // c←{} ⋄ x←{c←⍫⋄1}⍬ ⋄ {x=1:c 2⋄x}⍬ ←→ 2
-        var s=node[1],vars=node.scopeNode.vars,v
+        let s=node[1],vars=node.scopeNode.vars,v
         return s==='⍫'?[CON]:
                (v=vars['get_'+s])&&v.ctg===VERB?[LDC,A.zero,GET,v.scopeDepth,v.slot,MON]:
                  [GET, vars[s].scopeDepth, vars[s].slot]
-      case'{':
+      }
+      case'{':{
         // {1 + 1} 1                    ←→ 2
         // {⍵=0:1 ⋄ 2×∇⍵-1} 5           ←→ 32 # two to the power of
         // {⍵<2 : 1 ⋄ (∇⍵-1)+(∇⍵-2) } 8 ←→ 34 # Fibonacci sequence
@@ -213,79 +214,70 @@ const NOUN=1,VERB=2,ADV=3,CONJ=4
         // H←{⍵⍶⍹⍵;⍺⍶⍹⍵} ⋄ +H÷ 2        ←→ 2.5
         // H←{⍵⍶⍹⍵;⍺⍶⍹⍵} ⋄ 7 +H÷ 2      ←→ 7.5
         // {;;}                         !!!
-        var x=render(node[1])
-        var lx=[LAM,x.length].concat(x)
+        let x=render(node[1]), lx=[LAM,x.length].concat(x), f
         if(node.length===2){
           f=lx
         }else if(node.length===3){
-          var y=render(node[2]),ly=[LAM,y.length].concat(y),v=node.scopeNode.vars['⍠']
+          let y=render(node[2]),ly=[LAM,y.length].concat(y),v=node.scopeNode.vars['⍠']
           f=ly.concat(GET,v.scopeDepth,v.slot,lx,DYA)
         }else{
           err(node)
         }
         return node.ctg===VERB?f:[LAM,f.length+1].concat(f,RET)
-      case'S':
-        // ⍴''     ←→ ,0
-        // ⍴'x'    ←→ ⍬
-        // ⍴'xx'   ←→ ,2
-        // ⍴'a''b' ←→ ,3
-        // ⍴'''a'  ←→ ,2
-        // ⍴'a'''  ←→ ,2
-        // ⍴''''   ←→ ⍬
-        // 'a      !!!
-        var s=node[1].slice(1,-1).replace(/''/g,"'")
-        return[LDC,A(s,s.length===1?[]:[s.length])]
+      }
+      case'S': // ⍴''←→,0 ⍙ ⍴'x'←→⍬ ⍙ ⍴'xx'←→,2 ⍙ ⍴'a''b'←→,3 ⍙ ⍴'''a'←→,2 ⍙ ⍴'a'''←→,2 ⍙ ⍴''''←→⍬ ⍙ 'a !!!
+        {let s=node[1].slice(1,-1).replace(/''/g,"'");return[LDC,A(s,s.length===1?[]:[s.length])]}
       case'N':
         // ∞ ←→ ¯
         // ¯∞ ←→ ¯¯
         // ¯∞j¯∞ ←→ ¯¯j¯¯
         // ∞∞ ←→ ¯ ¯
         // ∞¯ ←→ ¯ ¯
-        var a=node[1].replace(/[¯∞]/g,'-').split(/j/i).map(x=>x==='-'?Infinity:x==='--'?-Infinity:parseFloat(x))
-        var v=a[1]?new Z(a[0],a[1]):a[0]
+        let a=node[1].replace(/[¯∞]/g,'-').split(/j/i).map(x=>x==='-'?Infinity:x==='--'?-Infinity:parseFloat(x))
+        let v=a[1]?new Z(a[0],a[1]):a[0]
         return[LDC,A([v],[])]
       case'J':
         // 123 + «456 + 789» ←→ 1368
-        var f=Function('return(_w,_a)=>('+node[1].replace(/^«|»$/g,'')+')')()
+        let f=Function('return(_w,_a)=>('+node[1].replace(/^«|»$/g,'')+')')()
         return[EMB,(_w,_a)=>aplify(f(_w,_a))]
-      case'[':
-        // ⍴ x[⍋x←6?40] ←→ ,6
-        var v=node.scopeNode.vars._index,axes=[],a=[],c
-        for(var i=2;i<node.length;i++)if(c=node[i]){axes.push(i-2);a.push.apply(a,render(c))}
+      case'[':{ // ⍴ x[⍋x←6?40] ←→ ,6
+        let v=node.scopeNode.vars._index,axes=[],a=[],c
+        for(let i=2;i<node.length;i++)if(c=node[i]){axes.push(i-2);a.push.apply(a,render(c))}
         a.push(VEC,axes.length,LDC,A(axes),VEC,2,GET,v.scopeDepth,v.slot)
         a.push.apply(a,render(node[1]))
         a.push(DYA)
         return a
-      case'V':
-        var fragments=[],areAllConst=1
-        for(var i=1;i<node.length;i++){
-          var f=render(node[i]);fragments.push(f);if(f.length!==2||f[0]!==LDC)areAllConst=0
+      }
+      case'V':{
+        let fragments=[],areAllConst=1
+        for(let i=1;i<node.length;i++){
+          let f=render(node[i]);fragments.push(f);if(f.length!==2||f[0]!==LDC)areAllConst=0
         }
         return areAllConst?[LDC,A(fragments.map(f=>isSimple(f[1])?unwrap(f[1]):f[1]))]
                          :[].concat.apply([],fragments).concat([VEC,node.length-1])
+      }
       case'⍬':return[LDC,A.zilde]
       case'M':return render(node[2]).concat(render(node[1]),MON)
       case'A':return render(node[1]).concat(render(node[2]),MON)
       case'D':case'C':return render(node[3]).concat(render(node[2]),render(node[1]),DYA)
-      case'T':
-        var v=node.scopeNode.vars._atop
-        return render(node[2]).concat(GET,v.scopeDepth,v.slot,render(node[1]),DYA)
-      case'F':
-        var u=node.scopeNode.vars._atop
-        var v=node.scopeNode.vars._fork1
-        var w=node.scopeNode.vars._fork2
-        var i=node.length-1
-        var r=render(node[i--])
+      case'T':{let v=node.scopeNode.vars._atop;return render(node[2]).concat(GET,v.scopeDepth,v.slot,render(node[1]),DYA)}
+      case'F':{
+        let u=node.scopeNode.vars._atop
+        let v=node.scopeNode.vars._fork1
+        let w=node.scopeNode.vars._fork2
+        let i=node.length-1
+        let r=render(node[i--])
         while(i>=2)r=r.concat(GET,v.scopeDepth,v.slot,render(node[i--]),DYA,
                               GET,w.scopeDepth,w.slot,render(node[i--]),DYA)
         return i?r.concat(render(node[1]),GET,u.scopeDepth,u.slot,DYA):r
+      }
       default:asrt(0)
     }
   }
   const renderLHS=node=>{
     switch(node[0]){
       case'X':
-        var name=node[1],vars=node.scopeNode.vars,v=vars['set_'+name]
+        let name=node[1],vars=node.scopeNode.vars,v=vars['set_'+name]
         return v&&v.ctg===VERB?[GET,v.scopeDepth,v.slot,MON]:[SET,vars[name].scopeDepth,vars[name].slot]
       case'.': // strand assignment
         // (a b) ← 1 2 ⋄ a           ←→ 1
@@ -295,17 +287,18 @@ const NOUN=1,VERB=2,ADV=3,CONJ=4
         // (a b c) ← 6     ⋄ a b c   ←→ 6 6 6
         // (a b c) ← 7 8   ⋄ a b c   !!!
         // ((a b)c)←3(4 5) ⋄ a b c   ←→ 3 3 (4 5)
-        var n=node.length-1,a=[SPL,n]
-        for(var i=1;i<node.length;i++){a.push.apply(a,renderLHS(node[i]));a.push(POP)}
+        let n=node.length-1,a=[SPL,n]
+        for(let i=1;i<node.length;i++){a.push.apply(a,renderLHS(node[i]));a.push(POP)}
         return a
-      case'[': // indexed assignment
-        var axes=[],a=[],v=node.scopeNode.vars._substitute
-        for(var i=2;i<node.length;i++)if(node[i]){axes.push(i-2);a.push.apply(a,render(node[i]))}
+      case'[':{ // indexed assignment
+        let axes=[],a=[],v=node.scopeNode.vars._substitute
+        for(let i=2;i<node.length;i++)if(node[i]){axes.push(i-2);a.push.apply(a,render(node[i]))}
         a.push(VEC,axes.length)
         a.push.apply(a,render(node[1]))
         a.push(LDC,A(axes),VEC,4,GET,v.scopeDepth,v.slot,MON)
         a.push.apply(a,renderLHS(node[1]))
         return a
+      }
     }
     asrt(0)
   }
@@ -318,15 +311,15 @@ const NOUN=1,VERB=2,ADV=3,CONJ=4
   if(x.isA)return x
   err('Cannot aplify object:'+x)
 }
-var prelude
+let prelude
 ;(_=>{
   const ast=parse(preludeSrc)
   const code=compileAST(ast) //creates ast.vars as a side effect
-  const vars={};for(var k in ast.vars)vars[k]=ast.vars[k] //flatten prototype chain
+  const vars={};for(let k in ast.vars)vars[k]=ast.vars[k] //flatten prototype chain
   prelude={code:code,nSlots:ast.nSlots,vars:vars}
 
-  var env=prelude.env=[[]]
-  for(var k in prelude.vars)env[0][prelude.vars[k].slot]=voc[k]
+  let env=prelude.env=[[]]
+  for(let k in prelude.vars)env[0][prelude.vars[k].slot]=voc[k]
   vm({code:prelude.code,env:env})
-  for(var k in prelude.vars)voc[k]=env[0][prelude.vars[k].slot]
+  for(let k in prelude.vars)voc[k]=env[0][prelude.vars[k].slot]
 })()
