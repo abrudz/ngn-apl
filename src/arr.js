@@ -11,7 +11,7 @@ const A=(a,s,stride,offset)=>{
   if(''+x.stride===''+strideForShape(x.s)&&!x.offset)return x
   if(typeof x.a==='string'){var r='';each(x,u=>r+=u);return A(r,x.s)}
   if(!(x.a instanceof Float64Array||x.a instanceof Array))nyiErr()
-  var r=new(x.a.constructor)(prod(x.s)),i=0;each(x,u=>r[i++]=u);return A(r,x.s)
+  var r=new(x.a.constructor)(prd(x.s)),i=0;each(x,u=>r[i++]=u);return A(r,x.s)
 }
 ,strideForShape=s=>{
   asrt(s.length!=null)
@@ -20,7 +20,7 @@ const A=(a,s,stride,offset)=>{
   return r
 }
 ,each=(a,f)=>{
-  if(!prod(a.s))return
+  if(!prd(a.s))return
   var data=a.a,s=a.s,stride=a.stride,lastAxis=s.length-1,p=a.offset,i=[],axis=s.length
   while(--axis>=0)i.push(0)
   while(1){
@@ -35,8 +35,8 @@ const A=(a,s,stride,offset)=>{
   }
 }
 ,empty=x=>{for(var i=0;i<x.s.length;i++)if(!x.s[i])return 1;return 0}
-,map=(x,f)=>{const n=prod(x.s),r=Array(n);for(var i=0;i<n;i++)r[i]=f(x.a[i]);return A(r,x.s)}
-,toArray=x=>{const n=prod(x.s),r=Array(n);for(var i=0;i<n;i++)r[i]=x.a[i];return r}
+,map=(x,f)=>{const n=prd(x.s),r=Array(n);for(var i=0;i<n;i++)r[i]=f(x.a[i]);return A(r,x.s)}
+,toArray=x=>{const n=prd(x.s),r=Array(n);for(var i=0;i<n;i++)r[i]=x.a[i];return r}
 ,toInt=(x,m,M)=>{var r=unwrap(x);if(r!==r|0||m!=null&&r<m||M!=null&&M<=r)domErr();return r}
 ,toSimpleString=x=>{
   if(x.s.length>1)rnkErr()
@@ -58,7 +58,7 @@ const A=(a,s,stride,offset)=>{
 ,asrt=x=>{if(typeof x==='function'){if(!x())throw Error('assertion failed: '+x)}
                else                     {if(!x)  throw Error('assertion failed'    )}}
 ,isInt=(x,m,M)=>x===~~x&&(m==null||m<=x&&(M==null||x<M))
-,prod=x=>{var r=1;for(var i=0;i<x.length;i++)r*=x[i];return r}
+,prd=x=>{var r=1;for(var i=0;i<x.length;i++)r*=x[i];return r}
 ,extend=(x,y)=>{for(var k in y)x[k]=y[k];return x}
 ,fmtNum=x=>(''+x).replace('Infinity','∞').replace(/-/g,'¯')
 ,repeat=(x,n)=>{
