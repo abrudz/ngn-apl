@@ -314,7 +314,7 @@ const NOUN=1,VERB=2,ADV=3,CONJ=4
 ,aplify=x=>{
   if(typeof x==='string')return x.length===1?A.scalar(x):A(x)
   if(typeof x==='number')return A.scalar(x)
-  if(x instanceof Array)return A(x.map(y=>{y=aplify(y);return y.shape.length?y:unwrap(y)}))
+  if(x instanceof Array)return A(x.map(y=>{y=aplify(y);return y.s.length?y:unwrap(y)}))
   if(x.isA)return x
   err('Cannot aplify object:'+x)
 }
