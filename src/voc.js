@@ -304,81 +304,49 @@ voc['○']=perv(
     }
   }
 )
-voc[',']=(om,al,axis)=>{
-  if(al){
-    // 10,66←→10 66 ⍙ ⍬,⍬←→⍬ ⍙ ⍬,1←→,1 ⍙ 1,⍬←→,1 ⍙ 'ab','c','def'←→'abcdef'
-    // (2 3⍴⍳6),2 2⍴⍳4 ←→ 2 5⍴0 1 2 0 1 3 4 5 2 3
-    // (3 2⍴⍳6),2 2⍴⍳4 !!! LENGTH ERROR
-    // (2 3⍴⍳6),⍳2 ←→ 2 4⍴0 1 2 0 3 4 5 1
-    // (⍳2),2 3⍴⍳6 ←→ 2 4⍴0 0 1 2 1 3 4 5
-    // (2 3⍴⍳6),9 ←→ 2 4⍴0 1 2 9 3 4 5 9
-    // (2 3 4⍴⍳24),99 ←→ 2 3 5⍴0 1 2 3 99 4 5 6 7 99 8 9 10 11 99 12 13 14 15 99 16 17 18 19 99 20 21 22 23 99
-    var nAxes=Math.max(al.s.length,om.s.length)
-    if(axis){axis=unwrap(axis);typeof axis!=='number'&&domErr();nAxes&&!(-1<axis&&axis<nAxes)&&rnkErr()}
-    else{axis=nAxes-1}
+voc[',']=(y,x,axis)=>{
+  if(!x)nyiErr()
+  // 10,66←→10 66 ⍙ ⍬,⍬←→⍬ ⍙ ⍬,1←→,1 ⍙ 1,⍬←→,1 ⍙ 'ab','c','def'←→'abcdef'
+  // (2 3⍴⍳6),2 2⍴⍳4←→2 5⍴0 1 2 0 1 3 4 5 2 3 ⍙ (2 3⍴⍳6),⍳2←→2 4⍴0 1 2 0 3 4 5 1
+  // (3 2⍴⍳6),2 2⍴⍳4 !!! LENGTH ERROR         ⍙ (⍳2),2 3⍴⍳6←→2 4⍴0 0 1 2 1 3 4 5
+  // (2 3⍴⍳6),9←→2 4⍴0 1 2 9 3 4 5 9 ⍙ (2 3 4⍴⎕a),'*'←→2 3 5⍴'ABCD*EFGH*IJKL*MNOP*QRST*UVWX*'
+  var nAxes=Math.max(x.s.length,y.s.length)
+  if(axis){axis=unwrap(axis);typeof axis!=='number'&&domErr();nAxes&&!(-1<axis&&axis<nAxes)&&rnkErr()}
+  else{axis=nAxes-1}
 
-    if(!al.s.length&&!om.s.length){
-      return A([unwrap(al),unwrap(om)])
-    }else if(!al.s.length){
-      var s=om.s.slice(0)
-      if(isInt(axis))s[axis]=1
-      al=A(repeat([unwrap(al)],prd(s)),s)
-    }else if(!om.s.length){
-      var s=al.s.slice(0)
-      if(isInt(axis))s[axis]=1
-      om=A(repeat([unwrap(om)],prd(s)),s)
-    }else if(al.s.length+1===om.s.length){
-      isInt(axis)||rnkErr()
-      var shape=al.s.slice(0);shape.splice(axis,0,1)
-      al=A(al.a,shape)
-    }else if(al.s.length===om.s.length+1){
-      isInt(axis)||rnkErr()
-      var shape=om.s.slice(0);shape.splice(axis,0,1)
-      om=A(om.a,shape)
-    }else if(al.s.length!==om.s.length){
-      rnkErr()
+  if(!x.s.length&&!y.s.length){return A([unwrap(x),unwrap(y)])}
+  else if(!x.s.length){var s=y.s.slice(0);if(isInt(axis))s[axis]=1;x=A(repeat([unwrap(x)],prd(s)),s)}
+  else if(!y.s.length){var s=x.s.slice(0);if(isInt(axis))s[axis]=1;y=A(repeat([unwrap(y)],prd(s)),s)}
+  else if(x.s.length+1===y.s.length){isInt(axis)||rnkErr();var s=x.s.slice(0);s.splice(axis,0,1);x=A(x.a,s)}
+  else if(x.s.length===y.s.length+1){isInt(axis)||rnkErr();var s=y.s.slice(0);s.splice(axis,0,1);y=A(y.a,s)}
+  else if(x.s.length!==y.s.length){rnkErr()}
+
+  asrt(x.s.length===y.s.length)
+  for(var i=0;i<x.s.length;i++)if(i!==axis&&x.s[i]!==y.s[i])lenErr()
+  var s=x.s.slice(0);if(isInt(axis)){s[axis]+=y.s[axis]}else{s.splice(Math.ceil(axis),0,2)}
+  var r=Array(prd(s))
+  var stride=Array(s.length);stride[s.length-1]=1
+  for(var i=s.length-1;i>0;i--)stride[i-1]=stride[i]*s[i]
+  var d=stride;if(!isInt(axis)){d=stride.slice(0);d.splice(Math.ceil(axis),1)}
+  if(!empty(x)){ // p:pointer in result, q:pointer in x.a
+    var p=0,q=0,i=new Int32Array(x.s.length)
+    while(1){
+      r[p]=x.a[q]
+      var a=i.length-1;while(a>=0&&i[a]+1===x.s[a]){q-=i[a]*x.stride[a];p-=i[a]*d[a];i[a--]=0}
+      if(a<0)break
+      q+=x.stride[a];p+=d[a];i[a]++
     }
-
-    asrt(al.s.length===om.s.length)
-    for(var i=0;i<al.s.length;i++)if(i!==axis&&al.s[i]!==om.s[i])lenErr()
-
-    var shape=al.s.slice(0);if(isInt(axis)){shape[axis]+=om.s[axis]}else{shape.splice(Math.ceil(axis),0,2)}
-    var data=Array(prd(shape))
-    var stride=Array(shape.length);stride[shape.length-1]=1
-    for(var i=shape.length-2;i>=0;i--)stride[i]=stride[i+1]*shape[i+1]
-
-    var rStride=stride;if(!isInt(axis)){rStride=stride.slice(0);rStride.splice(Math.ceil(axis),1)}
-    if(!empty(al)){
-      var r=0,p=0 // r:pointer in data (the result), p:pointer in al.a
-      var pIndices=repeat([0],al.s.length)
-      while(1){
-        data[r]=al.a[p]
-        var a=pIndices.length-1
-        while(a>=0&&pIndices[a]+1===al.s[a]){
-          p-=pIndices[a]*al.stride[a];r-=pIndices[a]*rStride[a];pIndices[a--]=0
-        }
-        if(a<0)break
-        p+=al.stride[a];r+=rStride[a];pIndices[a]++
-      }
-    }
-    if(!empty(om)){
-      var r=isInt(axis)?stride[axis]*al.s[axis]:stride[Math.ceil(axis)] // pointer in data (the result)
-      var q=0 // pointer in ⍵.a
-      var pIndices=repeat([0],om.s.length)
-      while(1){
-        data[r]=om.a[q]
-        var a=pIndices.length-1
-        while(a>=0&&pIndices[a]+1===om.s[a]){
-          q-=pIndices[a]*om.stride[a];r-=pIndices[a]*rStride[a];pIndices[a--]=0
-        }
-        if(a<0)break
-        q+=om.stride[a];r+=rStride[a];pIndices[a]++
-      }
-    }
-    return A(data,shape,stride)
-  }else{
-    asrt(0)
   }
+  if(!empty(y)){ // p:pointer in result, q:pointer in y.a
+    var p=isInt(axis)?stride[axis]*x.s[axis]:stride[Math.ceil(axis)],q=0,i=new Int32Array(y.s.length)
+    while(1){
+      r[p]=y.a[q]
+      var a=i.length-1;while(a>=0&&i[a]+1===y.s[a]){q-=i[a]*y.stride[a];p-=i[a]*d[a];i[a--]=0}
+      if(a<0)break
+      q+=y.stride[a];p+=d[a];i[a]++
+    }
+  }
+  return A(r,s)
 }
 
 // 12=12←→1 ⍙ 2=12←→0 ⍙ 'Q'='Q'←→1 ⍙ 1='1'←→0 ⍙ '1'=1←→0 ⍙ 11 7 2 9=11 3 2 6←→1 0 1 0 ⍙ 4=2+2←→1
@@ -689,11 +657,17 @@ voc['⍷']=(y,x)=>{
   if(x.s.length>y.s.length)return A(r,y.s)
   if(x.s.length<y.s.length)x=A(x.a,repeat([1],y.s.length-x.s.length).concat(x.s))
   if(empty(x))return A(r.fill(1),y.s)
-  var s=new Int32Array(y.s.length) // find shape
+  const s=new Int32Array(y.s.length) // find shape
   for(var i=0;i<y.s.length;i++){s[i]=y.s[i]-x.s[i]+1;if(s[i]<=0)return A(r,y.s)}
-  var d=y.stride,p=0,i=new Int32Array(s.length)
+  var d=y.stride,i=new Int32Array(s.length),j=new Int32Array(s.length),nk=prd(x.s),p=0
   while(1){
-    r[p]=+match(x,A(y.a,x.s,d,p))
+    var q=p;r[q]=1;j.fill(0)
+    for(var k=0;k<nk;k++){
+      r[p]&=+match(x.a[k],y.a[q])
+      var a=s.length-1;while(a>=0&&j[a]+1===x.s[a]){q-=j[a]*d[a];j[a--]=0}
+      if(a<0)break
+      q+=d[a];j[a]++
+    }
     var a=s.length-1;while(a>=0&&i[a]+1===s[a]){p-=i[a]*d[a];i[a--]=0}
     if(a<0)break
     p+=d[a];i[a]++
@@ -1106,15 +1080,14 @@ voc['⌽']=(om,al,axis)=>{
     var n=om.s[axis]
     step=(n+step%n)%n // force % to handle negatives properly
     if(empty(om)||!step)return om
-    var data=[],shape=om.s,stride=om.stride,p=0,indices=repeat([0],shape.length)
+    var r=[],d=strideForShape(om.s),p=0,i=repeat([0],om.s.length)
     while(1){
-      data.push(om.a[p+((indices[axis]+step)%shape[axis]-indices[axis])*stride[axis]])
-      var a=shape.length-1
-      while(a>=0&&indices[a]+1===shape[a]){p-=indices[a]*stride[a];indices[a--]=0}
+      r.push(om.a[p+((i[axis]+step)%om.s[axis]-i[axis])*d[axis]])
+      var a=om.s.length-1;while(a>=0&&i[a]+1===om.s[a]){p-=i[a]*d[a];i[a--]=0}
       if(a<0)break
-      indices[a]++;p+=stride[a]
+      i[a]++;p+=d[a]
     }
-    return A(data,shape)
+    return A(r,om.s)
   }else{
     // ⌽1 2 3 4 5 6                 ←→ 6 5 4 3 2 1
     // ⌽(1 2)(3 4)(5 6)             ←→ (5 6)(3 4)(1 2)
@@ -1130,8 +1103,9 @@ voc['⌽']=(om,al,axis)=>{
       axis=[om.s.length-1]
     }
     if(!om.s.length)return om
-    var stride=om.stride.slice(0);stride[axis]=-stride[axis]
-    return A(om.a,om.s,stride,(om.s[axis]-1)*om.stride[axis])
+    const ni=prd(om.s.slice(0,axis)),nj=om.s[axis],nk=prd(om.s.slice(axis+1)),r=Array(ni*nj*nk)
+    for(var i=0;i<ni;i++)for(var j=0;j<nj;j++)for(var k=0;k<nk;k++)r[(i*nj+j)*nk+k]=om.a[(i*nj+nj-1-j)*nk+k]
+    return A(r,om.s)
   }
 }
 
@@ -1149,13 +1123,8 @@ voc['/']=adv((om,al,axis)=>{
     // +/3←→3 ⍙ +/3 5 8←→16 ⍙ ⌈/82 66 93 13←→93 ⍙ ×/2 3⍴1 2 3 4 5 6←→6 120 ⍙ -/3 0⍴42←→3⍴0
     // 2,/'ab' 'cd' 'ef' 'hi'←→'abcd' 'cdef' 'efhi'
     // 3,/'ab' 'cd' 'ef' 'hi'←→'abcdef' 'cdefhi'
-    // 2+/1+⍳10←→3 5 7 9 11 13 15 17 19
-    // 5+/1+⍳10←→15 20 25 30 35 40
-    // 10+/1+⍳10←→,55
-    // 11+/1+⍳10←→⍬
-    // 12+/1+⍳10 !!! LENGTH ERROR
-    // 2-/3 4 9 7←→¯1 ¯5 2
-    // ¯2-/3 4 9 7←→1 5 ¯2
+    // 2+/1+⍳5←→3 5 7 9 ⍙ 5+/1+⍳8←→15 20 25 30 ⍙ 10+/1+⍳10←→,55 ⍙ 11+/1+⍳10←→⍬ ⍙ 12+/1+⍳10 !!! LENGTH ERROR
+    // 2-/3 4 9 7←→¯1 ¯5 2 ⍙ ¯2-/3 4 9 7←→1 5 ¯2
     var f=om,g=al,axis0=axis
     asrt(typeof f==='function')
     asrt(typeof g==='undefined')
@@ -1178,7 +1147,7 @@ voc['/']=adv((om,al,axis)=>{
 
       if(empty(om)){
         var z=f.identity;z!=null||domErr();asrt(!z.s.length)
-        return A(z.a,rShape,repeat([0],rShape.length))
+        return A(repeat([z.a[0]],prd(rShape)),rShape)
       }
 
       var data=[],indices=repeat([0],shape.length),p=0
@@ -1292,12 +1261,16 @@ voc['⌷']=(om,al,axes)=>{
   }else{
     axes=[];for(var i=0;i<a.length;i++)axes.push(i)
   }
-  var r=om
-  for(var i=a.length-1;i>=0;i--){
-    var u=a[i].isA?a[i]:A([a[i]],[])
-    r=indexAtSingleAxis(r,u,axes[i])
-  }
+  var r=om;for(var i=a.length-1;i>=0;i--)r=indexAtSingleAxis(r,a[i].isA?a[i]:A([a[i]],[]),axes[i])
   return r
+}
+const indexAtSingleAxis=(x,y,ax)=>{ // y:subscript
+  asrt(x.isA&&y.isA&&isInt(ax)&&0<=ax&&ax<x.s.length)
+  const ni=prd(x.s.slice(0,ax)),nj0=x.s[ax],nj=prd(y.s),nk=prd(x.s.slice(ax+1))
+       ,s=x.s.slice(0,ax).concat(y.s).concat(x.s.slice(ax+1)),n=ni*nj*nk,r=Array(n)
+  for(var j=0;j<nj;j++){const u=y.a[j];isInt(u)||domErr();0<=u&&u<nj0||idxErr()}
+  var l=0;for(var i=0;i<ni;i++)for(var j=0;j<nj;j++)for(var k=0;k<nk;k++)r[l++]=x.a[(i*nj0+y.a[j])*nk+k]
+  return A(r,s)
 }
 
 // (23 54 38)[0]←→23
@@ -1344,7 +1317,7 @@ voc._substitute=args=>{
     axes=[];for(var i=0;i<a.length;i++)a.push(i)
   }
   var subs=voc['⌷'](voc['⍳'](A(om.s)),al,A(axes))
-  if(isSingleton(value))value=A([value],subs.s,repeat([0],subs.s.length))
+  if(isSingleton(value))value=A(repeat([value],prd(subs.s)),subs.s)
   var data=toArray(om),stride=strideForShape(om.s)
   subs.s.length!==value.s.length&&rnkErr();''+subs.s!=''+value.s&&lenErr()
   const ni=prd(subs.s)
@@ -1362,136 +1335,71 @@ voc._substitute=args=>{
   return A(data,om.s)
 }
 
-const indexAtSingleAxis=(om,sub,ax)=>{
-  asrt(om.isA&&sub.isA&&isInt(ax)&&0<=ax&&ax<om.s.length)
-  var u=toArray(sub),n=om.s[ax]
-  for(var i=0;i<u.length;i++){isInt(u[i])||domErr();0<=u[i]&&u[i]<n||idxErr()}
-  var isUniform=0
-  if(u.length>=2){var d=u[1]-u[0];isUniform=1;for(var i=2;i<u.length;i++)if(u[i]-u[i-1]!==d){isUniform=0;break}}
-  if(isUniform){
-    var s=om.s.slice(0);s.splice.apply(s,[ax,1].concat(sub.s))
-    var stride=om.stride.slice(0), subStride=strideForShape(sub.s)
-    for(var i=0;i<subStride.length;i++)subStride[i]*=d*om.stride[ax]
-    stride.splice.apply(stride,[ax,1].concat(subStride))
-    return A(om.a,s,stride,u[0]*om.stride[ax])
-  }else{
-    var s1=om.s.slice(0);s1.splice(ax,1)
-    var stride1=om.stride.slice(0);stride1.splice(ax,1)
-    var r=[],n=prd(sub.s)
-    for(var i=0;i<n;i++)r.push.apply(r,toArray(A(om.a,s1,stride1,sub.a[i]*om.stride[ax])))
-    var s=s1.slice(0)
-    var stride=strideForShape(s)
-    s.splice.apply(s,[ax, 0].concat(sub.s))
-    var subStride = strideForShape (sub.s)
-    var k=prd(s1)
-    for(var i=0;i<subStride.length;i++)subStride[i]*=k
-    stride.splice.apply(stride,[ax,0].concat(subStride))
-    return A(r,s,stride)
-  }
-}
-
 voc['↑']=(om,al)=>al?take(om,al):first(om)
 
-// 5↑'ABCDEFGH'     ←→ 'ABCDE'
-// ¯3↑'ABCDEFGH'    ←→ 'FGH'
-// 3↑22 2 19 12     ←→ 22 2 19
-// ¯1↑22 2 19 12    ←→ ,12
-// ⍴1↑(2 2⍴⍳4)(⍳10) ←→ ,1
-// 2↑1              ←→ 1 0
-// 5↑40 92 11       ←→ 40 92 11 0 0
-// ¯5↑40 92 11      ←→ 0 0 40 92 11
-// 3 3↑1 1⍴0        ←→ 3 3⍴0 0 0 0 0 0 0 0 0
-// 5↑'abc'          ←→ 'abc  '
-// ¯5↑'abc'         ←→ '  abc'
-// 3 3↑1 1⍴'a'      ←→ 3 3⍴'a        '
-// 2 3↑1+4 3⍴⍳12    ←→ 2 3⍴1 2 3 4 5 6
-// ¯1 3↑1+4 3⍴⍳12   ←→ 1 3⍴10 11 12
-// 1 2↑1+4 3⍴⍳12    ←→ 1 2⍴1 2
-// 3↑⍬              ←→ 0 0 0
-// ¯2↑⍬             ←→ 0 0
-// 0↑⍬              ←→ ⍬
-// 3 3↑1            ←→ 3 3⍴1 0 0 0 0 0 0 0 0
-// 2↑3 3⍴⍳9         ←→ 2 3⍴⍳6
-// ¯2↑3 3⍴⍳9        ←→ 2 3⍴3+⍳6
-// 4↑3 3⍴⍳9         ←→ 4 3⍴(⍳9),0 0 0
-// ⍬↑3 3⍴⍳9         ←→ 3 3⍴⍳9
-const take=(om,al)=>{
-  al.s.length<=1||rnkErr()
-  if(!om.s.length)om=A([unwrap(om)],al.s.length?repeat([1],al.s[0]):[1])
-  var a=toArray(al)
-  a.length<=om.s.length||rnkErr()
+// 2↑⎕a←→'AB' ⍙ ¯3↑⎕a←→'XYZ' ⍙ 5↑'abc'←→'abc  ' ⍙ ¯5↑'abc'←→'  abc' ⍙ 3↑⍳2←→0 1 0 ⍙ ¯1↑⍳4←→,3
+// ⍴1↑(2 2⍴⍳4)(⍳10)←→,1 ⍙ 2↑1←→1 0 ⍙ 2 ¯2↑1 1⍴1←→2 2⍴0 1 0 0 ⍙ 3 3↑1 1⍴'a'←→3 3⍴'a        '
+// 2 3↑1+4 3⍴⍳12←→2 3⍴1 2 3 4 5 6 ⍙ ¯1 3↑1+4 3⍴⍳12←→1 3⍴10 11 12 ⍙ 1 2↑1+4 3⍴⍳12←→1 2⍴1 2
+// 3↑⍬←→0 0 0 ⍙ ¯2↑⍬←→0 0 ⍙ 0↑⍬←→⍬ ⍙ 3 3↑1←→3 3⍴1 0 0 0 0 0 0 0 0 ⍙ 2↑3 3⍴⍳9←→2 3⍴⍳6
+// ¯2↑3 3⍴⍳9←→2 3⍴3+⍳6 ⍙ 4↑3 3⍴⍳9←→4 3⍴(⍳9),0 0 0 ⍙ ⍬↑3 3⍴⍳9←→3 3⍴⍳9
+const take=(x,y)=>{
+  y.s.length<=1||rnkErr()
+  if(!x.s.length)x=A([unwrap(x)],y.s.length?repeat([1],y.s[0]):[1])
+  var a=toArray(y);a.length<=x.s.length||rnkErr()
   for(var i=0;i<a.length;i++)typeof a[i]==='number'&&a[i]===Math.floor(a[i])||domErr()
-  var mustCopy=0,shape=om.s.slice(0)
-  for(var i=0;i<a.length;i++){shape[i]=Math.abs(a[i]);if(shape[i]>om.s[i])mustCopy=1}
-  if(mustCopy){
-    var stride=Array(shape.length);stride[stride.length-1]=1
-    for(var i=stride.length-2;i>=0;i--)stride[i]=stride[i+1]*shape[i+1]
-    var data=repeat([getPrototype(om)],prd(shape))
-    var copyShape=shape.slice(0),p=0,q=0
-    for(var i=0;i<a.length;i++){
-      var x=a[i];copyShape[i]=Math.min(om.s[i],Math.abs(x))
-      if(x<0){if(x<-om.s[i]){q-=(x+om.s[i])*stride[i]}else{p+=(x+om.s[i])*om.stride[i]}}
-    }
-    if(prd(copyShape)){
-      var copyIndices=repeat([0],copyShape.length)
-      while(1){
-        data[q]=om.a[p];var axis=copyShape.length-1
-        while(axis>=0&&copyIndices[axis]+1===copyShape[axis]){
-          p-=copyIndices[axis]*om.stride[axis];q-=copyIndices[axis]*stride[axis];copyIndices[axis--]=0
-        }
-        if(axis<0)break
-        p+=om.stride[axis];q+=stride[axis];copyIndices[axis]++
-      }
-    }
-    return A(data,shape,stride)
-  }else{
-    var offset=0;for(var i=0;i<a.length;i++)if(a[i]<0)offset+=(om.s[i]+a[i])*om.stride[i]
-    return A(om.a,shape,om.stride,offset)
+  var s=x.s.slice(0);for(var i=0;i<a.length;i++)s[i]=Math.abs(a[i])
+  var d=Array(s.length);d[d.length-1]=1
+  for(var i=d.length-1;i>0;i--)d[i-1]=d[i]*s[i]
+  var r=repeat([getPrototype(x)],prd(s))
+  var cs=s.slice(0),p=0,q=0 // cs:shape to copy
+  for(var i=0;i<a.length;i++){
+    var u=a[i];cs[i]=Math.min(x.s[i],Math.abs(u))
+    if(u<0){if(u<-x.s[i]){q-=(u+x.s[i])*d[i]}else{p+=(u+x.s[i])*x.stride[i]}}
   }
+  if(prd(cs)){
+    var ci=new Int32Array(cs.length) // ci:indices for copying
+    while(1){
+      r[q]=x.a[p];var axis=cs.length-1
+      while(axis>=0&&ci[axis]+1===cs[axis]){p-=ci[axis]*x.stride[axis];q-=ci[axis]*d[axis];ci[axis--]=0}
+      if(axis<0)break
+      p+=x.stride[axis];q+=d[axis];ci[axis]++
+    }
+  }
+  return A(r,s)
 }
 
-// ↑(1 2 3)(4 5 6)←→1 2 3 ⍙ ↑(1 2)(3 4 5)←→1 2 ⍙ ↑'AB'←→'A' ⍙ ↑123←→123 ⍙ ↑⍬←→0
+// ↑(1 2 3)(4 5 6)←→1 2 3 ⍙ ↑(1 2)(3 4 5)←→1 2 ⍙ ↑'ab'←→'a' ⍙ ↑123←→123 ⍙ ↑⍬←→0
 const first=x=>{var y=empty(x)?getPrototype(x):x.a[0];return y.isA?y:A([y],[])}
 
-voc['⍉']=(om,al)=>{
-  var n=om.s.length
-  if(al){
-    // (2 2⍴⍳4)⍉2 2 2 2⍴⍳16 !!! RANK ERROR
-    // 0⍉3 5 8 ←→ 3 5 8
-    // 1 0⍉2 2 2⍴⍳8 !!! LENGTH ERROR
-    // ¯1⍉1 2 !!! DOMAIN ERROR
-    // 'a'⍉1 2 !!! DOMAIN ERROR
-    // 2⍉1 2 !!! RANK ERROR
-    // 2 0 1⍉2 3 4⍴⍳24 ←→ 3 4 2⍴0 12 1 13 2 14 3 15 4 16 5 17 6 18 7 19 8 20 9 21 10 22 11 23
-    // 2 0 0⍉2 3 4⍴⍳24 !!! RANK ERROR
-    // 0 0⍉3 3⍴⍳9 ←→ 0 4 8
-    // 0 0⍉2 3⍴⍳9 ←→ 0 4
-    // 0 0 0⍉3 3 3⍴⍳27 ←→ 0 13 26
-    // 0 1 0⍉3 3 3⍴⍳27 ←→ 3 3⍴0 3 6 10 13 16 20 23 26
-    al.s.length<=1||rnkErr()
-    al.s.length||(al=A([unwrap(al)]))
-    al.s[0]===n||lenErr()
-    var a=toArray(al)
+voc['⍉']=(y,x)=>{
+  if(x){
+    // 0⍉1 2←→1 2 ⍙ (2 2⍴⍳4)⍉2 2 2 2⍴⍳3 !!! RANK ERROR
+    // 1 0⍉2 2 2⍴⍳8 !!! LENGTH ERROR ⍙ ¯1⍉1 2 !!! DOMAIN ERROR ⍙ 'a'⍉1 2 !!! DOMAIN ERROR ⍙ 3⍉0 1 !!! RANK ERROR
+    // 2 0 1⍉2 3 4⍴⎕a←→3 4 2⍴'AMBNCODPEQFRGSHTIUJVKWLX' ⍙ 0 0 2⍉2 3 4⍴⍳24 !!! RANK ERROR
+    // 0 0⍉3 3⍴⍳9←→0 4 8 ⍙ 0 0⍉2 3⍴⍳9←→0 4 ⍙ 0 0 0⍉3 3 3⍴⍳27←→0 13 26 ⍙ 0 1 0⍉3 3 3⍴⎕a←→3 3⍴'ADGKNQUXA'
+    x.s.length<=1||rnkErr()
+    x.s.length||(x=A([unwrap(x)]))
+    x.s[0]===y.s.length||lenErr()
+    var a=toArray(x)
   }else{
-    // ⍉⍬←→⍬ ⍙ ⍉''←→'' ⍙ ⍉⍳3←→0 1 2 ⍙ ⍉2 3⍴⍳6←→3 2⍴0 3 1 4 2 5
-    // ⍉2 3 4⍴⍳24←→4 3 2⍴0 12 4 16 8 20 1 13 5 17 9 21 2 14 6 18 10 22 3 15 7 19 11 23
-    var a=[];for(var i=n-1;i>=0;i--)a.push(i)
+    // ⍉⍬←→⍬ ⍙ ⍉''←→'' ⍙ ⍉⍳3←→0 1 2 ⍙ ⍉2 3⍴⍳6←→3 2⍴0 3 1 4 2 5 ⍙ ⍉2 3 4⍴⎕a←→4 3 2⍴'AMEQIUBNFRJVCOGSKWDPHTLX'
+    var a=[];for(var i=y.s.length-1;i>=0;i--)a.push(i)
   }
-  var shape=[],stride=[]
+  var s=[],d=[],d0=strideForShape(y.s)
   for(var i=0;i<a.length;i++){
-    var x=a[i]
-    isInt(x,0)||domErr()
-    x<n||rnkErr()
-    if(shape[x]==null){
-      shape[x]=om.s[i]
-      stride[x]=om.stride[i]
-    }else{
-      shape[x]=Math.min(shape[x],om.s[i])
-      stride[x]+=om.stride[i]
-    }
+    var x=a[i];isInt(x,0)||domErr();x<y.s.length||rnkErr()
+    if(s[x]==null){s[x]=y.s[i];d[x]=d0[i]}
+    else{s[x]=Math.min(s[x],y.s[i]);d[x]+=d0[i]}
   }
-  for(var i=0;i<shape.length;i++)shape[i]!=null||rnkErr()
-  return A(om.a,shape,stride)
+  for(var i=0;i<s.length;i++)s[i]!=null||rnkErr()
+  var n=prd(s),r=Array(n),j=new Int32Array(s.length),p=0,l=s.length-1
+  for(var i=0;i<n;i++){
+    r[i]=y.a[p]
+    var u=l;while(u>=0&&j[u]+1===s[u]){p-=j[u]*d[u];j[u--]=0}
+    if(u<0)break
+    j[u]++;p+=d[u]
+  }
+  return A(r,s)
 }
 
-voc['⍠']=conj((f,g)=>(om,al,axis)=>(al?f:g)(om,al,axis)) // ({1}⍠{2})0 ←→ 1 ⍙ 0({1}⍠{2})0 ←→ 2
+voc['⍠']=conj((f,g)=>(om,al,axis)=>(al?f:g)(om,al,axis)) // ({1}⍠{2})0←→1 ⍙ 0({1}⍠{2})0←→2
