@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-const apl=require('../lib/apl'),{runDocTest}=require('./rundoctest'),si=process.stdin,so=process.stdout
+const apl=require('../apl'),{runDocTest}=require('./rundoctest'),si=process.stdin,so=process.stdout
 var s='';si.resume();si.setEncoding('utf8');si.on('data',x=>s+=x)
 si.on('end',_=>{
   var tests=eval(s),ne=0,nf=0,ts=0,t0=Date.now() //ne/nf:number of executed/failed tests, ts:last test timestamp

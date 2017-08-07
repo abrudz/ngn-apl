@@ -2,33 +2,16 @@
 set -e
 cd "$(dirname "$0")"
 
-if ! which node 2>&1 >/dev/null; then
-  echo 'node is not installed or not on your $PATH'
-  exit 1
-fi
 v="$(node -v|head -c3)"
 if [ "$v" != v7. -a "$v" != v8. -a "$v" != v9. ]; then
   echo "this project requires node v7+ but the one on your \$PATH is $(node -v)"
   exit 1
 fi
 
-#build lib/apl.js
-f=lib/apl.js
-if [ ! -e $f -o "$(find src -newer $f 2>/dev/null | wc -l)" -ne 0 ]; then
-  echo "building $f"
-  mkdir -p lib
-  node >$f <<.
-    process.stdout.write('//usr/bin/env node "\$0" \$@;exit \$?\n"use strict";\n')
-.
-  cat src/{arr,z,vm,prs,voc,compiler,apl}.js >>$f
-  chmod +x $f
-fi
-echo "$f: $(stat -c%s $f) bytes"
+stat -c '%n: %s bytes' apl.js
 
-#web demo
 #todo: echo -n 'var aplTests = ' ; node test/collectdoctests.js
 
-#test
 echo doctests; test/collectdoctests.js | test/rundoctests.js
 echo examples; examples/test
 echo ok

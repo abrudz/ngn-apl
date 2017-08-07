@@ -1,12 +1,4 @@
 {
   "name": "apl",
-  "version": "0.1.15",
-  "directories": {
-    "lib": "./lib",
-    "bin": "./lib"
-  },
-  "scripts": {
-    "start": "./lib/apl.js"
-  },
-  "main": "./lib/apl.js"
+  "version": "0.1.15"
 }
