@@ -5,7 +5,7 @@ si.on('end',_=>{
   var tests=eval(s),ne=0,nf=0,ts=0,t0=Date.now() //ne/nf:number of executed/failed tests, ts:last test timestamp
   for(var i=0;i<tests.length;i++){
     var test=tests[i],code=test[0],mode=test[1],expectation=test[2]
-    ne++;var o=runDocTest(test,apl,apl.approx) //o:outcome
+    ne++;var o=runDocTest(test,apl,apl.aprx) //o:outcome
     if(!o.success){
       nf++;so.write('Test failed: '+JSON.stringify(code)+'\n             '+JSON.stringify(expectation)+'\n')
       o.reason&&so.write(o.reason+'\n');o.error&&so.write(o.error.stack+'\n')

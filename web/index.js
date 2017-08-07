@@ -16,7 +16,7 @@ $($=>{
     try{
       var s=I.code.value;I.result.classList.remove('error')
       if(s===')t'){I.result.textContent='Running tests...';setTimeout(runDocTests,1)}
-      else{I.result.textContent=apl.format(apl(s)).join('\n')+'\n'}
+      else{I.result.textContent=apl.fmt(apl(s)).join('\n')+'\n'}
     }catch(e){
       console&&console.error&&console.error(e.stack)
       I.result.classList.add('error');I.result.textContent=e
@@ -164,7 +164,7 @@ $($=>{
     for(var i=0;i<aplTests.length;i++){
       var x=aplTests[i],code=x[0],mode=x[1],expectation=x[2]
       nExecuted++
-      var outcome=runDocTest([code,mode,expectation],apl,apl.approx)
+      var outcome=runDocTest([code,mode,expectation],apl,apl.aprx)
       if(!outcome.success){
         nFailed++
         var s='Test failed: '+JSON.stringify(code)+'\n'+

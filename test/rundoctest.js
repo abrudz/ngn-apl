@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-this.runDocTest=function(cme,exec,approx){
+this.runDocTest=function(cme,exec,aprx){
   var code=cme[0],mode=cme[1],expectation=cme[2],x,y
   if(mode==='←→'){
     try{
@@ -9,7 +9,7 @@ this.runDocTest=function(cme,exec,approx){
     }
     try{
       x=exec(code)
-      if(!approx(x,y))return{success:0,reason:'Expected '+JSON.stringify(y)+' but got '+JSON.stringify(x)}
+      if(!aprx(x,y))return{success:0,reason:'Expected '+JSON.stringify(y)+' but got '+JSON.stringify(x)}
     }catch(e){
       return{success:0,error:e}
     }
