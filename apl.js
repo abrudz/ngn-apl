@@ -1,17 +1,13 @@
 //usr/bin/env node "$0" $@;exit $?
 "use strict";
-var preludeSrc="⍬←()\n⍝ ⍬     ←→ 0⍴0\n⍝ ⍴⍬    ←→ ,0\n⍝# ⍬←5   !!!\n⍝ ⍳0    ←→ ⍬\n⍝ ⍴0    ←→ ⍬\n⍝ ⍬     ←→ ⍬\n⍝ ⍬⍬    ←→ ⍬ ⍬\n⍝ 1⍬2⍬3 ←→ 1 ⍬ 2 ⍬ 3\n\n⎕a←'ABCDEFGHIJKLMNOPQRSTUVWXYZ'\n⎕á←'ÁÂÃÇÈÊËÌÍÎÏÐÒÓÔÕÙÚÛÝþãìðòõ'\n⎕d←'0123456789'\n\n~←~⍠{(~⍺∊⍵)/⍺}\n⍝ 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'~'AEIOU' ←→ 'BCDFGHJKLMNPQRSTVWXYZ'\n⍝ 1 2 3 4 5 6~2 4 6                    ←→ 1 3 5\n⍝ 'THIS IS TEXT'~' '                   ←→ 'THISISTEXT'\n⍝ 'THIS' 'AND' 'THAT'~'T'              ←→ 'THIS' 'AND' 'THAT'\n⍝ 'THIS' 'AND' 'THAT'~'AND'            ←→ 'THIS' 'AND' 'THAT'\n⍝ 'THIS' 'AND' 'THAT'~⊂'AND'           ←→ 'THIS' 'THAT'\n⍝ 'THIS' 'AND' 'THAT'~'TH' 'AND'       ←→ 'THIS' 'THAT'\n⍝ 11 12 13 14 15 16~2 3⍴1 2 3 14 5 6   ←→ 11 12 13 15 16\n⍝ (2 2⍴⍳4)~2 !!! RANK ERROR\n\n_atop←{⍶⍹⍵;⍶⍺⍹⍵}\n⍝ (-⍟)2 3 ←→ -⍟2 3\n⍝ 2(-*)3 ←→ -2*3\n\n⊃←{\n  0=⍴⍴⍵:↑⍵\n  0=×/⍴⍵:⍵\n  shape←⍴⍵ ⋄ ⍵←,⍵\n  r←⌈/≢¨shapes←⍴¨⍵ ⍝ maximum rank of all shapes\n  max←↑⌈/shapes←(⍴ ↓ (r⍴1)∘,)¨shapes ⍝ maximum shape of rank adjusted shapes\n  (shape,max)⍴↑⍪/shapes{max↑⍺⍴⍵}¨⍵\n  ;\n  1<⍴⍴⍺:↗'RANK ERROR'\n  x←⍵\n  {\n    1<⍴⍴⍵:↗'RANK ERROR'\n    ⍵←,⍵\n    (⍴⍵)≠⍴⍴x:↗'RANK ERROR'\n    ∨/⍵≥⍴x:↗'INDEX ERROR'\n    x←⊃⍵⌷x\n  }¨⍺\n  x\n}\n⍝ ⊃3            ←→ 3\n⍝ ⊃(1 2)(3 4)   ←→ 2 2⍴1 2 3 4\n⍝ ⊃(1 2)(3 4 5) ←→ 2 3⍴1 2 0 3 4 5\n⍝ ⊃1 2          ←→ 1 2\n⍝ ⊃(1 2)3       ←→ 2 2⍴1 2 3 0\n⍝ ⊃1(2 3)       ←→ 2 2⍴1 0 2 3\n⍝ ⊃2 2⍴1(1 1 2⍴3 4)(5 6)(2 0⍴0) ←→ 2 2 1 2 2⍴1 0 0 0 3 4 0 0 5 6 0 0 0 0 0 0\n⍝ ⊃⍬            ←→ ⍬\n⍝ ⊃2 3 0⍴0      ←→ 2 3 0⍴0\n⍝ ⍬⊃3               ←→ 3\n⍝ 2⊃'PICK'          ←→ 'C'\n⍝ (⊂1 0)⊃2 2⍴'ABCD' ←→ 'C'\n⍝ 1⊃'foo' 'bar'     ←→ 'bar'\n⍝ 1 2⊃'foo' 'bar'   ←→ 'r'\n⍝ (2 2⍴0)⊃1 2       !!! RANK ERROR\n⍝ (⊂2 1⍴0)⊃2 2⍴0    !!! RANK ERROR\n⍝ (⊂2 2⍴0)⊃1 2      !!! RANK ERROR\n⍝ (⊂2 2)⊃1 2        !!! RANK ERROR\n⍝ (⊂0 2)⊃2 2⍴'ABCD' !!! INDEX ERROR\n\n⊂←⊂⍠{ ⍝ ⍺⊂⍵ definition\n  1<⍴⍴⍺:↗'RANK ERROR' ⋄ 1≠⍴⍴⍵:↗'NONCE ERROR' ⋄ ⍺←,⍺=0\n  keep←~1 1⍷⍺ ⋄ sel←keep/⍺ ⋄ dat←keep/⍵\n  {1=1↑sel:{sel←1↓sel ⋄ dat←1↓dat}⍬}⍬\n  {1=¯1↑sel:{sel←¯1↓sel ⋄ dat←¯1↓dat}⍬}⍬\n  sel←(⍴sel),⍨sel/⍳⍴sel ⋄ drop←0\n  sel{∆←drop↓⍺↑⍵ ⋄ drop←⍺+1 ⋄ ∆}¨⊂dat\n}\n⍝ a←' this is a test ' ⋄ (a≠' ')⊂a ←→ 'this' 'is' (,'a') 'test'\n\n↓←{\n  0=⍴⍴⍵:⍵ ⋄ ⊂[¯1+⍴⍴⍵]⍵\n  ;\n  1<⍴⍴⍺:↗'RANK ERROR'\n  a←,⍺\n  ⍵←{0=⍴⍴⍵:((⍴a)⍴1)⍴⍵⋄⍵}⍵\n  (⍴a)>⍴⍴⍵:↗'RANK ERROR'\n  a←(⍴⍴⍵)↑a\n  a←((a>0)×0⌊a-⍴⍵)+(a≤0)×0⌈a+⍴⍵\n  a↑⍵\n}\n⍝ ↓1 2 3 ←→ ⊂1 2 3\n⍝ ↓(1 2)(3 4) ←→ ⊂(1 2)(3 4)\n⍝ ↓2 2⍴⍳4 ←→ (0 1)(2 3)\n⍝ ↓2 3 4⍴⍳24 ←→ 2 3⍴(0 1 2 3)(4 5 6 7)(8 9 10 11)(12 13 14 15)(16 17 18 19)(20 21 22 23)\n⍝ 4↓'OVERBOARD'         ←→ 'BOARD'\n⍝ ¯5↓'OVERBOARD'        ←→ 'OVER'\n⍝ ⍴10↓'OVERBOARD'       ←→ ,0\n⍝ 0 ¯2↓3 3⍴'ONEFATFLY'  ←→ 3 1⍴'OFF'\n⍝ ¯2 ¯1↓3 3⍴'ONEFATFLY' ←→ 1 2⍴'ON'\n⍝ 1↓3 3⍴'ONEFATFLY'     ←→ 2 3⍴'FATFLY'\n⍝ ⍬↓3 3⍴⍳9              ←→ 3 3⍴⍳9\n⍝ 1 1↓2 3 4⍴'ABCDEFGHIJKLMNOPQRSTUVWXYZ'   ←→ 1 2 4⍴'QRSTUVWX'\n⍝ ¯1 ¯1↓2 3 4⍴'ABCDEFGHIJKLMNOPQRSTUVWXYZ' ←→ 1 2 4⍴'ABCDEFGH'\n⍝ 1↓0                   ←→ ⍬\n⍝ 0 1↓2                 ←→ 1 0⍴0\n⍝ 1 2↓3                 ←→ 0 0⍴0\n⍝ ⍬↓0                   ←→ 0\n\n⍪←{(≢⍵)(×/1↓⍴⍵)⍴⍵; ⍺,[0]⍵}\n⍝ ⍪2 3 4 ←→ 3 1⍴2 3 4\n⍝ ⍪0 ←→ 1 1⍴0\n⍝ ⍪2 2⍴2 3 4 5 ←→ 2 2⍴2 3 4 5\n⍝ ⍴⍪2 3⍴⍳6 ←→ 2 3\n⍝ ⍴⍪2 3 4⍴⍳24 ←→ 2 12\n⍝ (2 3⍴⍳6)⍪9 ←→ 3 3⍴(0 1 2 3 4 5 9 9 9)\n⍝ 1⍪2 ←→ 1 2\n\n⊢←{⍵}\n⍝ 123⊢456 ←→ 456\n⍝ ⊢456 ←→ 456\n\n⊣←{⍵;⍺}\n⍝ 123⊣456 ←→ 123\n⍝ ⊣456 ←→ 456\n\n≢←{⍬⍴(⍴⍵),1; ~⍺≡⍵}\n⍝ ≢0 ←→ 1\n⍝ ≢0 0 0 ←→ 3\n⍝ ≢⍬ ←→ 0\n⍝ ≢2 3⍴⍳6 ←→ 2\n⍝ 3≢3 ←→ 0\n\n,←{(×/⍴⍵)⍴⍵}⍠,\n⍝ ,2 3 4⍴'abcdefghijklmnopqrstuvwx' ←→ 'abcdefghijklmnopqrstuvwx'\n⍝ ,123 ←→ 1⍴123\n\n⌹←{\n  norm←{(⍵+.×+⍵)*0.5}\n\n  QR←{ ⍝ QR decomposition\n    n←(⍴⍵)[1]\n    1≥n:{t←norm,⍵ ⋄ (⍵÷t)(⍪t)}⍵\n    m←⌈n÷2\n    a0←((1↑⍴⍵),m)↑⍵\n    a1←(0,m)↓⍵\n    (q0 r0)←∇a0\n    c←(+⍉q0)+.×a1\n    (q1 r1)←∇a1-q0+.×c\n    (q0,q1)((r0,c)⍪((⌊n÷2),-n)↑r1)\n  }\n\n  Rinv←{ ⍝ Inverse of an upper triangular matrix\n    1=n←1↑⍴⍵:÷⍵\n    m←⌈n÷2\n    ai←∇(m,m)↑⍵\n    di←∇(m,m)↓⍵\n    b←(m,m-n)↑⍵\n    bx←-ai+.×b+.×di\n    (ai,bx)⍪((⌊n÷2),-n)↑di\n  }\n\n  0=⍴⍴⍵:÷⍵\n  1=⍴⍴⍵:,∇⍪⍵\n  2≠⍴⍴⍵:↗'RANK ERROR'\n  0∊≥/⍴⍵:↗'LENGTH ERROR'\n  (Q R)←QR ⍵\n  (Rinv R)+.×+⍉Q\n  ;\n  (⌹⍵)+.×⍺\n}\n⍝ ⌹2 ←→ .5\n⍝ ⌹2 2⍴4 3 3 2 ←→ 2 2⍴¯2 3 3 ¯4\n⍝ (4 4⍴12 1 4 10 ¯6 ¯5 4 7 ¯4 9 3 4 ¯2 ¯6 7 7)⌹93 81 93.5 120.5 ←→ .0003898888816687221 ¯.005029566573526544 .04730651764247189 .0705568912859835\n⍝ ⌹2 2 2⍴⍳8 !!! RANK ERROR\n⍝ ⌹2 3⍴⍳6 !!! LENGTH ERROR\n\n⍨←{⍵⍶⍵;⍵⍶⍺}\n⍝ 17-⍨23 ←→ 6\n⍝ 7⍴⍨2 3 ←→ 2 3⍴7\n⍝ +⍨2    ←→ 4\n⍝ -⍨123  ←→ 0\n";
-const A=(a,s)=>{
-  if(s)asrt(a.length===prd(s))
-  return {isA:1,a:a,s:s||[a.length]}
-}
+var preludeSrc="⍬←() ⍝ ⍬←→0⍴0 ⍙ ⍴⍬←→,0\n⎕a←'ABCDEFGHIJKLMNOPQRSTUVWXYZ'\n⎕á←'ÁÂÃÇÈÊËÌÍÎÏÐÒÓÔÕÙÚÛÝþãìðòõ'\n⎕d←'0123456789'\n\n~←~⍠{(~⍺∊⍵)/⍺}\n⍝ 'abcd'~'bde'←→'ac'\n⍝ 1 2 3 4 5 6~2 4 6←→1 3 5\n⍝ 'ab' 'cd' 'ad'~'a'←→'ab' 'cd' 'ad'\n⍝ 'ab' 'cd' 'ad'~'cd'←→'ab' 'cd' 'ad'\n⍝ 'ab' 'cd' 'ad'~⊂'cd'←→'ab' 'ad'\n⍝ 'ab' 'cd' 'ad'~'a' 'cd'←→'ab' 'ad'\n⍝ 11 12 13 14 15 16~2 3⍴1 2 3 14 5 6←→11 12 13 15 16\n⍝ (2 2⍴⍳4)~2 !!! RANK ERROR\n\n_atop←{⍶⍹⍵;⍶⍺⍹⍵} ⍝ (-⍟)2 3←→-⍟2 3 ⍙ 2(-*)3←→-2*3\n\n⊃←{\n  0=⍴⍴⍵:↑⍵\n  0=×/⍴⍵:⍵\n  shape←⍴⍵ ⋄ ⍵←,⍵\n  r←⌈/≢¨shapes←⍴¨⍵ ⍝ maximum rank of all shapes\n  max←↑⌈/shapes←(⍴ ↓ (r⍴1)∘,)¨shapes ⍝ maximum shape of rank adjusted shapes\n  (shape,max)⍴↑⍪/shapes{max↑⍺⍴⍵}¨⍵\n  ;\n  1<⍴⍴⍺:↗'RANK ERROR'\n  x←⍵\n  {\n    1<⍴⍴⍵:↗'RANK ERROR'\n    ⍵←,⍵\n    (⍴⍵)≠⍴⍴x:↗'RANK ERROR'\n    ∨/⍵≥⍴x:↗'INDEX ERROR'\n    x←⊃⍵⌷x\n  }¨⍺\n  x\n}\n⍝ ⊃3←→3 ⍙ ⊃(1 2)(3 4)←→2 2⍴1 2 3 4 ⍙ ⊃(1 2)(3 4 5)←→2 3⍴1 2 0 3 4 5 ⍙ ⊃1 2←→1 2 ⍙ ⊃(1 2)3←→2 2⍴1 2 3 0\n⍝ ⊃1(2 3)←→2 2⍴1 0 2 3 ⍙ ⊃2 2⍴1(1 1 2⍴3 4)(5 6)(2 0⍴0)←→2 2 1 2 2⍴1 0 0 0 3 4 0 0 5 6 0 0 0 0 0 0 ⍙ ⊃⍬←→⍬\n⍝ ⊃2 3 0⍴0←→2 3 0⍴0 ⍙ ⍬⊃3←→3 ⍙ 2⊃'pick'←→'c' ⍙ (⊂1 0)⊃2 2⍴'abcd'←→'c' ⍙ 1⊃'foo' 'bar'←→'bar' ⍙ 1 2⊃'foo' 'bar'←→'r'\n⍝ (2 2⍴0)⊃1 2 !!! RANK ERROR ⍙ (⊂2 1⍴0)⊃2 2⍴0 !!! RANK ERROR ⍙ (⊂2 2⍴0)⊃1 2 !!! RANK ERROR\n⍝ (⊂2 2)⊃1 2 !!! RANK ERROR ⍙ (⊂0 2)⊃2 2⍴'ABCD' !!! INDEX ERROR\n\n⊂←⊂⍠{\n  1<⍴⍴⍺:↗'RANK ERROR' ⋄ 1≠⍴⍴⍵:↗'NONCE ERROR' ⋄ ⍺←,⍺=0\n  keep←~1 1⍷⍺ ⋄ sel←keep/⍺ ⋄ dat←keep/⍵\n  {1=1↑sel:{sel←1↓sel ⋄ dat←1↓dat}⍬}⍬\n  {1=¯1↑sel:{sel←¯1↓sel ⋄ dat←¯1↓dat}⍬}⍬\n  sel←(⍴sel),⍨sel/⍳⍴sel ⋄ drop←0\n  sel{∆←drop↓⍺↑⍵ ⋄ drop←⍺+1 ⋄ ∆}¨⊂dat\n}\n⍝ a←' this is a test ' ⋄ (a≠' ')⊂a←→'this' 'is' (,'a') 'test'\n\n↓←{\n  0=⍴⍴⍵:⍵ ⋄ ⊂[¯1+⍴⍴⍵]⍵\n  ;\n  1<⍴⍴⍺:↗'RANK ERROR'\n  a←,⍺\n  ⍵←{0=⍴⍴⍵:((⍴a)⍴1)⍴⍵⋄⍵}⍵\n  (⍴a)>⍴⍴⍵:↗'RANK ERROR'\n  a←(⍴⍴⍵)↑a\n  a←((a>0)×0⌊a-⍴⍵)+(a≤0)×0⌈a+⍴⍵\n  a↑⍵\n}\n⍝ ↓1 2 3←→⊂1 2 3 ⍙ ↓(1 2)(3 4)←→⊂(1 2)(3 4) ⍙ ↓2 2⍴⍳4←→(0 1)(2 3)\n⍝ ↓2 3 4⍴⍳24←→2 3⍴(0 1 2 3)(4 5 6 7)(8 9 10 11)(12 13 14 15)(16 17 18 19)(20 21 22 23)\n⍝ 2↓'abc'←→,'c' ⍙ ¯1↓'abc'←→'ab' ⍙ 5↓'abc'←→'' ⍙ 0 ¯2↓3 3⍴⎕a←→3 1⍴'ADG' ⍙ ¯2 ¯1↓3 3⍴⎕a←→1 2⍴'AB' ⍙ 1↓3 3⍴⎕a←→2 3⍴'DEFGHI'\n⍝ ⍬↓3 3⍴⍳9←→3 3⍴⍳9 ⍙ 1 1↓2 3 4⍴⎕a←→1 2 4⍴'QRSTUVWX' ⍙ ¯1 ¯1↓2 3 4⍴⎕a←→1 2 4⍴'ABCDEFGH'\n⍝ 1↓0←→⍬ ⍙ 0 1↓2←→1 0⍴0 ⍙ 1 2↓3←→0 0⍴0 ⍙ ⍬↓0←→0\n\n⍪←{(≢⍵)(×/1↓⍴⍵)⍴⍵; ⍺,[0]⍵}\n⍝ ⍪2 3 4←→3 1⍴2 3 4 ⍙ ⍪0←→1 1⍴0 ⍙ ⍪2 2⍴2 3 4 5←→2 2⍴2 3 4 5 ⍙ ⍴⍪2 3⍴⍳6←→2 3 ⍙ ⍴⍪2 3 4⍴⍳24←→2 12\n⍝ (2 3⍴⍳6)⍪9←→3 3⍴0 1 2 3 4 5 9 9 9 ⍙ 1⍪2←→1 2\n\n⊢←{⍵}   ⍝ 1⊢2←→2 ⍙ ⊢3←→3\n⊣←{⍵;⍺} ⍝ 1⊣2←→1 ⍙ ⊣3←→3\n≢←{⍬⍴(⍴⍵),1; ~⍺≡⍵} ⍝ ≢0←→1 ⍙ ≢0 0←→2 ⍙ ≢⍬←→0 ⍙ ≢2 3⍴⍳6←→2 ⍙ 2≢2←→0\n,←{(×/⍴⍵)⍴⍵}⍠, ⍝ ,2 13⍴⎕a←→⎕a ⍙ ,1←→1⍴1\n\n⌹←{\n  norm←{(⍵+.×+⍵)*0.5}\n\n  QR←{ ⍝ QR decomposition\n    n←(⍴⍵)[1]\n    1≥n:{t←norm,⍵ ⋄ (⍵÷t)(⍪t)}⍵\n    m←⌈n÷2\n    a0←((1↑⍴⍵),m)↑⍵\n    a1←(0,m)↓⍵\n    (q0 r0)←∇a0\n    c←(+⍉q0)+.×a1\n    (q1 r1)←∇a1-q0+.×c\n    (q0,q1)((r0,c)⍪((⌊n÷2),-n)↑r1)\n  }\n\n  Rinv←{ ⍝ Inverse of an upper triangular matrix\n    1=n←1↑⍴⍵:÷⍵\n    m←⌈n÷2\n    ai←∇(m,m)↑⍵\n    di←∇(m,m)↓⍵\n    b←(m,m-n)↑⍵\n    bx←-ai+.×b+.×di\n    (ai,bx)⍪((⌊n÷2),-n)↑di\n  }\n\n  0=⍴⍴⍵:÷⍵\n  1=⍴⍴⍵:,∇⍪⍵\n  2≠⍴⍴⍵:↗'RANK ERROR'\n  0∊≥/⍴⍵:↗'LENGTH ERROR'\n  (Q R)←QR ⍵\n  (Rinv R)+.×+⍉Q\n  ;\n  (⌹⍵)+.×⍺\n}\n⍝ ⌹2←→.5 ⍙ ⌹2 2⍴4 3 3 2←→2 2⍴¯2 3 3 ¯4 ⍙ ⌹2 2 2⍴⍳8 !!! RANK ERROR ⍙ ⌹2 3⍴⍳6 !!! LENGTH ERROR\n⍝ (4 4⍴12 1 4 10 ¯6 ¯5 4 7 ¯4 9 3 4 ¯2 ¯6 7 7)⌹93 81 93.5 120.5←→.0003898888816687221 ¯.005029566573526544 .04730651764247189 .0705568912859835\n\n⍨←{⍵⍶⍵;⍵⍶⍺} ⍝ 17-⍨23←→6 ⍙ 7⍴⍨2 3←→2 3⍴7 ⍙ +⍨2←→4 ⍙ -⍨123←→0\n";
+const A=(a,s)=>{s&&asrt(a.length===prd(s));return{isA:1,a:a,s:s||[a.length]}}
 ,strideForShape=s=>{
   asrt(s.length!=null)
   let r=Array(s.length),u=1
   for(let i=r.length-1;i>=0;i--){asrt(isInt(s[i],0));r[i]=u;u*=s[i]}
   return r
 }
-,empty=x=>{for(let i=0;i<x.s.length;i++)if(!x.s[i])return 1;return 0}
 ,map=(x,f)=>{const n=x.a.length,r=Array(n);for(let i=0;i<n;i++)r[i]=f(x.a[i]);return A(r,x.s)}
 ,toArray=x=>{const n=x.a.length,r=Array(n);for(let i=0;i<n;i++)r[i]=x.a[i];return r}
 ,toInt=(x,m,M)=>{let r=unwrap(x);if(r!==r|0||m!=null&&r<m||M!=null&&M<=r)domErr();return r}
@@ -28,12 +24,11 @@ const A=(a,s)=>{
     return a.join('')
   }
 }
-,isSingleton=x=>{let s=x.s;for(let i=0;i<s.length;i++)if(s[i]!==1)return 0;return 1}
-,isSimple=x=>!x.s.length&&!(x.a[0].isA)
-,unwrap=x=>{isSingleton(x)||lenErr();return x.a[0]}
-,getPrototype=x=>empty(x)||typeof x.a[0]!=='string'?0:' ' // todo
+,isSimple=x=>!x.s.length&&!x.a[0].isA
+,unwrap=x=>{x.a.length===1||lenErr();return x.a[0]}
+,getPrototype=x=>!x.a.length||typeof x.a[0]!=='string'?0:' ' // todo
 ,asrt=x=>{if(typeof x==='function'){if(!x())throw Error('assertion failed: '+x)}
-               else                     {if(!x)  throw Error('assertion failed'    )}}
+          else                     {if(!x)  throw Error('assertion failed'    )}}
 ,isInt=(x,m,M)=>x===~~x&&(m==null||m<=x&&(M==null||x<M))
 ,prd=x=>{let r=1;for(let i=0;i<x.length;i++)r*=x[i];return r}
 ,extend=(x,y)=>{for(let k in y)x[k]=y[k];return x}
@@ -48,8 +43,7 @@ const A=(a,s)=>{
   for(let i=0;i<x.length;i++)if(x[i]!==y[i])return 0
   return 1
 }
-,err=(name,m,o)=>{
-  m=m||''
+,err=(name,m='',o)=>{
   if(o&&o.aplCode&&o.offset!=null){
     let a=o.aplCode.slice(0,o.offset).split('\n')
     let l=a.length,c=1+(a[a.length-1]||'').length // line and column
@@ -170,81 +164,58 @@ Z.gcd=(x,y)=>{
 Z.lcm=(x,y)=>{let p=Z.mul(x,y);return iszero(p)?p:Z.div(p,Z.gcd(x,y))}
 const LDC=1,VEC=2,GET=3,SET=4,MON=5,DYA=6,LAM=7,RET=8,POP=9,SPL=10,JEQ=11,EMB=12,CON=13
 ,Proc=function(code,addr,size,env){this.code=code;this.addr=addr;this.size=size;this.env=env;this.toString=_=>'#procedure'}
-,toFn=p=>(x,y)=>vm({code:p.code,env:p.env.concat([[x,p,y,null]]),pc:p.addr})
-,vm=o=>{
-  let code=o.code,env=o.env,stk=o.stk||[],pc=o.pc||0
+,toFn=p=>(x,y)=>vm(p.code,p.env.concat([[x,p,y,null]]),p.addr)
+,vm=(code,env,pc=0,stk=[])=>{
   asrt(code instanceof Array);asrt(env instanceof Array);for(let i=0;i<env.length;i++)asrt(env[i]instanceof Array)
   while(1){
     switch(code[pc++]){
       case LDC:stk.push(code[pc++]);break
       case VEC:{
-        let a=stk.splice(stk.length-code[pc++])
-        for(let i=0;i<a.length;i++)if(isSimple(a[i]))a[i]=unwrap(a[i])
-        stk.push(A(a))
-        break
+        let a=stk.splice(stk.length-code[pc++]);for(let i=0;i<a.length;i++)if(isSimple(a[i]))a[i]=unwrap(a[i])
+        stk.push(A(a));break
       }
       case GET:{let r=env[code[pc++]][code[pc++]];r!=null||valErr();stk.push(r);break}
       case SET:{env[code[pc++]][code[pc++]]=stk[stk.length-1];break}
       case MON:{
-        let wf=stk.splice(-2),w=wf[0],f=wf[1]
+        let[w,f]=stk.splice(-2)
         if(typeof f==='function'){
           if(w instanceof Proc)w=toFn(w)
-          if(f.cps){
-            f(w,undefined,undefined,r=>{stk.push(r);vm({code:code,env:env,stk:stk,pc:pc})})
-            return
-          }else{
-            stk.push(f(w))
-          }
+          if(f.cps){f(w,undefined,undefined,r=>{stk.push(r);vm(code,env,pc,stk)});return}
+          stk.push(f(w))
         }else{
           let bp=stk.length;stk.push(code,pc,env);code=f.code;pc=f.addr;env=f.env.concat([[w,f,null,bp]])
         }
         break
       }
       case DYA:{
-        let wfa=stk.splice(-3),w=wfa[0],f=wfa[1],a=wfa[2]
+        let[w,f,a]=stk.splice(-3)
         if(typeof f==='function'){
           if(w instanceof Proc)w=toFn(w)
           if(a instanceof Proc)a=toFn(a)
-          if(f.cps){
-            f(w,a,undefined,r=>{stk.push(r);vm({code:code,env:env,stk:stk,pc:pc})})
-            return
-          }else{
-            stk.push(f(w,a))
-          }
+          if(f.cps){f(w,a,undefined,r=>{stk.push(r);vm(code,env,pc,stk)});return}
+          stk.push(f(w,a))
         }else{
           let bp=stk.length;stk.push(code,pc,env);code=f.code;pc=f.addr;env=f.env.concat([[w,f,a,bp]])
         }
         break
       }
       case LAM:{let size=code[pc++];stk.push(new Proc(code,pc,size,env));pc+=size;break}
-      case RET:{
-        if(stk.length===1)return stk[0]
-        let u=stk.splice(-4,3);code=u[0];pc=u[1];env=u[2]
-        break
-      }
+      case RET:{if(stk.length===1)return stk[0];[code,pc,env]=stk.splice(-4,3);break}
       case POP:{stk.pop();break}
       case SPL:{
-        let n=code[pc++]
-        let a=toArray(stk[stk.length-1]).reverse()
-        for(let i=0;i<a.length;i++)if(!(a[i].isA))a[i]=A([a[i]],[])
+        let n=code[pc++],a=toArray(stk[stk.length-1]).reverse()
+        for(let i=0;i<a.length;i++)if(!a[i].isA)a[i]=A([a[i]],[])
         if(a.length===1){a=repeat(a,n)}else if(a.length!==n){lenErr()}
         stk.push.apply(stk,a)
         break
       }
-      case JEQ:{let n=code[pc++];toInt(stk[stk.length-1],0,2)||(pc+=n);break}
-      case EMB:{let frame=env[env.length-1];stk.push(code[pc++](frame[0],frame[2]));break}
+      case JEQ:{const n=code[pc++];toInt(stk[stk.length-1],0,2)||(pc+=n);break}
+      case EMB:{let frm=env[env.length-1];stk.push(code[pc++](frm[0],frm[2]));break}
       case CON:{
-        let frame=env[env.length-1]
-        ;(_=>{
-          let cont={
-            code:code,
-            env:env.map(x=>x.slice(0)),
-            stk:stk.slice(0,frame[3]),
-            pc:frame[1].addr+frame[1].size-1
-          }
-          asrt(code[cont.pc] === RET)
-          stk.push(r=>{code=cont.code;env=cont.env;stk=cont.stk;pc=cont.pc;stk.push(r)})
-        })()
+        let frm=env[env.length-1]
+        let cont={code,env:env.map(x=>x.slice(0)),stk:stk.slice(0,frm[3]),pc:frm[1].addr+frm[1].size-1}
+        asrt(code[cont.pc]===RET)
+        stk.push(r=>{code=cont.code;env=cont.env;stk=cont.stk;pc=cont.pc;stk.push(r)})
         break
       }
       default:err('Unrecognized instruction:'+code[pc-1]+',pc:'+pc)
@@ -336,19 +307,15 @@ const voc={}
     let r=f1(x);typeof r==='number'&&r!==r&&domErr();return r
   }
   let g2=!f2?nyiErr:(x,y)=>{
-    let tx=x.isA?(isSingleton(x)?20:30):10
-    let ty=y.isA?(isSingleton(y)? 2: 3): 1
-    switch(tx+ty){ // todo: use the larger shape when tx=10 and ty=1
-      case 11:        let r=f2(x,y);typeof r==='number'&&r!==r&&domErr();return r
+    switch((!x.isA?10:x.a.length===1?20:30)+(!y.isA?1:y.a.length===1?2:3)){
+      case 11:{let r=f2(x,y);typeof r==='number'&&r!==r&&domErr();return r}
       case 12:case 13:return map(y,yi=>g2(x,yi))
       case 21:case 31:return map(x,xi=>g2(xi,y))
-      case 23:        const xi=x.a[0];return map(y,yi=>g2(xi,yi))
-      case 32:case 22:const yi=y.a[0];return map(x,xi=>g2(xi,yi))
-      case 33:        {x.s.length!==y.s.length&&rnkErr();x.s!=''+y.s&&lenErr()
-                       const n=x.a.length,r=Array(n)
-                       for(let i=0;i<n;i++)r[i]=g2(x.a[i],y.a[i])
-                       return A(r,x.s)}
-      default:        asrt(0)
+      case 22:return A([g2(x.a[0],y.a[0])],x.s.length>y.s.length?x.s:y.s) // (1 1⍴2)+1 1 1⍴3←→1 1 1⍴5
+      case 23:{const xi=x.a[0];return map(y,yi=>g2(xi,yi))}
+      case 32:{const yi=y.a[0];return map(x,xi=>g2(xi,yi))}
+      case 33:{x.s.length!==y.s.length&&rnkErr();x.s!=''+y.s&&lenErr()
+               const n=x.a.length,r=Array(n);for(let i=0;i<n;i++)r[i]=g2(x.a[i],y.a[i]);return A(r,x.s)}
     }
   }
   return(y,x)=>{asrt(y.isA);asrt(!x||x.isA);return(x?g2:g1)(y,x)}
@@ -370,7 +337,7 @@ const voc={}
 ,numApprox=(x,y)=>x===y||Math.abs(x-y)<1e-11
 ,approx=(x,y)=>{ // like match(), but imprecision-tolerant
   if(x.isA){
-    if(!(y.isA))return 0
+    if(!y.isA)return 0
     if(x.s.length!==y.s.length)return 0
     if(x.s!=''+y.s)return 0
     let r=1,n=x.a.length;for(let i=0;i<n;i++)r&=approx(x.a[i],y.a[i])
@@ -522,7 +489,7 @@ voc['\\']=adv((y,x,axis)=>{
     for(let j=0;j<a.length;j++){isInt(a[j],0,2)||domErr();b.push(a[j]>0?i++:null)}
     i===y.s[axis]||lenErr()
     let data=[],xd=strideForShape(y.s)
-    if(shape[axis]&&!empty(y)){
+    if(shape[axis]&&y.a.length){
       let filler=getPrototype(y),p=0,indices=repeat([0],shape.length)
       while(1){
         data.push(b[indices[axis]]==null?filler:y.a[p+b[indices[axis]]*xd[axis]])
@@ -659,7 +626,7 @@ voc[',']=(y,x,axis)=>{
   let stride=Array(s.length);stride[s.length-1]=1
   for(let i=s.length-1;i>0;i--)stride[i-1]=stride[i]*s[i]
   let d=stride;if(!isInt(axis)){d=stride.slice(0);d.splice(Math.ceil(axis),1)}
-  if(!empty(x)){ // p:pointer in result, q:pointer in x.a
+  if(x.a.length){ // p:pointer in result, q:pointer in x.a
     let p=0,q=0,i=new Int32Array(x.s.length),xd=strideForShape(x.s)
     while(1){
       r[p]=x.a[q]
@@ -668,7 +635,7 @@ voc[',']=(y,x,axis)=>{
       q+=xd[a];p+=d[a];i[a]++
     }
   }
-  if(!empty(y)){ // p:pointer in result, q:pointer in y.a
+  if(y.a.length){ // p:pointer in result, q:pointer in y.a
     let p=isInt(axis)?stride[axis]*x.s[axis]:stride[Math.ceil(axis)],q=0,i=new Int32Array(y.s.length),yd=strideForShape(y.s)
     while(1){
       r[p]=y.a[q]
@@ -850,11 +817,11 @@ voc['¨']=adv((f,g)=>{
       const n=y.a.length,r=Array(n)
       for(var i=0;i<n;i++){const u=y.a[i],v=f(u.isA?u:A([u],[]));asrt(v.isA);r[i]=v.s.length?v:unwrap(v)}
       return A(r,y.s)
-    }else if(isSingleton(x)){
+    }else if(x.a.length===1){
       const n=y.a.length,r=Array(n),u=x.a[0].isA?x.a[0]:A([x.a[0]],[])
       for(let i=0;i<n;i++){const v=y.a[i],w=f(v.isA?v:A([v],[]),u);r[i]=w.s.length?w:unwrap(w)}
       return A(r,y.s)
-    }else if(isSingleton(y)){
+    }else if(y.a.length===1){
       const n=x.a.length,r=Array(n),v=y.a[0].isA?y.a[0]:A([y.a[0]],[])
       for(let i=0;i<n;i++){const u=x.a[i],w=f(v,u.isA?u:A([u],[]));r[i]=w.s.length?w:unwrap(w)}
       return A(r,x.s)
@@ -974,7 +941,7 @@ voc['⍷']=(y,x)=>{
   const r=new Float64Array(y.a.length)
   if(x.s.length>y.s.length)return A(r,y.s)
   if(x.s.length<y.s.length)x=A(x.a,repeat([1],y.s.length-x.s.length).concat(x.s))
-  if(empty(x))return A(r.fill(1),y.s)
+  if(!x.a.length)return A(r.fill(1),y.s)
   const s=new Int32Array(y.s.length) // find shape
   for(let i=0;i<y.s.length;i++){s[i]=y.s[i]-x.s[i]+1;if(s[i]<=0)return A(r,y.s)}
   let d=strideForShape(y.s),i=new Int32Array(s.length),j=new Int32Array(s.length),nk=x.a.length,p=0
@@ -1040,8 +1007,8 @@ const format=a=>{ // as array of strings
   if(t==='string')return[a]
   if(t==='number'){let r=[fmtNum(a)];r.align='right';return r}
   if(t==='function')return['#procedure']
-  if(!(a.isA))return[''+a]
-  if(empty(a))return['']
+  if(!a.isA)return[''+a]
+  if(!a.a.length)return['']
 
   let sa=a.s
   a=toArray(a)
@@ -1148,7 +1115,7 @@ voc['⍁']=conj((f,x)=>{
   if(f.isA){let h=f;f=x;x=h}
   asrt(typeof f==='function')
   asrt(x.isA)
-  isSingleton(x)||rnkErr()
+  x.a.length===1||rnkErr()
   if(x.s.length)x=A.scalar(unwrap(x))
   return withId(x,(y,x,axis)=>f(y,x,axis))
 })
@@ -1376,7 +1343,7 @@ voc['⌽']=(y,x,axis)=>{
     if(!step)return y
     let n=y.s[axis]
     step=(n+step%n)%n // force % to handle negatives properly
-    if(empty(y)||!step)return y
+    if(!y.a.length||!step)return y
     let r=[],d=strideForShape(y.s),p=0,i=repeat([0],y.s.length)
     while(1){
       r.push(y.a[p+((i[axis]+step)%y.s[axis]-i[axis])*d[axis]])
@@ -1392,7 +1359,7 @@ voc['⌽']=(y,x,axis)=>{
     // ⌽    2 5⍴1 2 3 4 5 6 7 8 9 0 ←→ 2 5⍴5 4 3 2 1 0 9 8 7 6
     // ⌽[0] 2 5⍴1 2 3 4 5 6 7 8 9 0 ←→ 2 5⍴6 7 8 9 0 1 2 3 4 5
     if(axis){
-      isSingleton(axis)||lenErr()
+      axis.a.length===1||lenErr()
       axis=unwrap(axis)
       isInt(axis)||domErr()
       0<=axis&&axis<y.s.length||idxErr()
@@ -1442,7 +1409,7 @@ voc['/']=adv((y,x,axis)=>{
         rShape=rShape.slice(0);rShape.splice(axis,1)
       }
 
-      if(empty(y)){
+      if(!y.a.length){
         let z=f.identity;z!=null||domErr();asrt(!z.s.length)
         return A(repeat([z.a[0]],prd(rShape)),rShape)
       }
@@ -1511,7 +1478,7 @@ voc['/']=adv((y,x,axis)=>{
     if(n===1)for(let i=0;i<b.length;i++)b[i]=b[i]==null?b[i]:0
 
     let data=[],d=strideForShape(y.s)
-    if(shape[axis]&&!empty(y)){
+    if(shape[axis]&&y.a.length){
       let filler=getPrototype(y),p=0,indices=repeat([0],shape.length)
       while(1){
         data.push(b[indices[axis]]==null?filler:y.a[p+b[indices[axis]]*d[axis]])
@@ -1614,7 +1581,7 @@ voc._substitute=args=>{
     axes=[];for(let i=0;i<a.length;i++)a.push(i)
   }
   let subs=voc['⌷'](voc['⍳'](A(y.s)),x,A(axes))
-  if(isSingleton(value))value=A(repeat([value],subs.a.length),subs.s)
+  if(value.a.length===1)value=A(repeat([value],subs.a.length),subs.s)
   let data=toArray(y),stride=strideForShape(y.s)
   subs.s.length!==value.s.length&&rnkErr();''+subs.s!=''+value.s&&lenErr()
   const ni=subs.a.length
@@ -1666,7 +1633,7 @@ const take=(x,y)=>{
 }
 
 // ↑(1 2 3)(4 5 6)←→1 2 3 ⍙ ↑(1 2)(3 4 5)←→1 2 ⍙ ↑'ab'←→'a' ⍙ ↑123←→123 ⍙ ↑⍬←→0
-const first=x=>{let y=empty(x)?getPrototype(x):x.a[0];return y.isA?y:A([y],[])}
+const first=x=>{let y=x.a.length?x.a[0]:getPrototype(x);return y.isA?y:A([y],[])}
 
 voc['⍉']=(y,x)=>{
   let a
@@ -1702,11 +1669,10 @@ voc['⍉']=(y,x)=>{
 
 voc['⍠']=conj((f,g)=>(y,x,axis)=>(x?f:g)(y,x,axis)) // ({1}⍠{2})0←→1 ⍙ 0({1}⍠{2})0←→2
 const NOUN=1,VERB=2,ADV=3,CONJ=4
-,exec=(s,o)=>{ // s:APL code, o:options
-  o=o||{}
+,exec=(s,o={})=>{ // s:APL code, o:options
   let ast=parse(s,o),code=compileAST(ast,o),env=[prelude.env[0].slice(0)]
   for(let k in ast.vars)env[0][ast.vars[k].slot]=o.ctx[k]
-  let r=vm({code:code,env:env})
+  let r=vm(code,env)
   for(let k in ast.vars){
     let v=ast.vars[k],x=o.ctx[k]=env[0][v.slot]
     if(v.ctg===ADV)x.adv=1
@@ -1717,8 +1683,7 @@ const NOUN=1,VERB=2,ADV=3,CONJ=4
 ,repr=x=>x===null||['string','number','boolean'].indexOf(typeof x)>=0?JSON.stringify(x):
          x instanceof Array?'['+x.map(repr).join(',')+']':
          x.repr?x.repr():'{'+Object.keys(x).map(k=>repr(k)+':'+repr(x[k])).join(',')+'}'
-,compileAST=(ast,o)=>{
-  o=o||{}
+,compileAST=(ast,o={})=>{
   ast.scopeDepth=0
   ast.nSlots=prelude?prelude.nSlots:0
   ast.vars=prelude?Object.create(prelude.vars):{}
@@ -1788,13 +1753,14 @@ const NOUN=1,VERB=2,ADV=3,CONJ=4
           }
           return node.ctg||VERB
         case'S':case'N':case'J':case'⍬':return NOUN
-        case'[':
+        case'[':{
           for(let i=2;i<node.length;i++)if(node[i]&&visit(node[i])!==NOUN)err(node,'Indices must be nouns.')
           return visit(node[1])
-        case'.':
+        }
+        case'.':{
           let a=node.slice(1),h=Array(a.length)
           for(let i=a.length-1;i>=0;i--)h[i]=visit(a[i])
-          // Form vectors from sequences of data
+          // strands
           let i=0
           while(i<a.length-1){
             if(h[i]===NOUN&&h[i+1]===NOUN){
@@ -1805,42 +1771,29 @@ const NOUN=1,VERB=2,ADV=3,CONJ=4
               i++
             }
           }
-          // Apply adverbs and conjunctions
-          // ⌽¨⍣3⊢(1 2)3(4 5 6) ←→ (2 1)3(6 5 4)
+          // adverbs and conjunctions
           i=0
-          while(i<a.length){
+          while(i<a.length){ // ⌽¨⍣3⊢(1 2)3(4 5 6)←→(2 1)3(6 5 4)
             if(h[i]===VERB&&i+1<a.length&&h[i+1]===ADV){
-              a.splice(i,2,['A'].concat(a.slice(i,i+2)))
-              h.splice(i,2,VERB)
+              a.splice(i,2,['A'].concat(a.slice(i,i+2)));h.splice(i,2,VERB)
             }else if((h[i]===NOUN||h[i]===VERB||h[i]===CONJ)&&i+2<a.length&&h[i+1]===CONJ&&(h[i+2]===NOUN||h[i+2]===VERB)){
-              // allow conjunction-conjunction-something to accommodate ∘.f syntax
-              a.splice(i,3,['C'].concat(a.slice(i,i+3)))
-              h.splice(i,3,VERB)
+              a.splice(i,3,['C'].concat(a.slice(i,i+3)));h.splice(i,3,VERB) // allow CONJ,CONJ,... for ∘.f
             }else{
               i++
             }
           }
-          // Atops
-          if(h.length===2&&h[0]!==NOUN&&h[1]!==NOUN){a=[['T'].concat(a)];h=[VERB]}
-          // Forks
-          if(h.length>=3&&h.length%2&&h.indexOf(NOUN)<0){a=[['F'].concat(a)];h=[VERB]}
+          if(h.length===2&&h[0]!==NOUN&&h[1]!==NOUN){a=[['T'].concat(a)];h=[VERB]}     // atops
+          if(h.length>=3&&h.length%2&&h.indexOf(NOUN)<0){a=[['F'].concat(a)];h=[VERB]} // forks
           if(h[h.length-1]!==NOUN){
             if(h.length>1)err(a[h.length-1],'Trailing function in expression')
           }else{
-            // Apply monadic and dyadic functions
-            while(h.length>1){
-              if(h.length===2||h[h.length-3]!==NOUN){
-                a.splice(-2,9e9,['M'].concat(a.slice(-2)))
-                h.splice(-2,9e9,NOUN)
-              }else{
-                a.splice(-3,9e9,['D'].concat(a.slice(-3)))
-                h.splice(-3,9e9,NOUN)
-              }
+            while(h.length>1){ // monadic and dyadic verbs
+              if(h.length===2||h[h.length-3]!==NOUN){a.splice(-2,9e9,['M'].concat(a.slice(-2)));h.splice(-2,9e9,NOUN)}
+              else                                  {a.splice(-3,9e9,['D'].concat(a.slice(-3)));h.splice(-3,9e9,NOUN)}
             }
           }
-          node.splice(0,9e9,a[0])
-          extend(node,a[0])
-          return h[0]
+          node.splice(0,9e9,a[0]);extend(node,a[0]);return h[0]
+        }
       }
       asrt(0)
     }
@@ -1865,8 +1818,7 @@ const NOUN=1,VERB=2,ADV=3,CONJ=4
           rhsCtg===NOUN||err(node,'Indexed assignment can be used only for nouns.')
           visitLHS(node[1],rhsCtg);for(let i=2;i<node.length;i++)node[i]&&visit(node[i])
           break
-        default:
-          err(node,'Invalid LHS node type: '+JSON.stringify(node[0]))
+        default:asrt(0)
       }
       return rhsCtg
     }
@@ -1875,19 +1827,12 @@ const NOUN=1,VERB=2,ADV=3,CONJ=4
   const render=node=>{
     switch(node[0]){
       case'B':
-        if(node.length===1){
-          // {}0 ←→ ⍬
-          return[LDC,A.zilde,RET]
-        }else{
-          let a=[];for(let i=1;i<node.length;i++){a.push.apply(a,render(node[i]));a.push(POP)}
-          a[a.length-1]=RET
-          return a
-        }
+        if(node.length===1)return[LDC,A.zilde,RET] // {}0 ←→ ⍬
+        let a=[];for(let i=1;i<node.length;i++){a.push.apply(a,render(node[i]));a.push(POP)}
+        a[a.length-1]=RET
+        return a
       case':':{let x=render(node[1]),y=render(node[2]);return x.concat(JEQ,y.length+2,POP,y,RET)}
-      case'←':
-        // A←5     ←→ 5
-        // A×A←2 5 ←→ 4 25
-        return render(node[2]).concat(renderLHS(node[1]))
+      case'←':return render(node[2]).concat(renderLHS(node[1])) // a←5←→5 ⍙ a×a←2 5←→4 25
       case'X':{
         // r←3 ⋄ get_c←{2×○r} ⋄ get_S←{○r*2} ⋄ before←.01×⌊100×r c S ⋄ r←r+1 ⋄ after←.01×⌊100×r c S ⋄ before after ←→ (3 18.84 28.27)(4 25.13 50.26)
         // {⍺}0 !!! VALUE ERROR
@@ -1897,7 +1842,7 @@ const NOUN=1,VERB=2,ADV=3,CONJ=4
         let s=node[1],vars=node.scopeNode.vars,v
         return s==='⍫'?[CON]:
                (v=vars['get_'+s])&&v.ctg===VERB?[LDC,A.zero,GET,v.scopeDepth,v.slot,MON]:
-                 [GET, vars[s].scopeDepth, vars[s].slot]
+                 [GET,vars[s].scopeDepth,vars[s].slot]
       }
       case'{':{
         // {1 + 1} 1                    ←→ 2
@@ -1928,21 +1873,16 @@ const NOUN=1,VERB=2,ADV=3,CONJ=4
         }
         return node.ctg===VERB?f:[LAM,f.length+1].concat(f,RET)
       }
-      case'S': // ⍴''←→,0 ⍙ ⍴'x'←→⍬ ⍙ ⍴'xx'←→,2 ⍙ ⍴'a''b'←→,3 ⍙ ⍴'''a'←→,2 ⍙ ⍴'a'''←→,2 ⍙ ⍴''''←→⍬ ⍙ 'a !!!
-        {let s=node[1].slice(1,-1).replace(/''/g,"'");return[LDC,A(s,s.length===1?[]:[s.length])]}
-      case'N':
-        // ∞ ←→ ¯
-        // ¯∞ ←→ ¯¯
-        // ¯∞j¯∞ ←→ ¯¯j¯¯
-        // ∞∞ ←→ ¯ ¯
-        // ∞¯ ←→ ¯ ¯
+      case'S':{ // ⍴''←→,0 ⍙ ⍴'x'←→⍬ ⍙ ⍴'xx'←→,2 ⍙ ⍴'a''b'←→,3 ⍙ ⍴'''a'←→,2 ⍙ ⍴'a'''←→,2 ⍙ ⍴''''←→⍬ ⍙ 'a !!!
+        let s=node[1].slice(1,-1).replace(/''/g,"'");return[LDC,A(s,s.length===1?[]:[s.length])]
+      }
+      case'N':{ // ∞←→¯ ⍙ ¯∞←→¯¯ ⍙ ¯∞j¯∞←→¯¯j¯¯ ⍙ ∞∞←→¯ ¯ ⍙ ∞¯←→¯ ¯
         let a=node[1].replace(/[¯∞]/g,'-').split(/j/i).map(x=>x==='-'?Infinity:x==='--'?-Infinity:parseFloat(x))
-        let v=a[1]?new Z(a[0],a[1]):a[0]
-        return[LDC,A([v],[])]
-      case'J':
-        // 123 + «456 + 789» ←→ 1368
-        let f=Function('return(_w,_a)=>('+node[1].replace(/^«|»$/g,'')+')')()
-        return[EMB,(_w,_a)=>aplify(f(_w,_a))]
+        return[LDC,A([a[1]?new Z(a[0],a[1]):a[0]],[])]
+      }
+      case'J':{ // 123 + «456 + 789» ←→ 1368
+        let f=Function('return(_w,_a)=>('+node[1].replace(/^«|»$/g,'')+')')();return[EMB,(_w,_a)=>aplify(f(_w,_a))]
+      }
       case'[':{ // ⍴ x[⍋x←6?40] ←→ ,6
         let v=node.scopeNode.vars._index,axes=[],a=[],c
         for(let i=2;i<node.length;i++)if(c=node[i]){axes.push(i-2);a.push.apply(a,render(c))}
@@ -1979,20 +1919,22 @@ const NOUN=1,VERB=2,ADV=3,CONJ=4
   }
   const renderLHS=node=>{
     switch(node[0]){
-      case'X':
+      case'X':{
         let name=node[1],vars=node.scopeNode.vars,v=vars['set_'+name]
         return v&&v.ctg===VERB?[GET,v.scopeDepth,v.slot,MON]:[SET,vars[name].scopeDepth,vars[name].slot]
-      case'.': // strand assignment
-        // (a b) ← 1 2 ⋄ a           ←→ 1
-        // (a b) ← 1 2 ⋄ b           ←→ 2
-        // (a b) ← +                 !!!
-        // (a b c) ← 3 4 5 ⋄ a b c   ←→ 3 4 5
-        // (a b c) ← 6     ⋄ a b c   ←→ 6 6 6
-        // (a b c) ← 7 8   ⋄ a b c   !!!
-        // ((a b)c)←3(4 5) ⋄ a b c   ←→ 3 3 (4 5)
+      }
+      case'.':{
+        // (a b)←1 2⋄a←→1
+        // (a b)←1 2⋄b←→2
+        // (a b)←+ !!!
+        // (a b c)←3 4 5⋄a b c←→3 4 5
+        // (a b c)←6⋄a b c←→6 6 6
+        // (a b c)←7 8⋄a b c !!!
+        // ((a b)c)←3(4 5)⋄a b c←→3 3(4 5)
         let n=node.length-1,a=[SPL,n]
         for(let i=1;i<node.length;i++){a.push.apply(a,renderLHS(node[i]));a.push(POP)}
         return a
+      }
       case'[':{ // indexed assignment
         let axes=[],a=[],v=node.scopeNode.vars._substitute
         for(let i=2;i<node.length;i++)if(node[i]){axes.push(i-2);a.push.apply(a,render(node[i]))}
@@ -2019,20 +1961,18 @@ let prelude
   const ast=parse(preludeSrc)
   const code=compileAST(ast) //creates ast.vars as a side effect
   const vars={};for(let k in ast.vars)vars[k]=ast.vars[k] //flatten prototype chain
-  prelude={code:code,nSlots:ast.nSlots,vars:vars}
-
+  prelude={code,nSlots:ast.nSlots,vars}
   let env=prelude.env=[[]]
   for(let k in prelude.vars)env[0][prelude.vars[k].slot]=voc[k]
-  vm({code:prelude.code,env:env})
+  vm(prelude.code,env)
   for(let k in prelude.vars)voc[k]=env[0][prelude.vars[k].slot]
 })()
 let apl=this.apl=(s,o)=>apl.ws(o)(s) // s:apl code; o:options
 extend(apl,{format:format,approx:approx,parse:parse,compileAST:compileAST,repr:repr})
-apl.ws=opts=>{
-  opts=opts||{}
+apl.ws=(o={})=>{
   const ctx=Object.create(voc)
-  if(opts.in )ctx['get_⎕']=ctx['get_⍞']=_=>{let s=opts.in();asrt(typeof s==='string');return new A(s)}
-  if(opts.out)ctx['set_⎕']=ctx['set_⍞']=x=>{opts.out(format(x).join('\n')+'\n')}
+  if(o.in )ctx['get_⎕']=ctx['get_⍞']=_=>{let s=o.in();asrt(typeof s==='string');return new A(s)}
+  if(o.out)ctx['set_⎕']=ctx['set_⍞']=x=>{o.out(format(x).join('\n')+'\n')}
   return aplCode=>exec(aplCode,{ctx:ctx})
 }
 const readline=(prompt,f)=>{

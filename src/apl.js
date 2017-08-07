@@ -1,10 +1,10 @@
 let apl=this.apl=(s,o)=>apl.ws(o)(s) // s:apl code; o:options
-extend(apl,{format:format,approx:approx,parse:parse,compileAST:compileAST,repr:repr})
+extend(apl,{format,approx,parse,compile,repr})
 apl.ws=(o={})=>{
   const ctx=Object.create(voc)
   if(o.in )ctx['get_⎕']=ctx['get_⍞']=_=>{let s=o.in();asrt(typeof s==='string');return new A(s)}
   if(o.out)ctx['set_⎕']=ctx['set_⍞']=x=>{o.out(format(x).join('\n')+'\n')}
-  return aplCode=>exec(aplCode,{ctx:ctx})
+  return s=>exec(s,{ctx})
 }
 const readline=(prompt,f)=>{
   ;(readline.requesters=readline.requesters||[]).push(f)
