@@ -1132,42 +1132,20 @@ voc['⊂']=(y,x,axes)=>{
   return A(a,rs)
 }
 
-// ~0 1←→1 0 ⍙ ~2 !!! DOMAIN ERROR
-voc['~']=perv(x=>+!bool(x))
-
 // 0 0 1 1∨0 1 0 1←→0 1 1 1 ⍙ 12∨18←→6 ⍙ 299∨323←→1 ⍙ 12345∨12345←→12345 ⍙ 0∨123←→123 ⍙ 123∨0←→123 ⍙ ∨/⍬←→0
 // ¯12∨18←→6 ⍙ 12∨¯18←→6 ⍙ ¯12∨¯18←→6 ⍙ 135j¯14∨155j34←→5j12 ⍙ 2 3 4∨0j1 1j2 2j3←→1 1 1 ⍙ 2j2 2j4∨5j5 4j4←→1j1 2
 // 1.5∨2.5 !!! DOMAIN ERROR ⍙ 'a'∨1 !!! DOMAIN ERROR ⍙ 1∨'a' !!! DOMAIN ERROR ⍙ 'a'∨'b' !!! DOMAIN ERROR
 voc['∨']=withId(0,perv(null,(y,x)=>Z.isint(x)&&Z.isint(y)?Z.gcd(x,y):domErr()))
 
-// 0 0 1 1∧0 1 0 1                ←→ 0 0 0 1
-// t←3 3⍴1 1 1 0 0 0 1 0 1 ⋄ 1∧t  ←→ 3 3⍴1 1 1 0 0 0 1 0 1
-// t←3 3⍴1 1 1 0 0 0 1 0 1 ⋄ ∧/t  ←→ 1 0 0
-// 12∧18                          ←→ 36
-// 299∧323                        ←→ 96577
-// 12345∧12345                    ←→ 12345
-// 0∧123                          ←→ 0
-// 123∧0                          ←→ 0
-// ∧/⍬                            ←→ 1
-// ¯12∧18                         ←→ ¯36
-// 12∧¯18                         ←→ ¯36
-// ¯12∧¯18                        ←→ 36
-// 1.5∧2.5                        !!! DOMAIN ERROR
-// 'a'∧1                          !!! DOMAIN ERROR
-// 1∧'a'                          !!! DOMAIN ERROR
-// 'a'∧'b'                        !!! DOMAIN ERROR
-// 135j¯14∧155j34                 ←→ 805j¯1448
-// 2 3 4∧0j1 1j2 2j3              ←→ 0j2 3j6 8j12
-// 2j2 2j4∧5j5 4j4                ←→ 10j10 ¯4j12
+// 0 0 1 1∧0 1 0 1←→0 0 0 1 ⍙ 1∧3 3⍴1 1 1 0 0 0 1 0 1←→3 3⍴1 1 1 0 0 0 1 0 1 ⍙ ∧/3 3⍴1 1 1 0 0 0 1 0 1←→1 0 0
+// 12∧18←→36 ⍙ 299∧323←→96577 ⍙ 123∧123←→123 ⍙ 0∧123←→0 ⍙ 123∧0←→0 ⍙ ∧/⍬←→1 ⍙ ¯12∧18←→¯36 ⍙ 12∧¯18←→¯36 ⍙ ¯12∧¯18←→36
+// 1.5∧2.5 !!! DOMAIN ERROR ⍙ 'a'∧1 !!! DOMAIN ERROR ⍙ 1∧'a' !!! DOMAIN ERROR ⍙ 'a'∧'b' !!! DOMAIN ERROR
+// 135j¯14∧155j34←→805j¯1448 ⍙ 2 3 4∧0j1 1j2 2j3←→0j2 3j6 8j12 ⍙ 2j2 2j4∧5j5 4j4←→10j10 ¯4j12
 voc['∧']=withId(1,perv(null,(y,x)=>Z.isint(x)&&Z.isint(y)?Z.lcm(x,y):domErr()))
 
-// 0 0 1 1⍱0 1 0 1 ←→ 1 0 0 0
-// 0⍱2 !!! DOMAIN ERROR
-voc['⍱']=perv(null,real((y,x)=>+!(bool(x)|bool(y))))
-
-// 0 0 1 1⍲0 1 0 1 ←→ 1 1 1 0
-// 0⍲2 !!! DOMAIN ERROR
-voc['⍲']=perv(null,real((y,x)=>+!(bool(x)&bool(y))))
+voc['⍱']=perv(null,real((y,x)=>+!(bool(x)|bool(y)))) // 0 0 1 1⍱0 1 0 1←→1 0 0 0 ⍙ 0⍱2 !!! DOMAIN ERROR
+voc['⍲']=perv(null,real((y,x)=>+!(bool(x)&bool(y)))) // 0 0 1 1⍲0 1 0 1←→1 1 1 0 ⍙ 0⍲2 !!! DOMAIN ERROR
+voc['~']=perv(x=>+!bool(x)) // ~0 1←→1 0 ⍙ ~2 !!! DOMAIN ERROR
 
 // ({⍵+1}⍣5)3 ←→ 8
 // ({⍵+1}⍣0)3 ←→ 3
@@ -1209,7 +1187,7 @@ voc['set_⍞']=x=>{
   return x
 }
 
-voc['get_⎕IO']=_=>A.zero //⎕IO←→0 ⍙ ⎕IO←0←→0 ⍙ ⎕IO←1 !!!
+voc['get_⎕IO']=_=>A.zero // ⎕IO←→0 ⍙ ⎕IO←0←→0 ⍙ ⎕IO←1 !!!
 voc['set_⎕IO']=x=>{if(match(x,A.zero)){return x}else{domErr()}}
 
 voc['⎕DL']=cps((y,x,_,callback)=>{let t0=+new Date;setTimeout(_=>{callback(A([new Date-t0]))},unw(y))})
