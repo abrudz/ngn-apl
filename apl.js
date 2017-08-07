@@ -985,63 +985,41 @@ voc._fork2=(hg,f)=>{let h=hg[0],g=hg[1];asrt(typeof h==='function');return(b,a)=
 // ⍕¯1             ←→ 1 2⍴'¯1'
 // ⍕¯1e¯100J¯2e¯99 ←→ 1 14⍴'¯1e¯100J¯2e¯99'
 voc['⍕']=(y,x)=>{x&&nyiErr();let t=fmt(y);return A(t.join(''),[t.length,t[0].length])}
-const fmt=a=>{ // as array of strings
-  let t=typeof a
-  if(a===null)return['null']
+const fmt=x=>{ // as array of strings
+  const t=typeof x
+  if(x===null)return['null']
   if(t==='undefined')return['undefined']
-  if(t==='string')return[a]
-  if(t==='number'){let r=[fmtNum(a)];r.align='right';return r}
+  if(t==='string')return[x]
+  if(t==='number'){const r=[fmtNum(x)];r.al=1;return r}
   if(t==='function')return['#procedure']
-  if(!a.isA)return[''+a]
-  if(!a.a.length)return['']
-
-  let sa=a.s
-  a=toArray(a)
-  if(!sa.length)return fmt(a[0])
-  let nRows=prd(sa.slice(0,-1))
-  let nCols=sa[sa.length-1]
-  let rows=[];for(let i=0;i<nRows;i++)rows.push({height:0,bottomMargin:0})
-  let cols=[];for(let i=0;i<nCols;i++)cols.push({type:0,width:0,leftMargin:0,rightMargin:0}) // type:0=characters,1=numbers,2=subarrays
-
-  let grid=[]
-  for(let i=0;i<nRows;i++){
-    let r=rows[i],gridRow=[];grid.push(gridRow)
-    for(let j=0;j<nCols;j++){
-      let c=cols[j],x=a[nCols*i+j],box=fmt(x)
-      r.height=Math.max(r.height,box.length)
-      c.width=Math.max(c.width,box[0].length)
-      c.type=Math.max(c.type,typeof x==='string'&&x.length===1?0:x.isA?2:1)
-      gridRow.push(box)
+  if(!x.isA)return[''+x]
+  if(!x.a.length)return['']
+  if(!x.s.length)return fmt(x.a[0])
+  // {t:type(0=chr,1=num,2=nst),w:width,h:height,lm:leftMargin,rm:rightMargin,bm:bottomMargin,al:align(0=lft,1=rgt)}
+  const nr=prd(x.s.slice(0,-1)),nc=x.s[x.s.length-1],rows=Array(nr),cols=Array(nc)
+  for(let i=0;i<nr;i++)rows[i]={h:0,bm:0};for(let i=0;i<nc;i++)cols[i]={t:0,w:0,lm:0,rm:0}
+  let g=Array(nr) // grid
+  for(let i=0;i<nr;i++){
+    const r=rows[i],gr=g[i]=Array(nc) // gr:grid row
+    for(let j=0;j<nc;j++){
+      const c=cols[j],u=x.a[nc*i+j],b=fmt(u) // b:box
+      r.h=Math.max(r.h,b.length);c.w=Math.max(c.w,b[0].length)
+      c.t=Math.max(c.t,typeof u==='string'&&u.length===1?0:u.isA?2:1);gr[j]=b
     }
   }
-
-  let step=1;for(let d=sa.length-2;d>0;d--){step*=sa[d];for(let i=step-1;i<nRows-1;i+=step)rows[i].bottomMargin++}
-
-  for(let j=0;j<nCols;j++){
-    let c=cols[j]
-    if(j<nCols-1&&(c.type!==cols[j+1].type||c.type))c.rightMargin++
-    if(c.type===2){c.leftMargin++;c.rightMargin++}
-  }
-
-  let result=[]
-  for(let i=0;i<nRows;i++){
-    let r=rows[i]
-    for(let j=0;j<nCols;j++){
-      let c=cols[j]
-      let t=grid[i][j]
-      let left =' '.repeat(c.leftMargin +(t.align==='right')*(c.width-t[0].length))
-      let right=' '.repeat(c.rightMargin+(t.align!=='right')*(c.width-t[0].length))
-      for(let k=0;k<t.length;k++)t[k]=left+t[k]+right
-      let bottom=' '.repeat(t[0].length)
-      for(let h=r.height+r.bottomMargin-t.length;h>0;h--)t.push(bottom)
+  let step=1;for(let d=x.s.length-2;d>0;d--){step*=x.s[d];for(let i=step-1;i<nr-1;i+=step)rows[i].bm++}
+  for(let j=0;j<nc;j++){const c=cols[j];if(j<nc-1&&(c.t!==cols[j+1].t||c.t))c.rm++;if(c.t===2){c.lm++;c.rm++}}
+  const a=[] // result
+  for(let i=0;i<nr;i++){
+    const r=rows[i]
+    for(let j=0;j<nc;j++){
+      const c=cols[j],t=g[i][j],d=c.w-t[0].length,lft=' '.repeat(c.lm+!!t.al*d),rgt=' '.repeat(c.rm+ !t.al*d)
+      for(let k=0;k<t.length;k++)t[k]=lft+t[k]+rgt
+      const btm=' '.repeat(t[0].length);for(let h=r.h+r.bm-t.length;h>0;h--)t.push(btm)
     }
-    let nk=r.height+r.bottomMargin
-    for(let k=0;k<nk;k++){
-      let s='';for(let j=0;j<nCols;j++)s+=grid[i][j][k]
-      result.push(s)
-    }
+    const nk=r.h+r.bm;for(let k=0;k<nk;k++){let s='';for(let j=0;j<nc;j++)s+=g[i][j][k];a.push(s)}
   }
-  return result
+  return a
 }
 
 // ⍋13 8 122 4                  ←→ 3 1 0 2
