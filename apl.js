@@ -53,9 +53,8 @@ const prelude=[
 "⍨←{⍵⍶⍵;⍵⍶⍺}" // 17-⍨23←→6 ⍙ 7⍴⍨2 3←→2 3⍴7 ⍙ +⍨2←→4 ⍙ -⍨123←→0
 ].join('\n')
 
-,A=(a,s)=>{s&&asrt(a.length===prd(s));return{isA:1,a:a,s:s||[a.length]}}
+,A=(a,s=[a.length])=>({isA:1,a,s})
 ,strides=s=>{
-  asrt(s.length!=null)
   let r=Array(s.length),u=1
   for(let i=r.length-1;i>=0;i--){asrt(isInt(s[i],0));r[i]=u;u*=s[i]}
   return r
@@ -116,31 +115,26 @@ A.bool=[A.zero=A([0],[]),A.one=A([1],[])]
 A.zld=A([],[0]);A.scal=x=>A([x],[])
 
 const Zify=x=>typeof x==='number'?new Z(x,0):x instanceof Z?x:domErr() // complexify
-const simplify=(re,im)=>im===0?re:new Z(re,im)
+const smplfy=(re,im)=>im===0?re:new Z(re,im)
 function Z(re,im){asrt(typeof re==='number');asrt(typeof im==='number'||im==null)
   if(re!==re||im!==im)domErr('NaN'); this.re=re;this.im=im||0}
 Z.prototype.toString=function(){return fmtNum(this.re)+'J'+fmtNum(this.im)}
 Z.prototype.repr=function(){return'new Z('+repr(this.re)+','+repr(this.im)+')'}
 
-Z.exp=x=>{x=Zify(x);let r=Math.exp(x.re);return simplify(r*Math.cos(x.im),r*Math.sin(x.im))}
+Z.exp=x=>{x=Zify(x);let r=Math.exp(x.re);return smplfy(r*Math.cos(x.im),r*Math.sin(x.im))}
 Z.log=x=>{if(typeof x==='number'&&x>0){return Math.log(x)}
-          else{x=Zify(x);return simplify(Math.log(Math.sqrt(x.re*x.re+x.im*x.im)),Z.dir(x))}}
+          else{x=Zify(x);return smplfy(Math.log(Math.sqrt(x.re*x.re+x.im*x.im)),Z.dir(x))}}
 Z.cjg=x=>new Z(x.re,-x.im)
 Z.neg=x=>new Z(-x.re,-x.im)
-Z.add=(x,y)=>{x=Zify(x);y=Zify(y);return simplify(x.re+y.re,x.im+y.im)}
-Z.sub=(x,y)=>{x=Zify(x);y=Zify(y);return simplify(x.re-y.re,x.im-y.im)}
-Z.mul=(x,y)=>{x=Zify(x);y=Zify(y);return simplify(x.re*y.re-x.im*y.im,x.re*y.im+x.im*y.re)}
+Z.add=(x,y)=>{x=Zify(x);y=Zify(y);return smplfy(x.re+y.re,x.im+y.im)}
+Z.sub=(x,y)=>{x=Zify(x);y=Zify(y);return smplfy(x.re-y.re,x.im-y.im)}
+Z.mul=(x,y)=>{x=Zify(x);y=Zify(y);return smplfy(x.re*y.re-x.im*y.im,x.re*y.im+x.im*y.re)}
 Z.div=(x,y)=>{x=Zify(x);y=Zify(y);const d=y.re*y.re+y.im*y.im
-              return simplify((x.re*y.re+x.im*y.im)/d,(y.re*x.im-y.im*x.re)/d)}
-Z.itimes   =x=>{x=Zify(x);return simplify(-x.im,x.re)}
-Z.negitimes=x=>{x=Zify(x);return simplify(x.im,-x.re)}
+              return smplfy((x.re*y.re+x.im*y.im)/d,(y.re*x.im-y.im*x.re)/d)}
+Z.it =x=>{x=Zify(x);return smplfy(-x.im,x.re)} // i times
+Z.nit=x=>{x=Zify(x);return smplfy(x.im,-x.re)} // -i times
 
-// ¯1 ¯2 ¯3 ¯4*2 ←→ 1 4 9 16
-// 0j1*2 ←→ ¯1
-// 1j2*3 ←→ ¯11j¯2
-// .5j1.5*5 ←→ 9.875j¯0.375
-// 9 4 0 ¯4 ¯9*.5 ←→ 3 2 0 0j2 0j3
-Z.pow=(x,y)=>{
+Z.pow=(x,y)=>{ // ¯3 ¯4*2←→9 16 ⍙ 0j1*2←→¯1 ⍙ 1j2*3←→¯11j¯2 ⍙ .5j1.5*5←→9.875j¯0.375 ⍙ 9 4 0 ¯4 ¯9*.5←→3 2 0 0j2 0j3
   if(typeof x==='number'&&typeof y==='number'&&(x>=0||isInt(y)))return Math.pow(x,y)
   if(typeof y==='number'&&isInt(y,0)){let r=1;while(y){(y&1)&&(r=Z.mul(r,x));x=Z.mul(x,x);y>>=1};return r}
   if(typeof x==='number'&&y===.5)return x<0?new Z(0,Math.sqrt(-x)):Math.sqrt(x)
@@ -149,48 +143,37 @@ Z.pow=(x,y)=>{
 Z.sqrt=x=>Z.pow(x,.5)
 Z.mag=x=>Math.sqrt(x.re*x.re+x.im*x.im) // magnitude
 Z.dir=x=>Math.atan2(x.im,x.re) // direction
-Z.sin=x=>Z.negitimes(Z.sinh(Z.itimes(x)))
-Z.cos=x=>Z.cosh(Z.itimes(x))
-Z.tan=x=>Z.negitimes(Z.tanh(Z.itimes(x)))
+Z.sin=x=>Z.nit(Z.sh(Z.it(x)))
+Z.cos=x=>Z.ch(Z.it(x))
+Z.tg =x=>Z.nit(Z.th(Z.it(x)))
 
-// arcsin x = -i ln(ix + sqrt(1 - x^2))
-// arccos x = -i ln(x + i sqrt(x^2 - 1))
-// arctan x = (i/2) (ln(1-ix) - ln(1+ix))
-Z.asin=x=>{x=Zify(x);return Z.negitimes(Z.log(Z.add(Z.itimes(x),Z.sqrt(Z.sub(1,Z.pow(x,2))))))}
-Z.acos=x=>{
-  x=Zify(x);const r=Z.negitimes(Z.log(Z.add(x,Z.sqrt(Z.sub(Z.pow(x,2),1)))))
-  // TODO look up the algorithm for determining the sign of arccos; the following line is dubious
-  return r instanceof Z&&(r.re<0||(r.re===0&&r.im<0))?Z.neg(r):r
-}
-Z.atan=x=>{
-  x=Zify(x);const ix=Z.itimes(x)
-  return Z.mul(new Z(0,.5),Z.sub(Z.log(Z.sub(1,ix)),Z.log(Z.add(1,ix))))
-}
+// asin(x)=-i ln(ix+sqrt(1-x^2)) ; acos(x)=-i ln(x+i sqrt(x^2-1)) ; atg(x)=(i/2)(ln(1-ix)-ln(1+ix))
+Z.asin=x=>{x=Zify(x);return Z.nit(Z.log(Z.add(Z.it(x),Z.sqrt(Z.sub(1,Z.pow(x,2))))))}
+Z.acos=x=>{x=Zify(x);const r=Z.nit(Z.log(Z.add(x,Z.sqrt(Z.sub(Z.pow(x,2),1)))))
+           return r instanceof Z&&(r.re<0||(r.re===0&&r.im<0))?Z.neg(r):r} // dubious?
+Z.atg=x=>{x=Zify(x);const ix=Z.it(x);return Z.mul(new Z(0,.5),Z.sub(Z.log(Z.sub(1,ix)),Z.log(Z.add(1,ix))))}
+Z.sh=x=>{let a=Z.exp(x);return Z.mul(.5,Z.sub(a,Z.div(1,a)))}
+Z.ch=x=>{let a=Z.exp(x);return Z.mul(.5,Z.add(a,Z.div(1,a)))}
+Z.th=x=>{let a=Z.exp(x),b=Z.div(1,a);return Z.div(Z.sub(a,b),Z.add(a,b))}
 
-Z.sinh=x=>{let a=Z.exp(x);return Z.mul(.5,Z.sub(a,Z.div(1,a)))}
-Z.cosh=x=>{let a=Z.exp(x);return Z.mul(.5,Z.add(a,Z.div(1,a)))}
-Z.tanh=x=>{let a=Z.exp(x),b=Z.div(1,a);return Z.div(Z.sub(a,b),Z.add(a,b))}
-
-// arcsinh x =     i arcsin(-ix)
-// arccosh x = +/- i arccos(x)
-// arctanh x =     i arctan(-ix)
-Z.asinh=x=>Z.itimes(Z.asin(Z.negitimes(x)))
-Z.acosh=x=>{x=Zify(x);let sign=x.im>0||(!x.im&&x.re<=1)?1:-1;return Z.mul(new Z(0,sign),Z.acos(x))}
-Z.atanh=x=>Z.itimes(Z.atan(Z.negitimes(x)))
+// ash(x)=i asin(-ix) ; ach(x)=±i acos(x) ; ath(x)=i atg(-ix)
+Z.ash=x=>Z.it(Z.asin(Z.nit(x)))
+Z.ach=x=>{x=Zify(x);let sign=x.im>0||(!x.im&&x.re<=1)?1:-1;return Z.mul(new Z(0,sign),Z.acos(x))}
+Z.ath=x=>Z.it(Z.atg(Z.nit(x)))
 
 Z.floor=x=>{
   if(typeof x==='number')return Math.floor(x)
   x=Zify(x)
   let re=Math.floor(x.re),im=Math.floor(x.im),r=x.re-re,i=x.im-im
   if(r+i>=1)r>=i?re++:im++
-  return simplify(re,im)
+  return smplfy(re,im)
 }
 Z.ceil=x=>{
   if(typeof x==='number')return Math.ceil(x)
   x=Zify(x)
   let re=Math.ceil(x.re),im=Math.ceil(x.im),r=re-x.re,i=im-x.im
   if(r+i>=1)r>=i?re--:im--
-  return simplify(re,im)
+  return smplfy(re,im)
 }
 
 const iszero=x=>!x||(x instanceof Z&&!x.re&&!x.im)
@@ -200,7 +183,7 @@ Z.isint=x=>typeof x==='number'?x===Math.floor(x):x.re===Math.floor(x.re)&&x.im==
 
 const firstquadrant=x=>{ // rotate into first quadrant
   if(typeof x==='number'){return Math.abs(x)}
-  else{x.re<0&&(x=Z.neg(x));x.im<0&&(x=Z.itimes(x));return x.re?x:x.im}
+  else{x.re<0&&(x=Z.neg(x));x.im<0&&(x=Z.it(x));return x.re?x:x.im}
 }
 Z.gcd=(x,y)=>{
   if(typeof x==='number'&&typeof y==='number'){
@@ -423,14 +406,14 @@ voc['-']=withId(0,perv(
 ))
 voc['×']=withId(1,perv(
   // ×¯2 ¯1 0 1 2 ¯ ¯¯ 3j¯4 ←→ ¯1 ¯1 0 1 1 1 ¯1 .6j¯.8
-  numeric(x=>(x>0)-(x<0),x=>{let d=Math.sqrt(x.re*x.re+x.im*x.im);return simplify(x.re/d,x.im/d)}),
+  numeric(x=>(x>0)-(x<0),x=>{let d=Math.sqrt(x.re*x.re+x.im*x.im);return smplfy(x.re/d,x.im/d)}),
   // 7×8←→56 ⍙ 1j¯2×¯2j3←→4j7 ⍙ 2×1j¯2←→2j¯4 ⍙ ×/⍬←→1
   numeric((y,x)=>x*y,(y,x)=>Z.mul(x,y))
 ))
 voc['÷']=withId(1,perv(
   // ÷2←→.5 ⍙ ÷2j3←→0.15384615384615385J¯0.23076923076923078 ⍙ 0÷0!!!DOMAIN ERROR
   numeric(x=>1/x,
-                x=>{let d=x.re*x.re+x.im*x.im;return simplify(x.re/d,-x.im/d)}),
+                x=>{let d=x.re*x.re+x.im*x.im;return smplfy(x.re/d,-x.im/d)}),
   // 27÷9←→3 ⍙ 4j7÷1j¯2←→¯2j3 ⍙ 0j2÷0j1←→2 ⍙ 5÷2j1←→2j¯1 ⍙ ÷/⍬←→1
   numeric((y,x)=>x/y,(y,x)=>Z.div(x,y))
 ))
@@ -566,16 +549,16 @@ voc['○']=perv(
   (x,i)=>{
     if(typeof x==='number'){
       switch(i){
-        case-12:return Z.exp(simplify(0,x))
-        case-11:return simplify(0,x)
+        case-12:return Z.exp(smplfy(0,x))
+        case-11:return smplfy(0,x)
         case-10:return x
         case -9:return x
-        case -8:return simplify(0,-Math.sqrt(1+x*x))
-        case -7:return Z.atanh(x)
-        case -6:return Z.acosh(x)
-        case -5:return Z.asinh(x)
+        case -8:return smplfy(0,-Math.sqrt(1+x*x))
+        case -7:return Z.ath(x)
+        case -6:return Z.ach(x)
+        case -5:return Z.ash(x)
         case -4:let t=Z.sqrt(x*x-1);return x<-1?-t:t
-        case -3:return Z.atan(x)
+        case -3:return Z.atg(x)
         case -2:return Z.acos(x)
         case -1:return Z.asin(x)
         case  0:return Z.sqrt(1-x*x)
@@ -583,9 +566,9 @@ voc['○']=perv(
         case  2:return Math.cos(x)
         case  3:return Math.tan(x)
         case  4:return Math.sqrt(1+x*x)
-        case  5:{let a=Math.exp(x),b=1/a;return(a-b)/2}     // sinh
-        case  6:{let a=Math.exp(x),b=1/a;return(a+b)/2}     // cosh
-        case  7:{let a=Math.exp(x),b=1/a;return(a-b)/(a+b)} // tanh
+        case  5:{let a=Math.exp(x),b=1/a;return(a-b)/2}     // sh
+        case  6:{let a=Math.exp(x),b=1/a;return(a+b)/2}     // ch
+        case  7:{let a=Math.exp(x),b=1/a;return(a-b)/(a+b)} // th
         case  8:return Z.sqrt(-1-x*x)
         case  9:return x
         case 10:return Math.abs(x)
@@ -595,26 +578,26 @@ voc['○']=perv(
       }
     }else if(x instanceof Z){
       switch(i){
-        case -12:return Z.exp(simplify(-x.im,x.re))
-        case -11:return Z.itimes(x)
+        case -12:return Z.exp(smplfy(-x.im,x.re))
+        case -11:return Z.it(x)
         case -10:return Z.cjg(x)
         case  -9:return x
         case  -8:return Z.neg(Z.sqrt(Z.sub(-1,Z.mul(x,x))))
-        case  -7:return Z.atanh(x)
-        case  -6:return Z.acosh(x)
-        case  -5:return Z.asinh(x)
+        case  -7:return Z.ath(x)
+        case  -6:return Z.ach(x)
+        case  -5:return Z.ash(x)
         case  -4:if(x.re===-1&&!x.im){return 0}else{let a=Z.add(x,1);return Z.mul(a,Z.sqrt(Z.div(Z.sub(x,1),a)))}
-        case  -3:return Z.atan(x)
+        case  -3:return Z.atg(x)
         case  -2:return Z.acos(x)
         case  -1:return Z.asin(x)
         case   0:return Z.sqrt(Z.sub(1,Z.mul(x,x)))
         case   1:return Z.sin(x)
         case   2:return Z.cos(x)
-        case   3:return Z.tan(x)
+        case   3:return Z.tg(x)
         case   4:return Z.sqrt(Z.add(1,Z.mul(x,x)))
-        case   5:return Z.sinh(x)
-        case   6:return Z.cosh(x)
-        case   7:return Z.tanh(x)
+        case   5:return Z.sh(x)
+        case   6:return Z.ch(x)
+        case   7:return Z.th(x)
         case   8:return Z.sqrt(Z.sub(-1,Z.mul(x,x)))
         case   9:return x.re
         case  10:return Z.mag(x)
@@ -685,35 +668,13 @@ voc['>']=withId(0,perv(null,real((y,x)=>+(x> y)))) // >/⍬ ←→ 0
 voc['≤']=withId(1,perv(null,real((y,x)=>+(x<=y)))) // ≤/⍬ ←→ 1
 voc['≥']=withId(1,perv(null,real((y,x)=>+(x>=y)))) // ≥/⍬ ←→ 1
 
-// 3≡3                    ←→ 1
-// 3≡,3                   ←→ 0
-// 4 7.1 8≡4 7.2 8        ←→ 0
-// (3 4⍴⍳12)≡3 4⍴⍳12      ←→ 1
-// (3 4⍴⍳12)≡⊂3 4⍴⍳12     ←→ 0
-// ('ABC' 'DEF')≡'ABCDEF' ←→ 0
-//! (⍳0)≡''               ←→ 0
-// (2 0⍴0)≡(0 2⍴0)        ←→ 0
-//! (0⍴1 2 3)≡0⍴⊂2 2⍴⍳4   ←→ 0
-// ≡4                      ←→ 0
-// ≡⍳4                     ←→ 1
-// ≡2 2⍴⍳4                 ←→ 1
-// ≡'abc'1 2 3(23 55)      ←→ 2
-// ≡'abc'(2 4⍴'abc'2 3'k') ←→ 3
-voc['≡']=(y,x)=>x?A.bool[+match(y,x)]:A([depthOf(y)],[])
+// 3≡3←→1 ⍙ 3≡,3←→0 ⍙ 4 7.1 8≡4 7.2 8←→0 ⍙ (3 4⍴⍳12)≡3 4⍴⍳12←→1 ⍙ (3 4⍴⍳12)≡⊂3 4⍴⍳12←→0 ⍙ ('ab' 'c')≡'abc'←→0
+// (2 0⍴0)≡(0 2⍴0)←→0 ⍙ ≡4←→0 ⍙ ≡⍳4←→1 ⍙ ≡2 2⍴⍳4←→1 ⍙ ≡'abc'1 2 3(23 55)←→2 ⍙ ≡'abc'(2 4⍴'abc'2 3'k')←→3
+voc['≡']=(y,x)=>x?A.bool[+match(y,x)]:A([depth(y)],[])
+const depth=x=>{if(!x.isA||!x.s.length&&!x.a[0].isA)return 0
+                let r=0,n=x.a.length;for(let i=0;i<n;i++)r=Math.max(r,depth(x.a[i]));return r+1}
 
-const depthOf=x=>{
-  if(!x.isA||!x.s.length&&!x.a[0].isA)return 0
-  let r=0,n=x.a.length;for(let i=0;i<n;i++)r=Math.max(r,depthOf(x.a[i]));return r+1
-}
-
-// (÷∘-)2     ←→ ¯0.5
-// 8(÷∘-)2    ←→ ¯4
-// ÷∘-2       ←→ ¯0.5
-// 8÷∘-2      ←→ ¯4
-// ⍴∘⍴2 3⍴⍳6  ←→ ,2
-// 3⍴∘⍴2 3⍴⍳6 ←→ 2 3 2
-// 3∘-1       ←→ 2
-// (-∘2)9     ←→ 7
+//(÷∘-)2←→¯0.5 ⍙ 8(÷∘-)2←→¯4 ⍙ ÷∘-2←→¯0.5 ⍙ 8÷∘-2←→¯4 ⍙ ⍴∘⍴2 3⍴⍳6←→,2 ⍙ 3⍴∘⍴2 3⍴⍳6←→2 3 2 ⍙ 3∘-1←→2 ⍙ (-∘2)9←→7
 voc['∘']=conj((g,f)=>{
   if(typeof f==='function'){if(typeof g==='function'){return(y,x)=>f(g(y),x)}      // f∘g
                             else{return(y,x)=>{x==null||synErr();return f(g,y)}}}  // f∘B
@@ -1129,12 +1090,12 @@ const grade=(y,x,dir)=>{
   }))
 }
 
-// f←{⍺+2×⍵} ⋄ f/⍬           !!! DOMAIN ERROR
-// f←{⍺+2×⍵} ⋄ (f⍁123)/⍬     ←→ 123
-// f←{⍺+2×⍵} ⋄ (456⍁f)/⍬     ←→ 456
-// f←{⍺+2×⍵} ⋄ g←f⍁789 ⋄ f/⍬ !!! DOMAIN ERROR
-// {}⍁1 2                    !!! RANK ERROR
-// ({}⍁(1 1 1⍴123))/⍬        ←→ 123
+// f←{⍺+2×⍵}⋄f/⍬           !!! DOMAIN ERROR
+// f←{⍺+2×⍵}⋄(f⍁123)/⍬     ←→ 123
+// f←{⍺+2×⍵}⋄(456⍁f)/⍬     ←→ 456
+// f←{⍺+2×⍵}⋄g←f⍁789 ⋄ f/⍬ !!! DOMAIN ERROR
+// {}⍁1 2                  !!! RANK ERROR
+// ({}⍁(1 1 1⍴123))/⍬      ←→ 123
 voc['⍁']=conj((f,x)=>{
   if(f.isA){let h=f;f=x;x=h}
   asrt(typeof f==='function')
@@ -1146,31 +1107,18 @@ voc['⍁']=conj((f,x)=>{
 
 voc['⍳']=(y,x)=>{
   if(x){
-    // 2 5 9 14 20⍳9                           ←→ 2
-    // 2 5 9 14 20⍳6                           ←→ 5
-    // 'GORSUCH'⍳'S'                           ←→ 3
-    // 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'⍳'CARP'     ←→ 2 0 17 15
-    // 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'⍳'PORK PIE' ←→ 15 14 17 10 26 15 8 4
-    // 'MON' 'TUES' 'WED'⍳'MON' 'THURS'        ←→ 0 3
-    // 1 3 2 0 3⍳⍳5                            ←→ 3 0 2 1 5
-    // 'CAT' 'DOG' 'MOUSE'⍳'DOG' 'BIRD'        ←→ 1 3
-    // 123⍳123                                 !!! RANK ERROR
-    // (2 2⍴123)⍳123                           !!! RANK ERROR
-    // 123 123⍳123                             ←→ 0
-    // ⍬⍳123 234                               ←→ 0 0
-    // 123 234⍳⍬                               ←→ ⍬
+    // 2 5 9 14 20⍳9←→2 ⍙ 2 5 9 14 20⍳6←→5 ⍙ 'abcde'⍳'d'←→3 ⍙ ⎕a⍳'NGN/'←→13 6 13 26
+    // 'ab' 'cd' 'efg'⍳'cd' 'efh'←→1 3 ⍙ 1 3 2 0 3⍳⍳5←→3 0 2 1 5
+    // 'cat' 'dog' 'mouse'⍳'dog' 'bird'←→1 3
+    // 1⍳1 !!! RANK ERROR ⍙ (1 2⍴3)⍳3 !!! RANK ERROR
+    // 1 1⍳1←→0 ⍙ ⍬⍳1 2←→0 0 ⍙ 1 2⍳⍬←→⍬
     x.s.length===1||rnkErr()
     const m=x.a.length,n=y.a.length,r=new Float64Array(n)
     for(let i=0;i<n;i++){r[i]=x.s[0];for(let j=0;j<m;j++)if(match(y.a[i],x.a[j])){r[i]=j;break}}
     return A(r,y.s)
   }else{
-    // ⍳5     ←→ 0 1 2 3 4
-    // ⍴⍳5    ←→ 1⍴5
-    // ⍳0     ←→ ⍬
-    // ⍴⍳0    ←→ ,0
-    // ⍳2 3 4 ←→ 2 3 4⍴(0 0 0)(0 0 1)(0 0 2)(0 0 3)(0 1 0)(0 1 1)(0 1 2)(0 1 3)(0 2 0)(0 2 1)(0 2 2)(0 2 3)(1 0 0)(1 0 1)(1 0 2)(1 0 3)(1 1 0)(1 1 1)(1 1 2)(1 1 3)(1 2 0)(1 2 1)(1 2 2)(1 2 3)
-    // ⍴⍳2 3 4 ←→ 2 3 4
-    // ⍳¯1 !!! DOMAIN ERROR
+    // ⍳5←→0 1 2 3 4 ⍙ ⍴⍳5←→1⍴5 ⍙ ⍳0←→⍬ ⍙ ⍴⍳0←→,0 ⍙ ⍴⍳2 3 4←→2 3 4 ⍙ ⍳¯1 !!! DOMAIN ERROR
+    // ⍳2 3 4←→2 3 4⍴(0 0 0)(0 0 1)(0 0 2)(0 0 3)(0 1 0)(0 1 1)(0 1 2)(0 1 3)(0 2 0)(0 2 1)(0 2 2)(0 2 3)(1 0 0)(1 0 1)(1 0 2)(1 0 3)(1 1 0)(1 1 1)(1 1 2)(1 1 3)(1 2 0)(1 2 1)(1 2 2)(1 2 3)
     y.s.length<=1||rnkErr()
     let a=toArray(y);for(let i=0;i<a.length;i++)isInt(a[i],0)||domErr()
     let n=prd(a),m=a.length,data,r=new Float64Array(n*m),p=1,q=n
