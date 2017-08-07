@@ -1,5 +1,58 @@
 //usr/bin/env node "$0" $@;exit $?
 "use strict";
+
+const prelude=[
+"⍬←() ⋄ ⎕d←'0123456789' ⋄ ⎕a←'ABCDEFGHIJKLMNOPQRSTUVWXYZ' ⋄ ⎕á←'ÁÂÃÇÈÊËÌÍÎÏÐÒÓÔÕÙÚÛÝþãìðòõ'", // ⍬←→0⍴0 ⍙ ⍴⍬←→,0
+// 'abcd'~'bde'←→'ac' ⍙ (⍳6)~0 2 4←→1 3 5 ⍙ 'ab' 'cd' 'ad'~'a'←→'ab' 'cd' 'ad' ⍙ 'ab' 'cd' 'ad'~'cd'←→'ab' 'cd' 'ad'
+// 'ab' 'cd' 'ad'~⊂'cd'←→'ab' 'ad' ⍙ 'ab' 'cd' 'ad'~'a' 'cd'←→'ab' 'ad' ⍙ (11+⍳6)~2 3⍴1 2 3 14 5 6←→11 12 13 15 16
+// (2 2⍴⍳4)~2 !!! RANK ERROR
+"~←~⍠{(~⍺∊⍵)/⍺}",
+"_atop←{⍶⍹⍵;⍶⍺⍹⍵}", // (-⍟)2 3←→-⍟2 3 ⍙ 2(-*)3←→-2*3
+// ⊃3←→3 ⍙ ⊃(1 2)(3 4)←→2 2⍴1 2 3 4 ⍙ ⊃(1 2)(3 4 5)←→2 3⍴1 2 0 3 4 5 ⍙ ⊃1 2←→1 2 ⍙ ⊃(1 2)3←→2 2⍴1 2 3 0
+// ⊃1(2 3)←→2 2⍴1 0 2 3 ⍙ ⊃2 2⍴1(1 1 2⍴3 4)(5 6)(2 0⍴0)←→2 2 1 2 2⍴1 0 0 0 3 4 0 0 5 6 0 0 0 0 0 0 ⍙ ⊃⍬←→⍬
+// ⊃2 3 0⍴0←→2 3 0⍴0 ⍙ ⍬⊃3←→3 ⍙ 2⊃'pick'←→'c' ⍙ (⊂1 0)⊃2 2⍴'abcd'←→'c' ⍙ 1⊃'foo' 'bar'←→'bar' ⍙ 1 2⊃'foo' 'bar'←→'r'
+// (2 2⍴0)⊃1 2 !!! RANK ERROR ⍙ (⊂2 1⍴0)⊃2 2⍴0 !!! RANK ERROR ⍙ (⊂2 2⍴0)⊃1 2 !!! RANK ERROR
+// (⊂2 2)⊃1 2 !!! RANK ERROR ⍙ (⊂0 2)⊃2 2⍴'ABCD' !!! INDEX ERROR
+"⊃←{0=⍴⍴⍵:↑⍵ ⋄ 0=×/⍴⍵:⍵ ⋄ shape←⍴⍵ ⋄ ⍵←,⍵ ⋄ r←⌈/≢¨shapes←⍴¨⍵ ⋄ max←↑⌈/shapes←(⍴↓(r⍴1)∘,)¨shapes",
+"   (shape,max)⍴↑⍪/shapes{max↑⍺⍴⍵}¨⍵",
+"   ;",
+"   1<⍴⍴⍺:↗'RANK ERROR' ⋄ x←⍵",
+"   {1<⍴⍴⍵:↗'RANK ERROR' ⋄ ⍵←,⍵ ⋄ (⍴⍵)≠⍴⍴x:↗'RANK ERROR' ⋄ ∨/⍵≥⍴x:↗'INDEX ERROR' ⋄ x←⊃⍵⌷x}¨⍺",
+"   x}",
+// a←' this is a test ' ⋄ (a≠' ')⊂a←→'this' 'is' (,'a') 'test'
+"⊂←⊂⍠{1<⍴⍴⍺:↗'RANK ERROR' ⋄ 1≠⍴⍴⍵:↗'NONCE ERROR' ⋄ ⍺←,⍺=0",
+"     keep←~1 1⍷⍺ ⋄ sel←keep/⍺ ⋄ dat←keep/⍵",
+"     {1=1↑sel:{sel←1↓sel ⋄ dat←1↓dat}⍬}⍬",
+"     {1=¯1↑sel:{sel←¯1↓sel ⋄ dat←¯1↓dat}⍬}⍬",
+"     sel←(⍴sel),⍨sel/⍳⍴sel ⋄ drop←0",
+"     sel{∆←drop↓⍺↑⍵ ⋄ drop←⍺+1 ⋄ ∆}¨⊂dat}",
+// ↓1 2 3←→⊂1 2 3 ⍙ ↓(1 2)(3 4)←→⊂(1 2)(3 4) ⍙ ↓2 2⍴⍳4←→(0 1)(2 3)
+// ↓2 3 4⍴⍳24←→2 3⍴(0 1 2 3)(4 5 6 7)(8 9 10 11)(12 13 14 15)(16 17 18 19)(20 21 22 23)
+// 2↓'abc'←→,'c' ⍙ ¯1↓'abc'←→'ab' ⍙ 5↓'abc'←→'' ⍙ 0 ¯2↓3 3⍴⎕a←→3 1⍴'ADG' ⍙ ¯2 ¯1↓3 3⍴⎕a←→1 2⍴'AB' ⍙ 1↓3 3⍴⎕a←→2 3⍴'DEFGHI'
+// ⍬↓3 3⍴⍳9←→3 3⍴⍳9 ⍙ 1 1↓2 3 4⍴⎕a←→1 2 4⍴'QRSTUVWX' ⍙ ¯1 ¯1↓2 3 4⍴⎕a←→1 2 4⍴'ABCDEFGH'
+// 1↓0←→⍬ ⍙ 0 1↓2←→1 0⍴0 ⍙ 1 2↓3←→0 0⍴0 ⍙ ⍬↓0←→0
+"↓←{0=⍴⍴⍵:⍵ ⋄ ⊂[¯1+⍴⍴⍵]⍵",
+"   ;",
+"   1<⍴⍴⍺:↗'RANK ERROR' ⋄ a←,⍺ ⋄ ⍵←{0=⍴⍴⍵:((⍴a)⍴1)⍴⍵ ⋄ ⍵}⍵",
+"   (⍴a)>⍴⍴⍵:↗'RANK ERROR' ⋄ a←(⍴⍴⍵)↑a ⋄ a←((a>0)×0⌊a-⍴⍵)+(a≤0)×0⌈a+⍴⍵ ⋄ a↑⍵}",
+// ⍪2 3 4←→3 1⍴2 3 4 ⍙ ⍪0←→1 1⍴0 ⍙ ⍪2 2⍴2 3 4 5←→2 2⍴2 3 4 5 ⍙ ⍴⍪2 3⍴⍳6←→2 3 ⍙ ⍴⍪2 3 4⍴⍳24←→2 12
+// (2 3⍴⍳6)⍪9←→3 3⍴0 1 2 3 4 5 9 9 9 ⍙ 1⍪2←→1 2
+"⍪←{(≢⍵)(×/1↓⍴⍵)⍴⍵ ; ⍺,[0]⍵}",
+"⊢←{⍵} ⋄ ⊣←{⍵;⍺}", // 1⊢2←→2 ⍙ ⊢3←→3 ⍙ 1⊣2←→1 ⍙ ⊣3←→3
+"≢←{⍬⍴(⍴⍵),1; ~⍺≡⍵}", // ≢0←→1 ⍙ ≢0 0←→2 ⍙ ≢⍬←→0 ⍙ ≢2 3⍴⍳6←→2 ⍙ 2≢2←→0
+",←{(×/⍴⍵)⍴⍵}⍠,", // ,2 13⍴⎕a←→⎕a ⍙ ,1←→1⍴1
+// ⌹2←→.5 ⍙ ⌹2 2⍴4 3 3 2←→2 2⍴¯2 3 3 ¯4 ⍙ ⌹2 2 2⍴⍳8 !!! RANK ERROR ⍙ ⌹2 3⍴⍳6 !!! LENGTH ERROR
+// (4 4⍴12 1 4 10 ¯6 ¯5 4 7 ¯4 9 3 4 ¯2 ¯6 7 7)⌹93 81 93.5 120.5←→.0003898888816687221 ¯.005029566573526544 .04730651764247189 .0705568912859835
+"⌹←{norm←{(⍵+.×+⍵)*0.5}",
+"   QR←{n←(⍴⍵)[1] ⋄ 1≥n:{t←norm,⍵ ⋄ (⍵÷t)(⍪t)}⍵ ⋄ m←⌈n÷2 ⋄ a0←((1↑⍴⍵),m)↑⍵ ⋄ a1←(0,m)↓⍵ ⋄ (q0 r0)←∇a0",
+"       c←(+⍉q0)+.×a1 ⋄ (q1 r1)←∇a1-q0+.×c ⋄ (q0,q1)((r0,c)⍪((⌊n÷2),-n)↑r1)}",
+"   Rinv←{1=n←1↑⍴⍵:÷⍵ ⋄ m←⌈n÷2 ⋄ ai←∇(m,m)↑⍵ ⋄ di←∇(m,m)↓⍵ ⋄ b←(m,m-n)↑⍵ ⋄ bx←-ai+.×b+.×di ⋄ (ai,bx)⍪((⌊n÷2),-n)↑di}",
+"   0=⍴⍴⍵:÷⍵ ⋄ 1=⍴⍴⍵:,∇⍪⍵ ⋄ 2≠⍴⍴⍵:↗'RANK ERROR' ⋄ 0∊≥/⍴⍵:↗'LENGTH ERROR' ⋄ (Q R)←QR ⍵ ⋄ (Rinv R)+.×+⍉Q",
+"   ;",
+"   (⌹⍵)+.×⍺}",
+"⍨←{⍵⍶⍵;⍵⍶⍺}" // 17-⍨23←→6 ⍙ 7⍴⍨2 3←→2 3⍴7 ⍙ +⍨2←→4 ⍙ -⍨123←→0
+].join('\n');
+
 const A=(a,s)=>{s&&asrt(a.length===prd(s));return{isA:1,a:a,s:s||[a.length]}}
 ,strideForShape=s=>{
   asrt(s.length!=null)
@@ -1644,7 +1697,7 @@ voc['⍉']=(y,x)=>{
 voc['⍠']=conj((f,g)=>(y,x,axis)=>(x?f:g)(y,x,axis)) // ({1}⍠{2})0←→1 ⍙ 0({1}⍠{2})0←→2
 const NOUN=1,VRB=2,ADV=3,CNJ=4
 ,exec=(s,o={})=>{
-  const ast=parse(s,o),code=compile(ast,o),env=[prelude.env[0].slice(0)]
+  const ast=parse(s,o),code=compile(ast,o),env=[preludeData.env[0].slice(0)]
   for(let k in ast.v)env[0][ast.v[k].i]=o.ctx[k]
   const r=vm(code,env)
   for(let k in ast.v){const v=ast.v[k],x=o.ctx[k]=env[0][v.i];if(v.g===ADV)x.adv=1;if(v.g===CNJ)x.conj=1}
@@ -1654,7 +1707,7 @@ const NOUN=1,VRB=2,ADV=3,CNJ=4
          x instanceof Array?'['+x.map(repr).join(',')+']':
          x.repr?x.repr():'{'+Object.keys(x).map(k=>repr(k)+':'+repr(x[k])).join(',')+'}'
 ,compile=(ast,o={})=>{
-  ast.d=0;ast.n=prelude?prelude.n:0;ast.v=prelude?Object.create(prelude.v):{} // n:nSlots,d:scopeDepth,v:vars
+  ast.d=0;ast.n=preludeData?preludeData.n:0;ast.v=preludeData?Object.create(preludeData.v):{} // n:nSlots,d:scopeDepth,v:vars
   o.ctx=o.ctx||Object.create(voc)
   for(let key in o.ctx)if(!ast.v[key]){ // VarInfo{g:grammaticalCategory(1=noun,2=vrb,3=adv,4=cnj),i:slot,d:scopeDepth}
     const u=o.ctx[key],varInfo=ast.v[key]={g:NOUN,i:ast.n++,d:ast.d}
@@ -1814,64 +1867,13 @@ const NOUN=1,VRB=2,ADV=3,CNJ=4
   err('Cannot aplify object:'+x)
 }
 
-var preludeSrc=[
-"⍬←() ⋄ ⎕d←'0123456789' ⋄ ⎕a←'ABCDEFGHIJKLMNOPQRSTUVWXYZ' ⋄ ⎕á←'ÁÂÃÇÈÊËÌÍÎÏÐÒÓÔÕÙÚÛÝþãìðòõ'", // ⍬←→0⍴0 ⍙ ⍴⍬←→,0
-// 'abcd'~'bde'←→'ac' ⍙ (⍳6)~0 2 4←→1 3 5 ⍙ 'ab' 'cd' 'ad'~'a'←→'ab' 'cd' 'ad' ⍙ 'ab' 'cd' 'ad'~'cd'←→'ab' 'cd' 'ad'
-// 'ab' 'cd' 'ad'~⊂'cd'←→'ab' 'ad' ⍙ 'ab' 'cd' 'ad'~'a' 'cd'←→'ab' 'ad' ⍙ (11+⍳6)~2 3⍴1 2 3 14 5 6←→11 12 13 15 16
-// (2 2⍴⍳4)~2 !!! RANK ERROR
-"~←~⍠{(~⍺∊⍵)/⍺}",
-"_atop←{⍶⍹⍵;⍶⍺⍹⍵}", // (-⍟)2 3←→-⍟2 3 ⍙ 2(-*)3←→-2*3
-// ⊃3←→3 ⍙ ⊃(1 2)(3 4)←→2 2⍴1 2 3 4 ⍙ ⊃(1 2)(3 4 5)←→2 3⍴1 2 0 3 4 5 ⍙ ⊃1 2←→1 2 ⍙ ⊃(1 2)3←→2 2⍴1 2 3 0
-// ⊃1(2 3)←→2 2⍴1 0 2 3 ⍙ ⊃2 2⍴1(1 1 2⍴3 4)(5 6)(2 0⍴0)←→2 2 1 2 2⍴1 0 0 0 3 4 0 0 5 6 0 0 0 0 0 0 ⍙ ⊃⍬←→⍬
-// ⊃2 3 0⍴0←→2 3 0⍴0 ⍙ ⍬⊃3←→3 ⍙ 2⊃'pick'←→'c' ⍙ (⊂1 0)⊃2 2⍴'abcd'←→'c' ⍙ 1⊃'foo' 'bar'←→'bar' ⍙ 1 2⊃'foo' 'bar'←→'r'
-// (2 2⍴0)⊃1 2 !!! RANK ERROR ⍙ (⊂2 1⍴0)⊃2 2⍴0 !!! RANK ERROR ⍙ (⊂2 2⍴0)⊃1 2 !!! RANK ERROR
-// (⊂2 2)⊃1 2 !!! RANK ERROR ⍙ (⊂0 2)⊃2 2⍴'ABCD' !!! INDEX ERROR
-"⊃←{0=⍴⍴⍵:↑⍵ ⋄ 0=×/⍴⍵:⍵ ⋄ shape←⍴⍵ ⋄ ⍵←,⍵ ⋄ r←⌈/≢¨shapes←⍴¨⍵ ⋄ max←↑⌈/shapes←(⍴↓(r⍴1)∘,)¨shapes",
-"   (shape,max)⍴↑⍪/shapes{max↑⍺⍴⍵}¨⍵",
-"   ;",
-"   1<⍴⍴⍺:↗'RANK ERROR' ⋄ x←⍵",
-"   {1<⍴⍴⍵:↗'RANK ERROR' ⋄ ⍵←,⍵ ⋄ (⍴⍵)≠⍴⍴x:↗'RANK ERROR' ⋄ ∨/⍵≥⍴x:↗'INDEX ERROR' ⋄ x←⊃⍵⌷x}¨⍺",
-"   x}",
-// a←' this is a test ' ⋄ (a≠' ')⊂a←→'this' 'is' (,'a') 'test'
-"⊂←⊂⍠{1<⍴⍴⍺:↗'RANK ERROR' ⋄ 1≠⍴⍴⍵:↗'NONCE ERROR' ⋄ ⍺←,⍺=0",
-"     keep←~1 1⍷⍺ ⋄ sel←keep/⍺ ⋄ dat←keep/⍵",
-"     {1=1↑sel:{sel←1↓sel ⋄ dat←1↓dat}⍬}⍬",
-"     {1=¯1↑sel:{sel←¯1↓sel ⋄ dat←¯1↓dat}⍬}⍬",
-"     sel←(⍴sel),⍨sel/⍳⍴sel ⋄ drop←0",
-"     sel{∆←drop↓⍺↑⍵ ⋄ drop←⍺+1 ⋄ ∆}¨⊂dat}",
-// ↓1 2 3←→⊂1 2 3 ⍙ ↓(1 2)(3 4)←→⊂(1 2)(3 4) ⍙ ↓2 2⍴⍳4←→(0 1)(2 3)
-// ↓2 3 4⍴⍳24←→2 3⍴(0 1 2 3)(4 5 6 7)(8 9 10 11)(12 13 14 15)(16 17 18 19)(20 21 22 23)
-// 2↓'abc'←→,'c' ⍙ ¯1↓'abc'←→'ab' ⍙ 5↓'abc'←→'' ⍙ 0 ¯2↓3 3⍴⎕a←→3 1⍴'ADG' ⍙ ¯2 ¯1↓3 3⍴⎕a←→1 2⍴'AB' ⍙ 1↓3 3⍴⎕a←→2 3⍴'DEFGHI'
-// ⍬↓3 3⍴⍳9←→3 3⍴⍳9 ⍙ 1 1↓2 3 4⍴⎕a←→1 2 4⍴'QRSTUVWX' ⍙ ¯1 ¯1↓2 3 4⍴⎕a←→1 2 4⍴'ABCDEFGH'
-// 1↓0←→⍬ ⍙ 0 1↓2←→1 0⍴0 ⍙ 1 2↓3←→0 0⍴0 ⍙ ⍬↓0←→0
-"↓←{0=⍴⍴⍵:⍵ ⋄ ⊂[¯1+⍴⍴⍵]⍵",
-"   ;",
-"   1<⍴⍴⍺:↗'RANK ERROR' ⋄ a←,⍺ ⋄ ⍵←{0=⍴⍴⍵:((⍴a)⍴1)⍴⍵ ⋄ ⍵}⍵",
-"   (⍴a)>⍴⍴⍵:↗'RANK ERROR' ⋄ a←(⍴⍴⍵)↑a ⋄ a←((a>0)×0⌊a-⍴⍵)+(a≤0)×0⌈a+⍴⍵ ⋄ a↑⍵}",
-// ⍪2 3 4←→3 1⍴2 3 4 ⍙ ⍪0←→1 1⍴0 ⍙ ⍪2 2⍴2 3 4 5←→2 2⍴2 3 4 5 ⍙ ⍴⍪2 3⍴⍳6←→2 3 ⍙ ⍴⍪2 3 4⍴⍳24←→2 12
-// (2 3⍴⍳6)⍪9←→3 3⍴0 1 2 3 4 5 9 9 9 ⍙ 1⍪2←→1 2
-"⍪←{(≢⍵)(×/1↓⍴⍵)⍴⍵ ; ⍺,[0]⍵}",
-"⊢←{⍵} ⋄ ⊣←{⍵;⍺}", // 1⊢2←→2 ⍙ ⊢3←→3 ⍙ 1⊣2←→1 ⍙ ⊣3←→3
-"≢←{⍬⍴(⍴⍵),1; ~⍺≡⍵}", // ≢0←→1 ⍙ ≢0 0←→2 ⍙ ≢⍬←→0 ⍙ ≢2 3⍴⍳6←→2 ⍙ 2≢2←→0
-",←{(×/⍴⍵)⍴⍵}⍠,", // ,2 13⍴⎕a←→⎕a ⍙ ,1←→1⍴1
-// ⌹2←→.5 ⍙ ⌹2 2⍴4 3 3 2←→2 2⍴¯2 3 3 ¯4 ⍙ ⌹2 2 2⍴⍳8 !!! RANK ERROR ⍙ ⌹2 3⍴⍳6 !!! LENGTH ERROR
-// (4 4⍴12 1 4 10 ¯6 ¯5 4 7 ¯4 9 3 4 ¯2 ¯6 7 7)⌹93 81 93.5 120.5←→.0003898888816687221 ¯.005029566573526544 .04730651764247189 .0705568912859835
-"⌹←{norm←{(⍵+.×+⍵)*0.5}",
-"   QR←{n←(⍴⍵)[1] ⋄ 1≥n:{t←norm,⍵ ⋄ (⍵÷t)(⍪t)}⍵ ⋄ m←⌈n÷2 ⋄ a0←((1↑⍴⍵),m)↑⍵ ⋄ a1←(0,m)↓⍵ ⋄ (q0 r0)←∇a0",
-"       c←(+⍉q0)+.×a1 ⋄ (q1 r1)←∇a1-q0+.×c ⋄ (q0,q1)((r0,c)⍪((⌊n÷2),-n)↑r1)}",
-"   Rinv←{1=n←1↑⍴⍵:÷⍵ ⋄ m←⌈n÷2 ⋄ ai←∇(m,m)↑⍵ ⋄ di←∇(m,m)↓⍵ ⋄ b←(m,m-n)↑⍵ ⋄ bx←-ai+.×b+.×di ⋄ (ai,bx)⍪((⌊n÷2),-n)↑di}",
-"   0=⍴⍴⍵:÷⍵ ⋄ 1=⍴⍴⍵:,∇⍪⍵ ⋄ 2≠⍴⍴⍵:↗'RANK ERROR' ⋄ 0∊≥/⍴⍵:↗'LENGTH ERROR' ⋄ (Q R)←QR ⍵ ⋄ (Rinv R)+.×+⍉Q",
-"   ;",
-"   (⌹⍵)+.×⍺}",
-"⍨←{⍵⍶⍵;⍵⍶⍺}" // 17-⍨23←→6 ⍙ 7⍴⍨2 3←→2 3⍴7 ⍙ +⍨2←→4 ⍙ -⍨123←→0
-].join('\n');
-let prelude
+let preludeData
 ;(_=>{
-  const ast=parse(preludeSrc),code=compile(ast),v={},env=[[]];for(let k in ast.v)v[k]=ast.v[k]
-  prelude={code,n:ast.n,v,env}
-  for(let k in prelude.v)env[0][prelude.v[k].i]=voc[k]
-  vm(prelude.code,env)
-  for(let k in prelude.v)voc[k]=env[0][prelude.v[k].i]
+  const ast=parse(prelude),code=compile(ast),v={},env=[[]];for(let k in ast.v)v[k]=ast.v[k]
+  preludeData={n:ast.n,v,env}
+  for(let k in v)env[0][v[k].i]=voc[k]
+  vm(code,env)
+  for(let k in v)voc[k]=env[0][v[k].i]
 })()
 let apl=this.apl=(s,o)=>apl.ws(o)(s) // s:apl code; o:options
 extend(apl,{format,approx,parse,compile,repr})
