@@ -62,19 +62,7 @@ const prelude=[
 ,map=(x,f)=>{const n=x.a.length,r=Array(n);for(let i=0;i<n;i++)r[i]=f(x.a[i]);return A(r,x.s)}
 ,toArray=x=>{const n=x.a.length,r=Array(n);for(let i=0;i<n;i++)r[i]=x.a[i];return r}
 ,toInt=(x,m,M)=>{let r=unw(x);if(r!==r|0||m!=null&&r<m||M!=null&&M<=r)domErr();return r}
-,str=x=>{
-  if(x.s.length>1)rnkErr()
-  if(typeof x.a==='string'){
-    if(!x.s.length)return x.a[0]
-    if(!x.s[0])return''
-    if(x.s.length===1)return x.a.slice(0,x.s[0])
-    return toArray(x).join('')
-  }else{
-    let a=toArray(x)
-    for(let i=0;i<a.length;i++)typeof a[i]!=='string'&&domErr()
-    return a.join('')
-  }
-}
+,str=x=>{x.s.length>1&&rnkErr();for(let i=0;i<x.a.length;i++)typeof x.a[i]!=='string'&&domErr();return x.a.join('')}
 ,isSimple=x=>!x.s.length&&!x.a[0].isA
 ,unw=x=>{x.a.length===1||lenErr();return x.a[0]} // unwrap
 ,getProt=x=>!x.a.length||typeof x.a[0]!=='string'?0:' ' // todo
@@ -1721,7 +1709,7 @@ const NOUN=1,VRB=2,ADV=3,CNJ=4
              else{synErrAt(x)}
              return x.g===VRB?f:[LAM,f.length+1].concat(f,RET)}
     // ⍴''←→,0 ⍙ ⍴'x'←→⍬ ⍙ ⍴'xx'←→,2 ⍙ ⍴'a''b'←→,3 ⍙ ⍴'''a'←→,2 ⍙ ⍴'a'''←→,2 ⍙ ⍴''''←→⍬ ⍙ 'a !!!
-    case'S':{const s=x[1].slice(1,-1).replace(/''/g,"'");return[LDC,A(s,s.length===1?[]:[s.length])]}
+    case'S':{const s=x[1].slice(1,-1).replace(/''/g,"'");return[LDC,A(s.split(''),s.length===1?[]:[s.length])]}
     // ∞←→¯ ⍙ ¯∞←→¯¯ ⍙ ¯∞j¯∞←→¯¯j¯¯ ⍙ ∞∞←→¯ ¯ ⍙ ∞¯←→¯ ¯
     case'N':{const a=x[1].replace(/[¯∞]/g,'-').split(/j/i).map(x=>x==='-'?Infinity:x==='--'?-Infinity:parseFloat(x))
              return[LDC,A([a[1]?new Z(a[0],a[1]):a[0]],[])]}
