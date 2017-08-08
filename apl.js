@@ -54,11 +54,7 @@ const prelude=[
 ].join('\n')
 
 ,A=(a,s=[a.length])=>({isA:1,a,s})
-,strides=s=>{
-  let r=Array(s.length),u=1
-  for(let i=r.length-1;i>=0;i--){asrt(isInt(s[i],0));r[i]=u;u*=s[i]}
-  return r
-}
+,strides=s=>{let r=Array(s.length),u=1;for(let i=r.length-1;i>=0;i--){asrt(isInt(s[i],0));r[i]=u;u*=s[i]};return r}
 ,map=(x,f)=>{const n=x.a.length,r=Array(n);for(let i=0;i<n;i++)r[i]=f(x.a[i]);return A(r,x.s)}
 ,toArray=x=>{const n=x.a.length,r=Array(n);for(let i=0;i<n;i++)r[i]=x.a[i];return r}
 ,toInt=(x,m,M)=>{let r=unw(x);if(r!==r|0||m!=null&&r<m||M!=null&&M<=r)domErr();return r}
