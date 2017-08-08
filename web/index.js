@@ -158,23 +158,31 @@ $($=>{
   })
 
   // Tests
+  const get=(x,f)=>{
+    var xhr=new XMLHttpRequest;xhr.open('get',x)
+    xhr.onreadystatechange=x=>{xhr.readyState===4&&f(xhr.responseText)}
+    xhr.send()
+  }
   const runDocTests=_=>{
-    I.result.classList.remove('error');I.result.classList.textContent=''
-    var nExecuted=0,nFailed=0,t0=+new Date
-    for(var i=0;i<aplTests.length;i++){
-      var x=aplTests[i],code=x[0],mode=x[1],expectation=x[2]
-      nExecuted++
-      var outcome=runDocTest([code,mode,expectation],apl,apl.aprx)
-      if(!outcome.success){
-        nFailed++
-        var s='Test failed: '+JSON.stringify(code)+'\n'+
-              '             '+JSON.stringify(expectation)+'\n'
-        if(outcome.reason)s+=outcome.reason+'\n'
-        if(outcome.error)s+=outcome.error.stack+'\n'
-        $('#result').text($('#result').text()+s)
+    get('../apl.js',x=>{
+      const aplTests=collectTests(x)
+      I.result.classList.remove('error');I.result.classList.textContent=''
+      var ne=0,nf=0,t0=+new Date // ne:number of executed, nf:number of failed
+      for(var i=0;i<aplTests.length;i++){
+        var x=aplTests[i],code=x[0],mode=x[1],expectation=x[2]
+        ne++
+        var o=runDocTest([code,mode,expectation],apl,apl.aprx)
+        if(!o.success){
+          nf++
+          var s='Test failed: '+JSON.stringify(code)+'\n'+
+                '             '+JSON.stringify(expectation)+'\n'
+          if(o.reason)s+=o.reason+'\n'
+          if(o.error)s+=o.error.stack+'\n'
+          $('#result').text($('#result').text()+s)
+        }
       }
-    }
-    I.result.textContent+=(nFailed?nFailed+' out of '+nExecuted+' tests failed':'All '+nExecuted+' tests passed')
-                          +' in '+(new Date-t0)+' ms.\n'
+      I.result.textContent+=(nf?nf+' out of '+ne+' tests failed':'All '+ne+' tests passed')
+                            +' in '+(new Date-t0)+' ms.\n'
+    })
   }
 })

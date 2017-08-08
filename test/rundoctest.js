@@ -1,4 +1,3 @@
-#!/usr/bin/env node
 this.runDocTest=function(cme,exec,aprx){
   var code=cme[0],mode=cme[1],expectation=cme[2],x,y
   if(mode==='←→'){
