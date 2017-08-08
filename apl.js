@@ -310,23 +310,18 @@ const ltr='_A-Za-zªµºÀ-ÖØ-öø-ˁˆ-ˑˠ-ˤˬˮͰ-ʹͶ-ͷͺ-ͽΆΈ-ΊΌΎ-
 }
 const voc={}
 ,perv=(f1,f2)=>{ // pervasive f1:monad, f2:dyad
-  let g1=!f1?nyiErr:x=>{
-    if(x.isA)return map(x,g1)
-    let r=f1(x);typeof r==='number'&&r!==r&&domErr();return r
-  }
-  let g2=!f2?nyiErr:(x,y)=>{
-    switch((!x.isA?10:x.a.length===1?20:30)+(!y.isA?1:y.a.length===1?2:3)){
-      case 11:{let r=f2(x,y);typeof r==='number'&&r!==r&&domErr();return r}
-      case 12:case 13:return map(y,yi=>g2(x,yi))
-      case 21:case 31:return map(x,xi=>g2(xi,y))
-      case 22:return A([g2(x.a[0],y.a[0])],x.s.length>y.s.length?x.s:y.s) // (1 1⍴2)+1 1 1⍴3←→1 1 1⍴5
-      case 23:{const xi=x.a[0];return map(y,yi=>g2(xi,yi))}
-      case 32:{const yi=y.a[0];return map(x,xi=>g2(xi,yi))}
-      case 33:{x.s.length!==y.s.length&&rnkErr();x.s!=''+y.s&&lenErr()
-               const n=x.a.length,r=Array(n);for(let i=0;i<n;i++)r[i]=g2(x.a[i],y.a[i]);return A(r,x.s)}
-    }
-  }
-  return(y,x)=>{asrt(y.isA);asrt(!x||x.isA);return(x?g2:g1)(y,x)}
+  let g1=!f1?nyiErr:x=>{if(x.isA)return map(x,g1);let r=f1(x);typeof r==='number'&&r!==r&&domErr();return r}
+  let g2=!f2?nyiErr:(x,y)=>{switch((!x.isA?10:x.a.length===1?20:30)+(!y.isA?1:y.a.length===1?2:3)){
+    case 11:{let r=f2(x,y);typeof r==='number'&&r!==r&&domErr();return r}
+    case 12:case 13:{const n=y.a.length,r=Array(n);for(let i=0;i<n;i++)r[i]=g2(x,y.a[i]);return A(r,y.s)}
+    case 21:case 31:{const n=x.a.length,r=Array(n);for(let i=0;i<n;i++)r[i]=g2(x.a[i],y);return A(r,x.s)}
+    case 22:return A([g2(x.a[0],y.a[0])],x.s.length>y.s.length?x.s:y.s) // (1 1⍴2)+1 1 1⍴3←→1 1 1⍴5
+    case 23:{const xi=x.a[0],n=y.a.length,r=Array(n);for(let i=0;i<n;i++)r[i]=g2(xi,y.a[i]);return A(r,y.s)}
+    case 32:{const yi=y.a[0],n=x.a.length,r=Array(n);for(let i=0;i<n;i++)r[i]=g2(x.a[i],yi);return A(r,x.s)}
+    case 33:{x.s.length!==y.s.length&&rnkErr();x.s!=''+y.s&&lenErr()
+             const n=x.a.length,r=Array(n);for(let i=0;i<n;i++)r[i]=g2(x.a[i],y.a[i]);return A(r,x.s)}
+  }}
+  return(y,x)=>(x?g2:g1)(y,x)
 }
 ,real=f=>(x,y,axis)=>typeof x!=='number'||y!=null&&typeof y!=='number'?domErr():f(x,y,axis)
 ,numeric=(f,g)=>(x,y,axis)=>
