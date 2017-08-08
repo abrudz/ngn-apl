@@ -172,7 +172,7 @@ $($=>{
         var x=aplTests[i],code=x[0],mode=x[1],expectation=x[2]
         ne++
         var o=runDocTest([code,mode,expectation],apl,apl.aprx)
-        if(!o.success){
+        if(o){
           nf++
           var s='Test failed: '+JSON.stringify(code)+'\n'+
                 '             '+JSON.stringify(expectation)+'\n'
