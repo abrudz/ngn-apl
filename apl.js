@@ -56,7 +56,6 @@ const prelude=[
 ,A=(a,s=[a.length])=>({isA:1,a,s})
 ,strides=s=>{let r=Array(s.length),u=1;for(let i=r.length-1;i>=0;i--){asrt(isInt(s[i],0));r[i]=u;u*=s[i]};return r}
 ,map=(x,f)=>{const n=x.a.length,r=Array(n);for(let i=0;i<n;i++)r[i]=f(x.a[i]);return A(r,x.s)}
-,toArray=x=>{const n=x.a.length,r=Array(n);for(let i=0;i<n;i++)r[i]=x.a[i];return r}
 ,toInt=(x,m,M)=>{let r=unw(x);if(r!==r|0||m!=null&&r<m||M!=null&&M<=r)domErr();return r}
 ,str=x=>{x.s.length>1&&rnkErr();for(let i=0;i<x.a.length;i++)typeof x.a[i]!=='string'&&domErr();return x.a.join('')}
 ,isSimple=x=>!x.s.length&&!x.a[0].isA
@@ -205,7 +204,8 @@ const LDC=1,VEC=2,GET=3,SET=4,MON=5,DYA=6,LAM=7,RET=8,POP=9,SPL=10,JEQ=11,EMB=12
     case LAM:{let size=b[p++];t.push(new Proc(b,p,size,h));p+=size;break}
     case RET:{if(t.length===1)return t[0];[b,p,h]=t.splice(-4,3);break}
     case POP:{t.pop();break}
-    case SPL:{let n=b[p++],a=toArray(t[t.length-1]).reverse();for(let i=0;i<a.length;i++)if(!a[i].isA)a[i]=A([a[i]],[])
+    case SPL:{let n=b[p++],a=t[t.length-1].a.slice(0).reverse()
+              for(let i=0;i<a.length;i++)if(!a[i].isA)a[i]=A([a[i]],[])
               if(a.length===1){a=rpt(a,n)}else if(a.length!==n){lenErr()}
               t.push.apply(t,a);break}
     case JEQ:{const n=b[p++];toInt(t[t.length-1],0,2)||(p+=n);break}
@@ -344,19 +344,10 @@ const voc={}
   if(h==null)return[]
   asrt(h.isA)
   if(h.s.length!==1||h.s[0]!==1)synErr() // [sic]
-  let a=unw(h)
-  if(a.isA){
-    a=toArray(a)
-    for(let i=0;i<a.length;i++){
-      isInt(a[i],0,rank)||domErr()
-      a.indexOf(a[i])<i&&domErr()
-    }
-    return a
-  }else if(isInt(a,0,rank)){
-    return[a]
-  }else{
-    domErr()
-  }
+  let z=unw(h)
+  if(z.isA){for(let i=0;i<z.a.length;i++){isInt(z.a[i],0,rank)||domErr();z.a.indexOf(z.a[i])<i&&domErr()};return z.a}
+  if(isInt(z,0,rank))return[z]
+  domErr()
 }
 ,withId=(x,f)=>{f.identity=x.isA?x:A.scal(x);return f}
 ,adv =f=>{f.adv =1;return f}
@@ -465,8 +456,8 @@ voc['\\']=adv((y,x,h)=>{
     y.s.length||nyiErr()
     h=h?toInt(h,0,y.s.length):y.s.length-1
     x.s.length>1&&rnkErr()
-    let a=toArray(x),b=[],i=0,s=y.s.slice(0);s[h]=a.length
-    for(let j=0;j<a.length;j++){isInt(a[j],0,2)||domErr();b.push(a[j]>0?i++:null)}
+    let b=[],i=0,s=y.s.slice(0);s[h]=x.a.length
+    for(let j=0;j<x.a.length;j++){isInt(x.a[j],0,2)||domErr();b.push(x.a[j]>0?i++:null)}
     i===y.s[h]||lenErr()
     let r=[],xd=strides(y.s)
     if(s[h]&&y.a.length){
@@ -685,10 +676,10 @@ voc['⊥']=(y,x)=>{
   if(!y.s.length)y=A([unw(y)])
   let lastDimA=x.s[x.s.length-1],firstDimB=y.s[0]
   if(lastDimA!==1&&firstDimB!==1&&lastDimA!==firstDimB)lenErr()
-  let a=toArray(x),b=toArray(y),r=[],ni=a.length/lastDimA,nj=b.length/firstDimB
+  let r=[],ni=x.a.length/lastDimA,nj=y.a.length/firstDimB
   for(let i=0;i<ni;i++)for(let j=0;j<nj;j++){
-    let u=a.slice(i*lastDimA,(i+1)*lastDimA)
-    let v=[];for(let l=0;l<firstDimB;l++)v.push(b[j+l*(b.length/firstDimB)])
+    let u=x.a.slice(i*lastDimA,(i+1)*lastDimA)
+    let v=[];for(let l=0;l<firstDimB;l++)v.push(y.a[j+l*(y.a.length/firstDimB)])
     if(u.length===1)u=rpt([u[0]],v.length)
     if(v.length===1)v=rpt([v[0]],u.length)
     let z=v[0];for(let k=1;k<v.length;k++)z=Z.add(Z.mul(z,u[k]),v[k])
@@ -708,14 +699,11 @@ const outerProduct=f=>{
   asrt(typeof f==='function')
   return(y,x)=>{
     x||synErr()
-    let a=toArray(x),b=toArray(y),r=[]
-    for(let i=0;i<a.length;i++)for(let j=0;j<b.length;j++){
-      let u=a[i],v=b[j]
-      u.isA||(u=A.scal(u))
-      v.isA||(v=A.scal(v))
-      let z=f(v,u)
-      z.s.length||(z=unw(z))
-      r.push(z)
+    const m=x.a.length,n=y.a.length,r=Array(m*n)
+    for(let i=0;i<m;i++)for(let j=0;j<n;j++){
+      let u=x.a[i],v=y.a[j];u.isA||(u=A.scal(u));v.isA||(v=A.scal(v))
+      let w=f(v,u);w.s.length||(w=unw(w))
+      r[i*n+j]=w
     }
     return A(r,x.s.concat(y.s))
   }
@@ -776,7 +764,7 @@ voc['⊤']=(y,x)=>{
 
 voc['∊']=(y,x)=>{
   if(x){ // 2 3 4 5 6∊1 2 3 5 8 13 21←→1 1 0 1 0 ⍙ 5∊1 2 3 5 8 13 21←→1
-    let b=toArray(y);return map(x,u=>{for(let i=0;i<b.length;i++)if(match(u,b[i]))return 1;return 0})
+    return map(x,u=>{for(let i=0;i<y.a.length;i++)if(match(u,y.a[i]))return 1;return 0})
   }else{ // ∊17←→,17 ⍙ ⍴∊(1 2 3)'ab'(4 5 6)←→,8 ⍙ ∊2 2⍴(1+2 2⍴⍳4)'ab'(1+2 3⍴⍳6)(7 8)←→1 2 3 4,'ab',1 2 3 4 5 6 7 8
     let r=[];enlist(y,r);return A(r)
   }
@@ -1140,7 +1128,7 @@ voc['⍴']=(y,x)=>{
     // 2 5⍴¨⊂1 2 3←→(1 2)(1 2 3 1 2) ⍙ ⍴1 2 3⍴0←→1 2 3 ⍙ ⍴⍴1 2 3⍴0←→,3 ⍙ 2 3⍴⍳5←→2 3⍴0 1 2 3 4 0
     // ⍬⍴123←→123 ⍙ ⍬⍴⍬←→0 ⍙ 2 3⍴⍬←→2 3⍴0 ⍙ 2 3⍴⍳7←→2 3⍴0 1 2 3 4 5
     x.s.length<=1||rnkErr()
-    let s=toArray(x),n=prd(s),m=y.a.length,a=y.a
+    let s=x.a,n=prd(s),m=y.a.length,a=y.a
     for(let i=0;i<s.length;i++)isInt(s[i],0)||domErr
     if(!m){m=1;a=[0]}
     let r=Array(n);for(let i=0;i<n;i++)r[i]=a[i%m]
@@ -1266,7 +1254,7 @@ voc['/']=adv((y,x,h)=>{
     y.s.length||(y=A([unw(y)]))
     h=h?toInt(h,0,y.s.length):y.s.length-1
     x.s.length<=1||rnkErr()
-    let a=toArray(x),n=y.s[h]
+    let a=x.a.slice(0),n=y.s[h]
     if(a.length===1)a=rpt(a,n)
     if(n!==1&&n!==a.length)lenErr()
 
@@ -1282,11 +1270,7 @@ voc['/']=adv((y,x,h)=>{
       let filler=getProt(y),p=0,ind=rpt([0],s.length)
       while(1){
         r.push(b[ind[h]]==null?filler:y.a[p+b[ind[h]]*d[h]])
-        let i=s.length-1
-        while(i>=0&&ind[i]+1===s[i]){
-          if(i!==h)p-=d[i]*ind[i]
-          ind[i--]=0
-        }
+        let i=s.length-1;while(i>=0&&ind[i]+1===s[i]){if(i!==h)p-=d[i]*ind[i];ind[i--]=0}
         if(i<0)break
         if(i!==h)p+=d[i]
         ind[i]++
@@ -1308,24 +1292,17 @@ voc['/']=adv((y,x,h)=>{
 // a←2 3⍴0⋄a[1;0 2]←1⋄a←→2 3⍴0 0 0 1 0 1
 voc['⌷']=(y,x,h)=>{
   if(typeof y==='function')return(u,v)=>y(u,v,x)
-  x||nyiErr()
-  x.s.length>1&&rnkErr()
-  let a=toArray(x);a.length>y.s.length&&lenErr()
+  x||nyiErr();x.s.length>1&&rnkErr();x.a.length>y.s.length&&lenErr()
   if(h){
-    h=toArray(h)
-    a.length===h.length||lenErr()
+    h=h.a;x.a.length===h.length||lenErr()
     let u=Array(y.s.length)
     for(let i=0;i<h.length;i++){
-      let axis=h[i]
-      isInt(axis)||domErr()
-      0<=axis&&axis<y.s.length||rnkErr()
-      u[axis]&&rnkErr()
-      u[axis]=1
+      let axis=h[i];isInt(axis)||domErr();0<=axis&&axis<y.s.length||rnkErr();u[axis]&&rnkErr();u[axis]=1
     }
   }else{
-    h=[];for(let i=0;i<a.length;i++)h.push(i)
+    h=[];for(let i=0;i<x.a.length;i++)h.push(i)
   }
-  let r=y;for(let i=a.length-1;i>=0;i--)r=indexAtSingleAxis(r,a[i].isA?a[i]:A([a[i]],[]),h[i])
+  let r=y;for(let i=x.a.length-1;i>=0;i--)r=indexAtSingleAxis(r,x.a[i].isA?x.a[i]:A([x.a[i]],[]),h[i])
   return r
 }
 const indexAtSingleAxis=(x,y,ax)=>{ // y:subscript
@@ -1354,7 +1331,7 @@ const indexAtSingleAxis=(x,y,ax)=>{ // y:subscript
 // (⍳3)[]←→⍳3
 // ⍴(3 3⍴⍳9)[⍬;⍬]←→0 0
 // ' X'[(3 3⍴⍳9)∊1 3 6 7 8]←→3 3⍴' X ','X  ','XXX'
-voc._index=(xh,y)=>{const[x,h]=toArray(xh);return voc['⌷'](y,x,h)}
+voc._index=({a},y)=>voc['⌷'](y,a[0],a[1])
 
 // a←⍳5⋄a[1 3]←7 8⋄a←→0 7 2 8 4
 // a←⍳5⋄a[1 3]←7⋄a←→0 7 2 7 4
@@ -1369,25 +1346,21 @@ voc._index=(xh,y)=>{const[x,h]=toArray(xh);return voc['⌷'](y,x,h)}
 // a←3 3⍴⍳9⋄a[⍬;1 2]←789⋄a←→3 3⍴⍳9
 // a←1 2 3⋄a[]←4 5 6⋄a←→4 5 6
 voc._substitute=args=>{
-  let[value,x,y,h]=toArray(args).map(u=>u.isA?u:A([u],[]))
+  let[value,x,y,h]=args.a.map(u=>u.isA?u:A([u],[]))
   x.s.length>1&&rnkErr()
   let a=Array(x.a.length);a.length>y.s.length&&lenErr()
-  if(h){h.s.length>1&&rnkErr();h=toArray(h);a.length===h.length||lenErr()}
+  if(h){h.s.length>1&&rnkErr();h=h.a;a.length===h.length||lenErr()}
   else{h=[];for(let i=0;i<a.length;i++)a.push(i)}
   let subs=voc['⌷'](voc['⍳'](A(y.s)),x,A(h))
   if(value.a.length===1)value=A(rpt([value],subs.a.length),subs.s)
-  let r=toArray(y),stride=strides(y.s)
+  let r=y.a.slice(0),stride=strides(y.s)
   subs.s.length!==value.s.length&&rnkErr();''+subs.s!=''+value.s&&lenErr()
   const ni=subs.a.length
   for(let i=0;i<ni;i++){
-    let u=subs.a[i], v=value.a[i]
+    let u=subs.a[i],v=value.a[i]
     if(v.isA&&!v.s.length)v=unw(v)
-    if(u.isA){
-      let p=0,ua=toArray(u);for(let j=0;j<ua.length;j++)p+=ua[j]*stride[j]
-      r[p]=v
-    }else{
-      r[u]=v
-    }
+    if(u.isA){let p=0;for(let j=0;j<u.a.length;j++)p+=u.a[j]*stride[j]; r[p]=v}
+    else{r[u]=v}
   }
   return A(r,y.s)
 }
@@ -1402,15 +1375,15 @@ voc['↑']=(y,x)=>x?take(y,x):first(y)
 const take=(x,y)=>{
   y.s.length<=1||rnkErr()
   if(!x.s.length)x=A([unw(x)],y.s.length?rpt([1],y.s[0]):[1])
-  let a=toArray(y);a.length<=x.s.length||rnkErr()
-  for(let i=0;i<a.length;i++)typeof a[i]==='number'&&a[i]===Math.floor(a[i])||domErr()
-  let s=x.s.slice(0);for(let i=0;i<a.length;i++)s[i]=Math.abs(a[i])
+  y.a.length<=x.s.length||rnkErr()
+  for(let i=0;i<y.a.length;i++)typeof y.a[i]==='number'&&y.a[i]===Math.floor(y.a[i])||domErr()
+  let s=x.s.slice(0);for(let i=0;i<y.a.length;i++)s[i]=Math.abs(y.a[i])
   let d=Array(s.length);d[d.length-1]=1
   for(let i=d.length-1;i>0;i--)d[i-1]=d[i]*s[i]
   let r=rpt([getProt(x)],prd(s))
   let cs=s.slice(0),p=0,q=0,xd=strides(x.s) // cs:shape to copy
-  for(let i=0;i<a.length;i++){
-    let u=a[i];cs[i]=Math.min(x.s[i],Math.abs(u))
+  for(let i=0;i<y.a.length;i++){
+    let u=y.a[i];cs[i]=Math.min(x.s[i],Math.abs(u))
     if(u<0){if(u<-x.s[i]){q-=(u+x.s[i])*d[i]}else{p+=(u+x.s[i])*xd[i]}}
   }
   if(prd(cs)){
@@ -1438,7 +1411,7 @@ voc['⍉']=(y,x)=>{
     x.s.length<=1||rnkErr()
     x.s.length||(x=A([unw(x)]))
     x.s[0]===y.s.length||lenErr()
-    a=toArray(x)
+    a=x.a
   }else{
     // ⍉⍬←→⍬ ⍙ ⍉''←→'' ⍙ ⍉⍳3←→0 1 2 ⍙ ⍉2 3⍴⍳6←→3 2⍴0 3 1 4 2 5 ⍙ ⍉2 3 4⍴⎕a←→4 3 2⍴'AMEQIUBNFRJVCOGSKWDPHTLX'
     a=[];for(let i=y.s.length-1;i>=0;i--)a.push(i)
