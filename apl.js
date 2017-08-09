@@ -1,5 +1,5 @@
 //usr/bin/env node "$0" $@;exit $?
-"use strict";
+'use strict'
 
 const prelude=[
 "⍬←() ⋄ ⎕d←'0123456789' ⋄ ⎕a←'ABCDEFGHIJKLMNOPQRSTUVWXYZ' ⋄ ⎕á←'ÁÂÃÇÈÊËÌÍÎÏÐÒÓÔÕÙÚÛÝþãìðòõ'", // ⍬←→0⍴0 ⍙ ⍴⍬←→,0
@@ -77,22 +77,21 @@ const prelude=[
   for(let i=0;i<x.length;i++)if(x[i]!==y[i])return 0
   return 1
 }
-,err=(name,m='',o)=>{
+,err=(s,o)=>{
   if(o&&o.aplCode&&o.offset!=null){
     let a=o.aplCode.slice(0,o.offset).split('\n')
     let l=a.length,c=1+(a[a.length-1]||'').length // line and column
-    m+='\n'+(o.file||'-')+':'+l+':'+c+o.aplCode.split('\n')[l-1]+'_'.repeat(c-1)+'^'
+    s+='\n'+(o.file||'-')+':'+l+':'+c+o.aplCode.split('\n')[l-1]+'_'.repeat(c-1)+'^'
   }
-  let e=Error(m);e.name=name;for(let k in o)e[k]=o[k]
-  throw e
+  let e=Error(s);e.name=s;for(let k in o)e[k]=o[k];throw e
 }
-,synErr=(m,o)=>err('SYNTAX ERROR',m,o)
-,domErr=(m,o)=>err('DOMAIN ERROR',m,o)
-,lenErr=(m,o)=>err('LENGTH ERROR',m,o)
-,rnkErr=(m,o)=>err(  'RANK ERROR',m,o)
-,idxErr=(m,o)=>err( 'INDEX ERROR',m,o)
-,nyiErr=(m,o)=>err( 'NONCE ERROR',m,o)
-,valErr=(m,o)=>err( 'VALUE ERROR',m,o)
+,synErr=(m,o)=>err('SYNTAX ERROR',o)
+,domErr=(m,o)=>err('DOMAIN ERROR',o)
+,lenErr=(m,o)=>err('LENGTH ERROR',o)
+,rnkErr=(m,o)=>err(  'RANK ERROR',o)
+,idxErr=(m,o)=>err( 'INDEX ERROR',o)
+,nyiErr=(m,o)=>err( 'NONCE ERROR',o)
+,valErr=(m,o)=>err( 'VALUE ERROR',o)
 
 A.bool=[A.zero=A([0],[]),A.one=A([1],[])]
 A.zld=A([],[0]);A.scal=x=>A([x],[])
@@ -100,7 +99,7 @@ A.zld=A([],[0]);A.scal=x=>A([x],[])
 const Zify=x=>typeof x==='number'?new Z(x,0):x instanceof Z?x:domErr() // complexify
 const smplfy=(re,im)=>im===0?re:new Z(re,im)
 function Z(re,im){asrt(typeof re==='number');asrt(typeof im==='number'||im==null)
-  if(re!==re||im!==im)domErr('NaN'); this.re=re;this.im=im||0}
+  if(re!==re||im!==im)domErr(); this.re=re;this.im=im||0}
 Z.prototype.toString=function(){return fmtNum(this.re)+'J'+fmtNum(this.im)}
 Z.prototype.repr=function(){return'new Z('+repr(this.re)+','+repr(this.im)+')'}
 
@@ -232,7 +231,7 @@ const ltr='_A-Za-zªµºÀ-ÖØ-öø-ˁˆ-ˑˠ-ˤˬˮͰ-ʹͶ-ͷͺ-ͽΆΈ-ΊΌΎ-
   while(i<ns){
     let m,t,v,s1=s.slice(i) // m:match object, t:type, v:value, s1:remaining source code
     for(let j=0;j<td.length;j++)if(m=s1.match(td[j][1])){v=m[0];t=td[j][0];t==='.'&&(t=v);break}
-    t||synErr('Unrecognized token',{file:o?o.file:null,o:i,s:s})
+    t||synErr({file:o?o.file:null,o:i,s:s})
     if(t!=='-'){
       if('([{'.includes(t)){stk.push(t)}else if(')]}'.includes(t)){stk.pop()}
       if(t!=='L'||stk[stk.length-1]==='{')tkns.push({t:t,v:v[0]==='⎕'?v.toUpperCase():v,o:i,s:s})
@@ -254,8 +253,8 @@ const ltr='_A-Za-zªµºÀ-ÖØ-öø-ˁˆ-ˑˠ-ˤˬˮͰ-ʹͶ-ͷͺ-ͽΆΈ-ΊΌΎ-
   // '.' expr     a b
   i=1;let tkn=tkns[0] // single-token lookahead
   const cnsm=x=>x.includes(tkn.t)?tkn=tkns[i++]:0 // consume
-  ,dmnd=x=>{tkn.t===x?(tkn=tkns[i++]):prsErr('Expected token of type '+x+' but got '+tkn.t)} // demand
-  ,prsErr=x=>{synErr(x,{file:o.file,offset:tkn.o,aplCode:s})}
+  ,dmnd=x=>{tkn.t===x?(tkn=tkns[i++]):prsErr()} // demand
+  ,prsErr=x=>{synErr({file:o.file,offset:tkn.o,aplCode:s})}
   ,body=_=>{
     let r=['B']
     while(1){
@@ -274,7 +273,7 @@ const ltr='_A-Za-zªµºÀ-ÖØ-öø-ˁˆ-ˑˠ-ˤˬˮͰ-ʹͶ-ͷͺ-ͽΆΈ-ΊΌΎ-
       if(cnsm('NSXJ')){item=[tkn0.t,tkn0.v]}
       else if(cnsm('(')){if(cnsm(')')){item=['⍬']}else{item=expr();dmnd(')')}}
       else if(cnsm('{')){item=['{',body()];while(cnsm(';')){item.push(body())};dmnd('}')}
-      else{prsErr('Encountered unexpected token of type '+tkn.t)}
+      else{prsErr()}
       if(cnsm('[')){
         item=['[',item]
         while(1){
@@ -986,9 +985,7 @@ const grade=(y,x,dir)=>{
 // f←{⍺+2×⍵}⋄g←f⍁789⋄f/⍬ !!! DOMAIN ERROR ⍙ {}⍁1 2 !!! RANK ERROR ⍙ ({}⍁(1 1 1⍴123))/⍬←→123
 voc['⍁']=conj((f,x)=>{
   if(f.isA){let h=f;f=x;x=h}
-  asrt(typeof f==='function')
-  asrt(x.isA)
-  x.a.length===1||rnkErr()
+  asrt(typeof f==='function');asrt(x.isA);x.a.length===1||rnkErr()
   if(x.s.length)x=A.scal(unw(x))
   return withId(x,(y,x,h)=>f(y,x,h))
 })
@@ -1091,7 +1088,7 @@ voc['⎕DL']=cps((y,x,_,cb)=>{let t0=+new Date;setTimeout(_=>{cb(A([new Date-t0]
 
 voc['⎕RE']=(y,x)=>{ // 'b(c+)d'⎕RE'abcd'←→1'bcd'(,'c') ⍙ 'B(c+)d'⎕RE'abcd'←→⍬ ⍙ 'a(b'⎕RE'c' !!! DOMAIN ERROR
   x=str(x),y=str(y)
-  let re;try{re=RegExp(x)}catch(e){domErr(e.toString())}
+  let re;try{re=RegExp(x)}catch(e){domErr()}
   let m=re.exec(y);if(!m)return A.zld
   let r=[m.index];for(let i=0;i<m.length;i++)r.push(A(m[i]||''))
   return A(r)
@@ -1199,23 +1196,20 @@ voc['/']=adv((y,x,h)=>{
       if(!y.s.length)y=A([unw(y)])
       h=axis0?toInt(axis0):y.s.length-1
       0<=h&&h<y.s.length||rnkErr()
-      let n,nwise,bk
-      if(x){nwise=1;n=toInt(x);if(n<0){bk=1;n=-n}}else{n=y.s[h]}
+      let n,w,b // w:isNWise,b:isBackwards
+      if(x){w=1;n=toInt(x);if(n<0){b=1;n=-n}}else{n=y.s[h]}
       let s0=y.s.slice();s0[h]=y.s[h]-n+1
       let s=s0
-      if(nwise){
+      if(w){
         if(!s0[h])return A([],s)
         s0[h]>=0||lenErr()
       }else{
         s=s.slice();s.splice(h,1)
       }
-      if(!y.a.length){
-        let z=f.identity;z!=null||domErr();asrt(!z.s.length)
-        return A(rpt([z.a[0]],prd(s)),s)
-      }
+      if(!y.a.length){let z=f.identity;z!=null||domErr();asrt(!z.s.length);return A(rpt([z.a[0]],prd(s)),s)}
       let r=[],ind=rpt([0],s0.length),p=0,u,d=strides(y.s)
       while(1){
-        if(bk){
+        if(b){
           u=y.a[p];u.isA||(u=A.scal(u))
           for(let i=1;i<n;i++){let v=y.a[p+i*d[h]];v.isA||(v=A.scal(v));u=f(u,v)}
         }else{
@@ -1257,14 +1251,12 @@ voc['/']=adv((y,x,h)=>{
     let a=x.a.slice(),n=y.s[h]
     if(a.length===1)a=rpt(a,n)
     if(n!==1&&n!==a.length)lenErr()
-
     let b=[],s=y.s.slice();s[h]=0
     for(let i=0;i<a.length;i++){
       let u=a[i];isInt(u)||domErr();s[h]+=Math.abs(u)
       let nj=Math.abs(u);for(let j=0;j<nj;j++)b.push(u>0?i:null)
     }
     if(n===1)for(let i=0;i<b.length;i++)b[i]=b[i]==null?b[i]:0
-
     let r=[],d=strides(y.s)
     if(s[h]&&y.a.length){
       let filler=getProt(y),p=0,ind=rpt([0],s.length)
@@ -1402,21 +1394,14 @@ const take=(x,y)=>{
 const first=x=>{let y=x.a.length?x.a[0]:getProt(x);return y.isA?y:A([y],[])}
 
 voc['⍉']=(y,x)=>{
-  let a
-  if(x){
-    // 0⍉1 2←→1 2 ⍙ (2 2⍴⍳4)⍉2 2 2 2⍴⍳3 !!! RANK ERROR
-    // 1 0⍉2 2 2⍴⍳8 !!! LENGTH ERROR ⍙ ¯1⍉1 2 !!! DOMAIN ERROR ⍙ 'a'⍉1 2 !!! DOMAIN ERROR ⍙ 3⍉0 1 !!! RANK ERROR
-    // 2 0 1⍉2 3 4⍴⎕a←→3 4 2⍴'AMBNCODPEQFRGSHTIUJVKWLX' ⍙ 0 0 2⍉2 3 4⍴⍳24 !!! RANK ERROR
-    // 0 0⍉3 3⍴⍳9←→0 4 8 ⍙ 0 0⍉2 3⍴⍳9←→0 4 ⍙ 0 0 0⍉3 3 3⍴⍳27←→0 13 26 ⍙ 0 1 0⍉3 3 3⍴⎕a←→3 3⍴'ADGKNQUXA'
-    x.s.length<=1||rnkErr()
-    x.s.length||(x=A([unw(x)]))
-    x.s[0]===y.s.length||lenErr()
-    a=x.a
-  }else{
-    // ⍉⍬←→⍬ ⍙ ⍉''←→'' ⍙ ⍉⍳3←→0 1 2 ⍙ ⍉2 3⍴⍳6←→3 2⍴0 3 1 4 2 5 ⍙ ⍉2 3 4⍴⎕a←→4 3 2⍴'AMEQIUBNFRJVCOGSKWDPHTLX'
-    a=[];for(let i=y.s.length-1;i>=0;i--)a.push(i)
-  }
-  let s=[],d=[],d0=strides(y.s)
+  let a,s=[],d=[],d0=strides(y.s)
+  // 0⍉1 2←→1 2 ⍙ (2 2⍴⍳4)⍉2 2 2 2⍴⍳3 !!! RANK ERROR
+  // 1 0⍉2 2 2⍴⍳8 !!! LENGTH ERROR ⍙ ¯1⍉1 2 !!! DOMAIN ERROR ⍙ 'a'⍉1 2 !!! DOMAIN ERROR ⍙ 3⍉0 1 !!! RANK ERROR
+  // 2 0 1⍉2 3 4⍴⎕a←→3 4 2⍴'AMBNCODPEQFRGSHTIUJVKWLX' ⍙ 0 0 2⍉2 3 4⍴⍳24 !!! RANK ERROR
+  // 0 0⍉3 3⍴⍳9←→0 4 8 ⍙ 0 0⍉2 3⍴⍳9←→0 4 ⍙ 0 0 0⍉3 3 3⍴⍳27←→0 13 26 ⍙ 0 1 0⍉3 3 3⍴⎕a←→3 3⍴'ADGKNQUXA'
+  if(x){x.s.length<=1||rnkErr();x.s.length||(x=A([unw(x)]));x.s[0]===y.s.length||lenErr();a=x.a}
+  // ⍉⍬←→⍬ ⍙ ⍉''←→'' ⍙ ⍉⍳3←→0 1 2 ⍙ ⍉2 3⍴⍳6←→3 2⍴0 3 1 4 2 5 ⍙ ⍉2 3 4⍴⎕a←→4 3 2⍴'AMEQIUBNFRJVCOGSKWDPHTLX'
+  else{a=new Int32Array(y.s.length);for(let i=0;i<a.length;i++)a[i]=a.length-i-1}
   for(let i=0;i<a.length;i++){
     let x=a[i];isInt(x,0)||domErr();x<y.s.length||rnkErr()
     if(s[x]==null){s[x]=y.s[i];d[x]=d0[i]}
@@ -1434,6 +1419,7 @@ voc['⍉']=(y,x)=>{
 }
 
 voc['⍠']=conj((f,g)=>(y,x,axis)=>(x?f:g)(y,x,axis)) // ({1}⍠{2})0←→1 ⍙ 0({1}⍠{2})0←→2
+
 const NOUN=1,VRB=2,ADV=3,CNJ=4
 ,exec=(s,o={})=>{
   const ast=prs(s,o),code=compile(ast,o),env=[preludeData.env[0].slice()]
@@ -1475,7 +1461,7 @@ const NOUN=1,VRB=2,ADV=3,CNJ=4
         case'X':{
           const s=x[1],v=vars['get_'+s]
           if(v&&v.g===VRB)return NOUN
-          return vars[s]&&vars[s].g||valErr(s,{file:o.file,offset:x.offset,aplCode:o.aplCode}) // x⋄x←0 !!! VALUE ERROR
+          return vars[s]&&vars[s].g||valErr({file:o.file,offset:x.offset,aplCode:o.aplCode}) // x⋄x←0 !!! VALUE ERROR
         }
         case'{':
           for(let i=1;i<x.length;i++){
@@ -1603,7 +1589,7 @@ const NOUN=1,VRB=2,ADV=3,CNJ=4
   if(typeof x==='number')return A.scal(x)
   if(x instanceof Array)return A(x.map(y=>{y=aplify(y);return y.s.length?y:unw(y)}))
   if(x.isA)return x
-  err('Cannot aplify object:'+x)
+  domErr()
 }
 
 let preludeData
