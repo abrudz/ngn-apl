@@ -204,13 +204,13 @@ const LDC=1,VEC=2,GET=3,SET=4,MON=5,DYA=6,LAM=7,RET=8,POP=9,SPL=10,JEQ=11,EMB=12
     case LAM:{let size=b[p++];t.push(new Proc(b,p,size,h));p+=size;break}
     case RET:{if(t.length===1)return t[0];[b,p,h]=t.splice(-4,3);break}
     case POP:{t.pop();break}
-    case SPL:{let n=b[p++],a=t[t.length-1].a.slice(0).reverse()
+    case SPL:{let n=b[p++],a=t[t.length-1].a.slice().reverse()
               for(let i=0;i<a.length;i++)if(!a[i].isA)a[i]=A([a[i]],[])
               if(a.length===1){a=rpt(a,n)}else if(a.length!==n){lenErr()}
               t.push.apply(t,a);break}
     case JEQ:{const n=b[p++];toInt(t[t.length-1],0,2)||(p+=n);break}
     case EMB:{let frm=h[h.length-1];t.push(b[p++](frm[0],frm[2]));break}
-    case CON:{let frm=h[h.length-1],cont={b,h:h.map(x=>x.slice(0)),t:t.slice(0,frm[3]),p:frm[1].p+frm[1].size-1}
+    case CON:{let frm=h[h.length-1],cont={b,h:h.map(x=>x.slice()),t:t.slice(0,frm[3]),p:frm[1].p+frm[1].size-1}
               asrt(b[cont.p]===RET);t.push(r=>{b=cont.b;h=cont.h;t=cont.t;p=cont.p;t.push(r)});break}
   }
 }
@@ -456,7 +456,7 @@ voc['\\']=adv((y,x,h)=>{
     y.s.length||nyiErr()
     h=h?toInt(h,0,y.s.length):y.s.length-1
     x.s.length>1&&rnkErr()
-    let b=[],i=0,s=y.s.slice(0);s[h]=x.a.length
+    let b=[],i=0,s=y.s.slice();s[h]=x.a.length
     for(let j=0;j<x.a.length;j++){isInt(x.a[j],0,2)||domErr();b.push(x.a[j]>0?i++:null)}
     i===y.s[h]||lenErr()
     let r=[],xd=strides(y.s)
@@ -580,19 +580,19 @@ voc[',']=(y,x,h)=>{
   else{h=nAxes-1}
 
   if(!x.s.length&&!y.s.length){return A([unw(x),unw(y)])}
-  else if(!x.s.length){let s=y.s.slice(0);if(isInt(h))s[h]=1;x=A(rpt([unw(x)],prd(s)),s)}
-  else if(!y.s.length){let s=x.s.slice(0);if(isInt(h))s[h]=1;y=A(rpt([unw(y)],prd(s)),s)}
-  else if(x.s.length+1===y.s.length){isInt(h)||rnkErr();let s=x.s.slice(0);s.splice(h,0,1);x=A(x.a,s)}
-  else if(x.s.length===y.s.length+1){isInt(h)||rnkErr();let s=y.s.slice(0);s.splice(h,0,1);y=A(y.a,s)}
+  else if(!x.s.length){let s=y.s.slice();if(isInt(h))s[h]=1;x=A(rpt([unw(x)],prd(s)),s)}
+  else if(!y.s.length){let s=x.s.slice();if(isInt(h))s[h]=1;y=A(rpt([unw(y)],prd(s)),s)}
+  else if(x.s.length+1===y.s.length){isInt(h)||rnkErr();let s=x.s.slice();s.splice(h,0,1);x=A(x.a,s)}
+  else if(x.s.length===y.s.length+1){isInt(h)||rnkErr();let s=y.s.slice();s.splice(h,0,1);y=A(y.a,s)}
   else if(x.s.length!==y.s.length){rnkErr()}
 
   asrt(x.s.length===y.s.length)
   for(let i=0;i<x.s.length;i++)if(i!==h&&x.s[i]!==y.s[i])lenErr()
-  let s=x.s.slice(0);if(isInt(h)){s[h]+=y.s[h]}else{s.splice(Math.ceil(h),0,2)}
+  let s=x.s.slice();if(isInt(h)){s[h]+=y.s[h]}else{s.splice(Math.ceil(h),0,2)}
   let r=Array(prd(s))
   let stride=Array(s.length);stride[s.length-1]=1
   for(let i=s.length-1;i>0;i--)stride[i-1]=stride[i]*s[i]
-  let d=stride;if(!isInt(h)){d=stride.slice(0);d.splice(Math.ceil(h),1)}
+  let d=stride;if(!isInt(h)){d=stride.slice();d.splice(Math.ceil(h),1)}
   if(x.a.length){ // p:pointer in result, q:pointer in x.a
     let p=0,q=0,i=new Int32Array(x.s.length),xd=strides(x.s)
     while(1){
@@ -1201,13 +1201,13 @@ voc['/']=adv((y,x,h)=>{
       0<=h&&h<y.s.length||rnkErr()
       let n,nwise,bk
       if(x){nwise=1;n=toInt(x);if(n<0){bk=1;n=-n}}else{n=y.s[h]}
-      let s0=y.s.slice(0);s0[h]=y.s[h]-n+1
+      let s0=y.s.slice();s0[h]=y.s[h]-n+1
       let s=s0
       if(nwise){
         if(!s0[h])return A([],s)
         s0[h]>=0||lenErr()
       }else{
-        s=s.slice(0);s.splice(h,1)
+        s=s.slice();s.splice(h,1)
       }
       if(!y.a.length){
         let z=f.identity;z!=null||domErr();asrt(!z.s.length)
@@ -1254,11 +1254,11 @@ voc['/']=adv((y,x,h)=>{
     y.s.length||(y=A([unw(y)]))
     h=h?toInt(h,0,y.s.length):y.s.length-1
     x.s.length<=1||rnkErr()
-    let a=x.a.slice(0),n=y.s[h]
+    let a=x.a.slice(),n=y.s[h]
     if(a.length===1)a=rpt(a,n)
     if(n!==1&&n!==a.length)lenErr()
 
-    let b=[],s=y.s.slice(0);s[h]=0
+    let b=[],s=y.s.slice();s[h]=0
     for(let i=0;i<a.length;i++){
       let u=a[i];isInt(u)||domErr();s[h]+=Math.abs(u)
       let nj=Math.abs(u);for(let j=0;j<nj;j++)b.push(u>0?i:null)
@@ -1353,7 +1353,7 @@ voc._substitute=args=>{
   else{h=[];for(let i=0;i<a.length;i++)a.push(i)}
   let subs=voc['⌷'](voc['⍳'](A(y.s)),x,A(h))
   if(value.a.length===1)value=A(rpt([value],subs.a.length),subs.s)
-  let r=y.a.slice(0),stride=strides(y.s)
+  let r=y.a.slice(),stride=strides(y.s)
   subs.s.length!==value.s.length&&rnkErr();''+subs.s!=''+value.s&&lenErr()
   const ni=subs.a.length
   for(let i=0;i<ni;i++){
@@ -1377,11 +1377,11 @@ const take=(x,y)=>{
   if(!x.s.length)x=A([unw(x)],y.s.length?rpt([1],y.s[0]):[1])
   y.a.length<=x.s.length||rnkErr()
   for(let i=0;i<y.a.length;i++)typeof y.a[i]==='number'&&y.a[i]===Math.floor(y.a[i])||domErr()
-  let s=x.s.slice(0);for(let i=0;i<y.a.length;i++)s[i]=Math.abs(y.a[i])
+  let s=x.s.slice();for(let i=0;i<y.a.length;i++)s[i]=Math.abs(y.a[i])
   let d=Array(s.length);d[d.length-1]=1
   for(let i=d.length-1;i>0;i--)d[i-1]=d[i]*s[i]
   let r=rpt([getProt(x)],prd(s))
-  let cs=s.slice(0),p=0,q=0,xd=strides(x.s) // cs:shape to copy
+  let cs=s.slice(),p=0,q=0,xd=strides(x.s) // cs:shape to copy
   for(let i=0;i<y.a.length;i++){
     let u=y.a[i];cs[i]=Math.min(x.s[i],Math.abs(u))
     if(u<0){if(u<-x.s[i]){q-=(u+x.s[i])*d[i]}else{p+=(u+x.s[i])*xd[i]}}
@@ -1436,7 +1436,7 @@ voc['⍉']=(y,x)=>{
 voc['⍠']=conj((f,g)=>(y,x,axis)=>(x?f:g)(y,x,axis)) // ({1}⍠{2})0←→1 ⍙ 0({1}⍠{2})0←→2
 const NOUN=1,VRB=2,ADV=3,CNJ=4
 ,exec=(s,o={})=>{
-  const ast=prs(s,o),code=compile(ast,o),env=[preludeData.env[0].slice(0)]
+  const ast=prs(s,o),code=compile(ast,o),env=[preludeData.env[0].slice()]
   for(let k in ast.v)env[0][ast.v[k].i]=o.ctx[k]
   const r=vm(code,env)
   for(let k in ast.v){const v=ast.v[k],x=o.ctx[k]=env[0][v.i];if(v.g===ADV)x.adv=1;if(v.g===CNJ)x.conj=1}
