@@ -1,4 +1,4 @@
-$($=>{
+document.onready=_=>{
   var a=document.body.querySelectorAll('[id]'),I={};for(var i=0;i<a.length;i++)I[a[i].id]=a[i]
 
   // bookmarkable source code
@@ -8,9 +8,8 @@ $($=>{
     for(var i=0;i<a.length;i++){var b=a[i].split('=');hashParams[b[0]]=unescape(b[1])}
   }
   I.code.value=hashParams.code||'';I.code.focus()
-  $(I.permalink).tipsy({gravity:'e',opacity:1,delayIn:1000}).bind('mouseover focus',_=>{
-    $(this).attr('href','#code='+escape($('#code').val()));return!1
-  })
+  $(I.permalink).tipsy({gravity:'e',opacity:1,delayIn:1000})
+  I.permalink.onmouseover=I.permalink.onfocus=_=>{I.permalink.href='#code='+escape(I.code.value);return!1}
 
   const execute=_=>{
     try{
@@ -23,7 +22,8 @@ $($=>{
     }
   }
 
-  $(I.go).tipsy({gravity:'e',opacity:1,delayIn:1000}).closest('form').submit(_=>{execute();return!1})
+  $(I.go).tipsy({gravity:'e',opacity:1,delayIn:1000})
+  I.go.onclick=_=>{execute();return!1}
   hashParams.run&&I.go.click()
 
   var hSymbolDefs={
@@ -178,11 +178,10 @@ $($=>{
                 '             '+JSON.stringify(expectation)+'\n'
           if(o.reason)s+=o.reason+'\n'
           if(o.error)s+=o.error.stack+'\n'
-          $('#result').text($('#result').text()+s)
+          I.result.textContent+=s
         }
       }
-      I.result.textContent+=(nf?nf+' out of '+ne+' tests failed':'All '+ne+' tests passed')
-                            +' in '+(new Date-t0)+' ms.\n'
+      I.result.textContent+=(nf?nf+' out of '+ne+' tests failed':'All '+ne+' tests passed')+' in '+(new Date-t0)+' ms.\n'
     })
   }
-})
+}
