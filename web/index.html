@@ -1,23 +1,27 @@
 <!DOCTYPE html>
-<html>
-<head>
-<meta charset=UTF-8>
-<title>ngn/apl demo</title>
-<style>@import url(../web/index.css);@import url(../web/keyboard.css);@import url(../web/tipsy.css);</style>
-</head>
-<body>
-<h1><a href=https://github.com/ngn/apl#readme>ngn/apl</a> demo</h1>
-<a id=permalink href=# title='bookmarkable link to the source code below'>#permalink</a>
-<a href=https://github.com/ngn/apl/tree/master/examples target=_blank>examples</a>
-<form><p><textarea id=code></textarea><input id=go type=submit value=⍎ title='Execute code (ctrl-Enter)'></p></form>
+<html><head><meta charset=utf-8><title>ngn/apl</title><style>
+@font-face{font-family:a;src:url(Apl385.woff)format('woff');}
+/* http://www.apl385.com/fonts/index.htm as of 2017-08-10 says:
+"All fonts listed on this page are original artwork by Adrian Smith, and are freely placed into the public domain." */
+body,textarea,input{font-family:a,monospace}
+#logo,#perm{font-weight:bold;font-size:large}
+a{color:#008;text-decoration:none}
+a:hover{text-decoration:underline}
+#lb b{font-weight:normal;padding:1px;cursor:pointer}
+#lb b:hover{color:#fff;background-color:#008}
+#perm{float:right}
+#code{width:100%}
+#go{float:right;width:64px}
+#result{margin-top:16px;white-space:pre}
+#result.err{color:red}
+</style></head><body>
+<a id=perm href=# title='bookmarkable link to the APL code below'>#</a>
+<a id=logo href=https://github.com/ngn/apl#readme title='project home at github'>ngn/apl</a>
+<!--<a href=https://github.com/ngn/apl/tree/master/examples target=_blank>examples</a>-->
+<div id=lb>&nbsp;</div>
+<textarea id=code rows=8 autofocus></textarea>
+<input id=go type=submit value=⍎ title='Execute (Ctrl-Enter)'>
 <div id=result></div>
-<script src=../apl.js                          ></script>
-<script src=jquery.min.js                      ></script>
-<script src=jquery.fieldselection.min.js       ></script>
-<script src=jquery.keyboard.js                 ></script>
-<script src=jquery.keyboard.extension-typing.js></script>
-<script src=jquery.tipsy.js                    ></script>
-<script src=index.js                           ></script>
-<script src=../t.js                            ></script>
+<script src=../apl.js></script><script src=../t.js></script><script src=index.js></script>
 </body>
 </html>
