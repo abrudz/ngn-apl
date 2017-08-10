@@ -78,20 +78,21 @@ const prelude=[
   return 1
 }
 ,err=(s,o)=>{
+  let m
   if(o&&o.aplCode&&o.offset!=null){
     let a=o.aplCode.slice(0,o.offset).split('\n')
     let l=a.length,c=1+(a[a.length-1]||'').length // line and column
-    s+='\n'+(o.file||'-')+':'+l+':'+c+o.aplCode.split('\n')[l-1]+'_'.repeat(c-1)+'^'
+    m='\n'+(o.file||'-')+':'+l+':'+c+o.aplCode.split('\n')[l-1]+'_'.repeat(c-1)+'^'
   }
-  let e=Error(s);e.name=s;for(let k in o)e[k]=o[k];throw e
+  let e=Error(m);e.name=s;for(let k in o)e[k]=o[k];throw e
 }
-,synErr=(m,o)=>err('SYNTAX ERROR',o)
-,domErr=(m,o)=>err('DOMAIN ERROR',o)
-,lenErr=(m,o)=>err('LENGTH ERROR',o)
-,rnkErr=(m,o)=>err(  'RANK ERROR',o)
-,idxErr=(m,o)=>err( 'INDEX ERROR',o)
-,nyiErr=(m,o)=>err( 'NONCE ERROR',o)
-,valErr=(m,o)=>err( 'VALUE ERROR',o)
+,synErr=o=>err('SYNTAX ERROR',o)
+,domErr=o=>err('DOMAIN ERROR',o)
+,lenErr=o=>err('LENGTH ERROR',o)
+,rnkErr=o=>err(  'RANK ERROR',o)
+,idxErr=o=>err( 'INDEX ERROR',o)
+,nyiErr=o=>err( 'NONCE ERROR',o)
+,valErr=o=>err( 'VALUE ERROR',o)
 
 A.bool=[A.zero=A([0],[]),A.one=A([1],[])]
 A.zld=A([],[0]);A.scal=x=>A([x],[])
