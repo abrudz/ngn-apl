@@ -29,16 +29,16 @@ I.code.onkeydown=x=>{
 const hc={'<':'&lt;','&':'&amp;',"'":'&apos;','"':'&quot;'},he=x=>x.replace(/[<&'"]/g,c=>hc[c])
 const tcs='<-←xx×:-÷*o⍟[-⌹oo○ff⌈FF⌈ll⌊LL⌊tt⊥TT⊤-|⊣|-⊢~~≈=/≠<=≤>=≥==≡=-≢vv∨^^∧^~⍲v~⍱^|↑v|↓<<⊂>>⊃[|⌷A|⍋V|⍒ii⍳ee∊e-⍷'+
 'uu∪nn∩/-⌿\\-⍀,-⍪rr⍴pp⍴o|⌽o-⊖o\\⍉..¨~:⍨*:⍣o.∘[\'⍞[]⎕[:⍠[=⌸ot⍎oT⍕<>⋄on⍝aa⍺ww⍵a-⍶w-⍹VV∇--¯88∞0~⍬V~⍫//↗[/⍁'
-const lbs=['←assign','+add;conjugate','-sub;negate','×multiply;signum','÷divide;reciprocal','*power;exp','⍟log;ln',
-'⌹matrix divide;matrix inverse','○circular;pi','!binomial;factorial','?deal;roll','|residue;magnitude',
-'⌈max;ceiling','⌊min;floor','⊥decode','⊤encode','⊣left','⊢right','=equals','≈approx','≠not equals',
-'≤lesser or equal to','>less than','<greater than','≥greater or equal to','≡match','≢not match','∨or',
-'∧and','⍲nand','⍱nor','↑take;mix','↓drop;split','⊂enclose','⊃pick;first','⌷index','⍋grade up',
-'⍒grade down','⍳index of;indices','∊member of','⍷find','∪union;unique','∩intersection','~without;not',
-'/reduce;replicate','\\scan','⌿1st axis reduce;1st axis replicate','⍀1st axis scan',',flatten;catenate',
-'⍪table;1st axis catenate','⍴reshape;shape of','⌽rotate;reverse','⊖1st axis rotate;1st axis reverse',
-'⍉reorder axes;transpose','¨each','⍨commute;selfie','⍣power operator','.inner product',
-'∘compose;outer product','⍞stdin;stdout','⎕"eval\'ed stdin;stdout"','⍠combine monadic-dyadic fns',
+const lbs=['←assign','+conjugate;add','-negate;subtract','×signum;multiply','÷reciprocal;divide','*exp;power','⍟ln;log',
+'⌹matrix inverse;matrix divide','○pi;circular','!factorial;binomial','?roll;deal','|magnitude;residue',
+'⌈ceiling;max','⌊floor;min','⊥decode','⊤encode','⊣left','⊢right','=equals','≈approx','≠not equals',
+'≤lesser or equal to','>less than','<greater than','≥greater or equal to','≡depth;match','≢tally;not match','∨or',
+'∧and','⍲nand','⍱nor','↑mix;take','↓split;drop','⊂enclose','⊃first;pick','⌷index','⍋grade up',
+'⍒grade down','⍳indices;index of','∊flatten;member of','⍷find','∪unique;union','∩intersection','~not;without',
+'/reduce;replicate','\\scan','⌿1st axis reduce;1st axis replicate','⍀1st axis scan',',enlist;catenate',
+'⍪table;1st axis catenate','⍴shape of;reshape','⌽reverse;rotate','⊖1st axis reverse;1st axis rotate',
+'⍉transpose;reorder axes','¨each','⍨selfie;commute','⍣power operator','.inner product',
+'∘compose','⍞stdin;stdout','⎕"eval\'ed stdin;stdout"','⍠combine monadic-dyadic fns',
 '⌸key operator','⍎execute','⍕format','⋄statement separator','⍝comment','⍺left argument','⍵right argument',
 '⍶left operand','⍹right operand','∇recursion','¯negative','∞infinity','⍬empty numeric vector',
 '⍫"return" reified as a function','↗throw','⍁identity element operator']
