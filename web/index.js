@@ -42,7 +42,9 @@ const lbs=['←assign','+add;conjugate','-sub;negate','×multiply;signum','÷div
 '⌸key operator','⍎execute','⍕format','⋄statement separator','⍝comment','⍺left argument','⍵right argument',
 '⍶left operand','⍹right operand','∇recursion','¯negative','∞infinity','⍬empty numeric vector',
 '⍫"return" reified as a function','↗throw','⍁identity element operator']
-const tc={};for(let i=0;i<tcs.length;i+=3)tc[tcs[i]+tcs[i+1]]=tc[tcs[i+1]+tcs[i]]=tcs[i+2] // tab completions
+const tc={} // tab completions
+for(let i=0;i<tcs.length;i+=3)tc[tcs[i]+tcs[i+1]]=tcs[i+2]
+for(let i=0;i<tcs.length;i+=3){let k=tcs[i+1]+tcs[i];tc[k]=tc[k]||tcs[i+2]}
 let lbh='';for(let i=0;i<lbs.length;i++){
   const ks=[];for(let j=0;j<tcs.length;j+=3)if(tcs[j+2]===lbs[i][0])ks.push('\n'+tcs[j]+' '+tcs[j+1]+' <tab>')
   lbh+='<b title="'+he(lbs[i].slice(1))+(ks.length?'\n'+ks.join(''):'')+'">'+lbs[i][0]+'</b>'
