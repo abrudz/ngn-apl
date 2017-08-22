@@ -17,15 +17,12 @@ I.go.onclick=_=>{
 }
 hp.run&&I.go.click()
 I.code.focus()
-I.code.onkeydown=x=>{
-  const m=x.ctrlKey+2*x.shiftKey+4*x.altKey+8*x.metaKey
-  if(x.which===13&&m===1){I.go.click();return!1}
-  if(x.which===9&&!m){
-    const e=I.code,i=e.selectionStart,v=e.value,s=v.slice(i-2,i),c=tc[s]
-    if(c){e.value=v.slice(0,i-2)+c+v.slice(i);e.selectionStart=e.selectionEnd=i-1}
-    return!1
-  }
-}
+I.code.onkeydown=x=>{switch(x.ctrlKey+2*x.shiftKey+4*x.altKey+8*x.metaKey+100*x.which){
+  case 1301:{I.go.click();return!1}
+  case  900:{const e=I.code,i=e.selectionStart,v=e.value,s=v.slice(i-2,i),c=tc[s]
+             if(c){e.value=v.slice(0,i-2)+c+v.slice(i);e.selectionStart=e.selectionEnd=i-1}
+             return!1}
+}}
 const hc={'<':'&lt;','&':'&amp;',"'":'&apos;','"':'&quot;'},he=x=>x.replace(/[<&'"]/g,c=>hc[c])
 const tcs='<-←xx×:-÷*o⍟[-⌹oo○ff⌈FF⌈ll⌊LL⌊tt⊥TT⊤-|⊣|-⊢~~≈=/≠<=≤>=≥==≡=-≢vv∨^^∧^~⍲v~⍱^|↑v|↓<<⊂>>⊃[|⌷A|⍋V|⍒ii⍳ee∊e-⍷'+
 'uu∪nn∩/-⌿\\-⍀,-⍪rr⍴pp⍴o|⌽o-⊖o\\⍉..¨~:⍨*:⍣o.∘[\'⍞[]⎕[:⍠[=⌸ot⍎oT⍕<>⋄on⍝aa⍺ww⍵a-⍶w-⍹VV∇--¯88∞0~⍬V~⍫//↗[/⍁'
@@ -67,11 +64,9 @@ const runDocTests=_=>{
       ne++;let x=t[i],o=runDocTest(x,apl,apl.aprx)
       if(o){
         nf++
-        let s='Test failed: '+JSON.stringify(x[0])+'\n'+
-              '             '+JSON.stringify(x[2])+'\n'
-        if(o.reason)s+=o.reason+'\n'
-        if(o.error)s+=o.error.stack+'\n'
-        I.result.textContent+=s
+        I.result.textContent+='Test failed: '+JSON.stringify(x[0])+'\n'+
+                              '             '+JSON.stringify(x[2])+'\n'+
+                              (o.m?o.m+'\n':'')+(o.e?o.e.stack+'\n':'')
       }
     }
     I.result.textContent+=(nf?nf+' out of '+ne+' tests failed':'All '+ne+' tests passed')+' in '+(new Date-t0)+' ms.\n'
