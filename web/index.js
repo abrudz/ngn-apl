@@ -8,7 +8,7 @@ I.perm.onmouseover=I.perm.onfocus=_=>{I.perm.href='#code='+escape(I.code.value);
 I.go.onclick=_=>{
   try{
     const s=I.code.value;I.result.classList.remove('err')
-    if(s===')t'){I.result.textContent='Running tests...';setTimeout(runDocTests,1)}
+    if(s===')t'){I.result.textContent='Running tests...\n';setTimeout(runDocTests,1)}
     else{I.result.textContent=apl.fmt(apl(s)).join('\n')+'\n'}
   }catch(e){
     console&&console.error&&console.error(e.stack);I.result.classList.add('err');I.result.textContent=e
@@ -60,15 +60,15 @@ const get=(x,f)=>{const r=new XMLHttpRequest;r.open('get',x)
                   r.onreadystatechange=x=>{r.readyState===4&&f(r.responseText)};r.send()}
 const runDocTests=_=>{
   get('../apl.js',x=>{
-    const aplTests=collectTests(x)
+    const t=collectTests(x)
     I.result.classList.remove('err');I.result.classList.textContent=''
     let ne=0,nf=0,t0=+new Date // ne:number of executed, nf:number of failed
-    for(let i=0;i<aplTests.length;i++){
-      ne++;let x=aplTests[i],code=x[0],mode=x[1],expectation=x[2],o=runDocTest([code,mode,expectation],apl,apl.aprx)
+    for(let i=0;i<t.length;i++){
+      ne++;let x=t[i],o=runDocTest(x,apl,apl.aprx)
       if(o){
         nf++
-        let s='Test failed: '+JSON.stringify(code)+'\n'+
-              '             '+JSON.stringify(expectation)+'\n'
+        let s='Test failed: '+JSON.stringify(x[0])+'\n'+
+              '             '+JSON.stringify(x[2])+'\n'
         if(o.reason)s+=o.reason+'\n'
         if(o.error)s+=o.error.stack+'\n'
         I.result.textContent+=s
