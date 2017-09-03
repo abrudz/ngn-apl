@@ -11,10 +11,10 @@ const repr=JSON.stringify
   let[s,m,exp]=cme,x,y // s:code, m:mode, exp:expectation
   if(m==='←→'){
     try{y=exec(exp)}catch(e){return{e,m:'cannot compute expected value '+repr(exp)}}
-    try{x=exec(s);if(!aprx(x,y))return{m:'expected '+repr(y)+' but got '+repr(x)}}catch(e){return{e}}
+    try{x=exec(s);if(!aprx(x,y))return{m:' actual:   '+repr(x)+'\n expected: '+repr(y)}}catch(e){return{e}}
   }else{
     try{exec(s);return{m:"should have thrown but didn't"}}catch(e){
-      if(exp&&e.name.slice(0,exp.length)!==exp)return{e,m:'expected '+repr(exp)+' but got '+repr(e.message)}
+      if(exp&&e.name.slice(0,exp.length)!==exp)return{e,m:' actual:   '+repr(e.name)+'\n expected: '+repr(exp)}
     }
   }
 }
@@ -24,8 +24,7 @@ if(typeof require!=='undefined'&&typeof module!=='undefined'&&module===require.m
   let ne=0,nf=0,ts=0 //ne/nf:number of executed/failed tests, ts:last test timestamp
   for(let i=0;i<t.length;i++){
     ne++;let[s,m,exp]=t[i],o=runDocTest(t[i],apl,apl.aprx) //o:error outcome
-    if(o){nf++;so.write('Test failed: '+repr(s)+'\n             '+repr(exp)+'\n')
-          o.m&&so.write(o.m+'\n');o.e&&so.write(o.e.stack+'\n')}
+    if(o){nf++;so.write('failed: '+s+m+exp+'\n');o.m&&so.write(o.m+'\n');o.e&&so.write(o.e.stack+'\n')}
     if(Date.now()-ts>100){so.write(ne+'/'+t.length+(nf?' ('+nf+' failed)':'')+'\r');ts=Date.now()}
   }
   so.write((nf?nf+'/'+ne+' tests failed':ne+' tests passed')+' in '+(Date.now()-t0)+' ms\n')
