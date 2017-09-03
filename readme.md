@@ -1,24 +1,24 @@
 **[Demo](https://ngn.github.com/apl/web/index.html)**<br>
 
 An [APL](https://en.wikipedia.org/wiki/APL_%28programming_language%29) interpreter written in JavaScript.
-Runs in a browser or on [NodeJS](https://nodejs.org/).
+Runs in a browser or [NodeJS](https://nodejs.org/).
 
 Supports: most primitives, dfns (`{⍺ ⍵}`), nested arrays, complex numbers (`1j2`), infinities (`¯` or `∞`), forks and
-atops, strand assignment (`(a b)←c`), indexed assignment (`a[b]←c`), user-defined operators (`{⍺⍺ ⍵⍵}`)
+atops, strand assignment (`(a b)←c`), indexed assignment (`a[b]←c`), user-defined operators (`{⍺⍺ ⍵⍵}`).
 
-Doesn't support: traditional functions (`∇R←X f Y`), non-zero index origin (`⎕IO`), comparison tolerance (`⎕CT`),
-prototypes, NaN-s, modified assignment (`x+←1`), control structures (`:If`), object-oriented features, namespaces
+Doesn't support: tradfns (`∇R←X f Y`), non-zero index origin (`⎕IO`), comparison tolerance (`⎕CT`),
+prototypes, modified assignment (`x+←1`), control structures (`:If`), object-oriented features, namespaces.
 
 Used in [Paul L Jackson's web site](https://plj541.github.io/APL.js/), [repl.it](https://repl.it/languages/APL),
 and [tio.run](https://tio.run/#apl-ngn).
 
 #Offline usage
 
-Download [apl.js](https://ngn.github.io/apl/apl.js) and run it with [NodeJS](https://nodejs.org/) to start a session:
+Download [apl.js](https://ngn.github.io/apl/apl.js) and run it with [NodeJS](https://nodejs.org/) to start a REPL:
 
     node apl.js
 
-Running it with an argument executes an APL script:
+An APL script can be given as argument:
 
     node apl.js filename.apl
 
@@ -29,9 +29,9 @@ Running it with an argument executes an APL script:
 
 or used in an HTML page:
 
-    <script src="https://ngn.github.io/apl/apl.js"></script>
+    <script src='https://ngn.github.io/apl/apl.js'></script>
     <script>
-      var result=apl('1 2 3+4 5 6') //apl() is exported as a global variable
+      var r=apl('1 2 3+4 5 6')
     </script>
 
 #Editor support
