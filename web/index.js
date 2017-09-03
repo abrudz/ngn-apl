@@ -7,11 +7,11 @@ I.code.value=hp.code||'';I.code.focus()
 I.perm.onmouseover=I.perm.onfocus=_=>{I.perm.href='#code='+escape(I.code.value);return!1}
 I.go.onclick=_=>{
   try{
-    const s=I.code.value;I.result.classList.remove('err')
-    if(s===')t'){I.result.textContent='Running tests...\n';setTimeout(runDocTests,1)}
-    else{I.result.textContent=apl.fmt(apl(s)).join('\n')+'\n'}
+    const s=I.code.value;I.rslt.classList.remove('err')
+    if(s===')t'){I.rslt.textContent='Running tests...\n';setTimeout(runDocTests,1)}
+    else{I.rslt.textContent=apl.fmt(apl(s)).join('\n')+'\n'}
   }catch(e){
-    console&&console.error&&console.error(e.stack);I.result.classList.add('err');I.result.textContent=e
+    console&&console.error&&console.error(e.stack);I.rslt.classList.add('err');I.rslt.textContent=e
   }
   return!1
 }
@@ -58,18 +58,18 @@ const get=(x,f)=>{const r=new XMLHttpRequest;r.open('get',x)
 const runDocTests=_=>{
   get('../apl.js',x=>{
     const t=collectTests(x)
-    I.result.classList.remove('err');I.result.classList.textContent=''
+    I.rslt.classList.remove('err');I.rslt.classList.textContent=''
     let ne=0,nf=0,t0=+new Date // ne:number of executed, nf:number of failed
     for(let i=0;i<t.length;i++){
       ne++;let x=t[i],o=runDocTest(x,apl,apl.aprx)
       if(o){
         nf++
-        I.result.textContent+='Test failed: '+JSON.stringify(x[0])+'\n'+
-                              '             '+JSON.stringify(x[2])+'\n'+
-                              (o.m?o.m+'\n':'')+(o.e?o.e.stack+'\n':'')
+        I.rslt.textContent+='Test failed: '+JSON.stringify(x[0])+'\n'+
+                            '             '+JSON.stringify(x[2])+'\n'+
+                            (o.m?o.m+'\n':'')+(o.e?o.e.stack+'\n':'')
       }
     }
-    I.result.textContent+=(nf?nf+' out of '+ne+' tests failed':'All '+ne+' tests passed')+' in '+(new Date-t0)+' ms.\n'
+    I.rslt.textContent+=(nf?nf+' out of '+ne+' tests failed':'All '+ne+' tests passed')+' in '+(new Date-t0)+' ms.\n'
   })
 }
 })();

@@ -5,15 +5,15 @@ const prelude=[
 "⍬←() ⋄ ⎕d←'0123456789' ⋄ ⎕a←'ABCDEFGHIJKLMNOPQRSTUVWXYZ' ⋄ ⎕á←'ÁÂÃÇÈÊËÌÍÎÏÐÒÓÔÕÙÚÛÝþãìðòõ'", // ⍬←→0⍴0 ⍙ ⍴⍬←→,0
 // 'abcd'~'bde'←→'ac' ⍙ (⍳6)~0 2 4←→1 3 5 ⍙ 'ab' 'cd' 'ad'~'a'←→'ab' 'cd' 'ad' ⍙ 'ab' 'cd' 'ad'~'cd'←→'ab' 'cd' 'ad'
 // 'ab' 'cd' 'ad'~⊂'cd'←→'ab' 'ad' ⍙ 'ab' 'cd' 'ad'~'a' 'cd'←→'ab' 'ad' ⍙ (11+⍳6)~2 3⍴1 2 3 14 5 6←→11 12 13 15 16
-// (2 2⍴⍳4)~2 !!! RANK ERROR
+// (2 2⍴⍳4)~2 !! RANK ERROR
 "~←~⍠{(~⍺∊⍵)/⍺}",
 "_atop←{⍶⍹⍵;⍶⍺⍹⍵}", // (-⍟)2 3←→-⍟2 3 ⍙ 2(-*)3←→-2*3
 // ↑3←→3 ⍙ ↑(1 2)(3 4)←→2 2⍴1 2 3 4 ⍙ ↑(1 2)(3 4 5)←→2 3⍴1 2 0 3 4 5 ⍙ ↑1 2←→1 2 ⍙ ↑(1 2)3←→2 2⍴1 2 3 0
 // ↑1(2 3)←→2 2⍴1 0 2 3 ⍙ ↑2 2⍴1(1 1 2⍴3 4)(5 6)(2 0⍴0)←→2 2 1 2 2⍴1 0 0 0 3 4 0 0 5 6 0 0 0 0 0 0 ⍙ ↑⍬←→⍬
 // ↑2 3 0⍴0←→2 3 0⍴0
 // ⍬⊃3←→3 ⍙ 2⊃'pick'←→'c' ⍙ (⊂1 0)⊃2 2⍴'abcd'←→'c' ⍙ 1⊃'foo' 'bar'←→'bar' ⍙ 1 2⊃'foo' 'bar'←→'r'
-// (2 2⍴0)⊃1 2 !!! RANK ERROR ⍙ (⊂2 1⍴0)⊃2 2⍴0 !!! RANK ERROR ⍙ (⊂2 2⍴0)⊃1 2 !!! RANK ERROR
-// (⊂2 2)⊃1 2 !!! RANK ERROR ⍙ (⊂0 2)⊃2 2⍴'ABCD' !!! INDEX ERROR
+// (2 2⍴0)⊃1 2 !! RANK ERROR ⍙ (⊂2 1⍴0)⊃2 2⍴0 !! RANK ERROR ⍙ (⊂2 2⍴0)⊃1 2 !! RANK ERROR
+// (⊂2 2)⊃1 2 !! RANK ERROR ⍙ (⊂0 2)⊃2 2⍴'ABCD' !! INDEX ERROR
 "↑←{",
 "  0=⍴⍴⍵:⊃⍵ ⋄ 0=×/⍴⍵:⍵ ⋄ shape←⍴⍵ ⋄ ⍵←,⍵ ⋄ r←⌈/≢¨shapes←⍴¨⍵ ⋄ max←⊃⌈/shapes←(⍴↓(r⍴1)∘,)¨shapes",
 "  (shape,max)⍴⊃⍪/shapes{max↑⍺⍴⍵}¨⍵",
@@ -45,7 +45,7 @@ const prelude=[
 "⊢←{⍵} ⋄ ⊣←{⍵;⍺}", // 1⊢2←→2 ⍙ ⊢3←→3 ⍙ 1⊣2←→1 ⍙ ⊣3←→3
 "≢←{⍬⍴(⍴⍵),1; ~⍺≡⍵}", // ≢0←→1 ⍙ ≢0 0←→2 ⍙ ≢⍬←→0 ⍙ ≢2 3⍴⍳6←→2 ⍙ 2≢2←→0
 ",←{(×/⍴⍵)⍴⍵}⍠,", // ,2 13⍴⎕a←→⎕a ⍙ ,1←→1⍴1
-// ⌹2←→.5 ⍙ ⌹2 2⍴4 3 3 2←→2 2⍴¯2 3 3 ¯4 ⍙ ⌹2 2 2⍴⍳8 !!! RANK ERROR ⍙ ⌹2 3⍴⍳6 !!! LENGTH ERROR
+// ⌹2←→.5 ⍙ ⌹2 2⍴4 3 3 2←→2 2⍴¯2 3 3 ¯4 ⍙ ⌹2 2 2⍴⍳8 !! RANK ERROR ⍙ ⌹2 3⍴⍳6 !! LENGTH ERROR
 // (4 4⍴12 1 4 10 ¯6 ¯5 4 7 ¯4 9 3 4 ¯2 ¯6 7 7)⌹93 81 93.5 120.5←→.0003898888816687221 ¯.005029566573526544 .04730651764247189 .0705568912859835
 "⌹←{norm←{(⍵+.×+⍵)*0.5}",
 "   QR←{n←(⍴⍵)[1] ⋄ 1≥n:{t←norm,⍵ ⋄ (⍵÷t)(⍪t)}⍵ ⋄ m←⌈n÷2 ⋄ a0←((1↑⍴⍵),m)↑⍵ ⋄ a1←(0,m)↓⍵ ⋄ (q0 r0)←∇a0",
@@ -294,7 +294,7 @@ const ltr='_A-Za-zªµºÀ-ÖØ-öø-ˁˆ-ˑˠ-ˤˬˮͰ-ʹͶ-ͷͺ-ͽΆΈ-ΊΌΎ-
     }
   }
   ,r=body()
-  dmnd('$');return r // 'hello'} !!! SYNTAX ERROR
+  dmnd('$');return r // 'hello'} !! SYNTAX ERROR
 }
 const voc={}
 ,perv=(f1,f2)=>{ // pervasive f1:monad, f2:dyad
@@ -360,10 +360,10 @@ const voc={}
 voc['+']=withId(0,perv(
   numeric(x=>x,Z.cjg),
   // +0((1j¯2 ¯3j4)¯5.6)←→0((1j2 ¯3j¯4)¯5.6) ⍙ 1(2 3)+(4 5)6←→(5 6)(8 9)
-  // (2 3⍴1 2 3 4 5 6)+¯2←→2 3⍴¯1 0 1 2 3 4     ⍙ 1 2 3+4 5!!! LENGTH ERROR
-  // (2 3⍴1 2 3 4 5 6)+2⍴¯2 !!! RANK ERROR      ⍙ (2 3⍴⍳6)+3 2⍴⍳6!!! LENGTH ERROR
-  // (2 3⍴1 2 3 4 5 6)+2 3⍴¯2←→2 3⍴¯1 0 1 2 3 4 ⍙ 1j¯2+¯2j3←→¯1j1 ⍙ +/⍬←→0 ⍙ ¯+¯¯ !!! DOMAIN ERROR
-  // 1j¯+2j¯¯ !!! DOMAIN ERROR
+  // (2 3⍴1 2 3 4 5 6)+¯2←→2 3⍴¯1 0 1 2 3 4     ⍙ 1 2 3+4 5!! LENGTH ERROR
+  // (2 3⍴1 2 3 4 5 6)+2⍴¯2 !! RANK ERROR      ⍙ (2 3⍴⍳6)+3 2⍴⍳6!! LENGTH ERROR
+  // (2 3⍴1 2 3 4 5 6)+2 3⍴¯2←→2 3⍴¯1 0 1 2 3 4 ⍙ 1j¯2+¯2j3←→¯1j1 ⍙ +/⍬←→0 ⍙ ¯+¯¯ !! DOMAIN ERROR
+  // 1j¯+2j¯¯ !! DOMAIN ERROR
   numeric((x,y)=>x+y,Z.add)
 ))
 voc['-']=withId(0,perv(
@@ -377,7 +377,7 @@ voc['×']=withId(1,perv(
   numeric((x,y)=>x*y,Z.mul)
 ))
 voc['÷']=withId(1,perv(
-  // ÷2←→.5 ⍙ ÷2j3←→0.15384615384615385J¯0.23076923076923078 ⍙ 0÷0!!!DOMAIN ERROR
+  // ÷2←→.5 ⍙ ÷2j3←→0.15384615384615385J¯0.23076923076923078 ⍙ 0÷0!!DOMAIN ERROR
   numeric(x=>1/x,
           x=>{let d=x.re*x.re+x.im*x.im;return smplfy(x.re/d,-x.im/d)}),
   // 27÷9←→3 ⍙ 4j7÷1j¯2←→¯2j3 ⍙ 0j2÷0j1←→2 ⍙ 5÷2j1←→2j¯1 ⍙ ÷/⍬←→1
@@ -419,10 +419,10 @@ voc['⍀']=adv((y,x,h)=>voc['\\'](y,x,h||A.zero))
 // T←'ONE(TWO) BOOK(S)'⋄((T∊'()')⍱≠\T∊'()')/T←→'ONE BOOK'
 // 1 0 1\'ab'←→'a b'
 // 0 1 0 1 0\2 3←→0 2 0 3 0
-// (2 2⍴0)\'food' !!! RANK ERROR
-// 'abc'\'def'    !!! DOMAIN ERROR
-// 1 0 1 1\'ab'   !!! LENGTH ERROR
-// 1 0 1 1\'abcd' !!! LENGTH ERROR
+// (2 2⍴0)\'food' !! RANK ERROR
+// 'abc'\'def'    !! DOMAIN ERROR
+// 1 0 1 1\'ab'   !! LENGTH ERROR
+// 1 0 1 1\'abcd' !! LENGTH ERROR
 // 1 0 1\2 2⍴'ABCD'←→2 3⍴'A BC D'    ⍙ 1 0 1⍀2 2⍴'ABCD'←→3 2⍴'AB  CD'
 // 1 0 1\[0]2 2⍴'ABCD'←→3 2⍴'AB  CD' ⍙ 1 0 1\[1]2 2⍴'ABCD'←→2 3⍴'A BC D'
 voc['\\']=adv((y,x,h)=>{
@@ -465,7 +465,7 @@ voc['\\']=adv((y,x,h)=>{
 voc['○']=perv(
   // ○2←→6.283185307179586
   // ○2j2←→6.283185307179586j6.283185307179586
-  // ○'ABC' !!! DOMAIN ERROR
+  // ○'ABC' !! DOMAIN ERROR
   numeric(x=>Math.PI*x,x=>new Z(Math.PI*x.re,Math.PI*x.im)),
   // ¯12○2 2j3←→¯0.4161468365471j0.9092974268257 ¯0.02071873100224j0.04527125315609
   // ¯11○2 2j3←→0j2 ¯3j2
@@ -493,7 +493,7 @@ voc['○']=perv(
   // 10○¯2 ¯2j3←→2 3.605551275464
   // 11○2  2j3←→0 3
   // 12○2  2j3←→0 0.98279372324733
-  // 1○'a' !!! DOMAIN ERROR ⍙ 99○1 !!! DOMAIN ERROR ⍙ 99○1j2 !!! DOMAIN ERROR
+  // 1○'a' !! DOMAIN ERROR ⍙ 99○1 !! DOMAIN ERROR ⍙ 99○1j2 !! DOMAIN ERROR
   (i,x)=>{
     if(typeof x==='number'){
       switch(i){
@@ -562,7 +562,7 @@ voc[',']=(y,x,h)=>{
   if(!x)nyiErr()
   // 10,66←→10 66 ⍙ ⍬,⍬←→⍬ ⍙ ⍬,1←→,1 ⍙ 1,⍬←→,1 ⍙ 'ab','c','def'←→'abcdef'
   // (2 3⍴⍳6),2 2⍴⍳4←→2 5⍴0 1 2 0 1 3 4 5 2 3 ⍙ (2 3⍴⍳6),⍳2←→2 4⍴0 1 2 0 3 4 5 1
-  // (3 2⍴⍳6),2 2⍴⍳4 !!! LENGTH ERROR         ⍙ (⍳2),2 3⍴⍳6←→2 4⍴0 0 1 2 1 3 4 5
+  // (3 2⍴⍳6),2 2⍴⍳4 !! LENGTH ERROR         ⍙ (⍳2),2 3⍴⍳6←→2 4⍴0 0 1 2 1 3 4 5
   // (2 3⍴⍳6),9←→2 4⍴0 1 2 9 3 4 5 9 ⍙ (2 3 4⍴⎕a),'*'←→2 3 5⍴'ABCD*EFGH*IJKL*MNOP*QRST*UVWX*'
   let nAxes=Math.max(x.s.length,y.s.length)
   if(h){h=unw(h);typeof h!=='number'&&domErr();nAxes&&!(-1<h&&h<nAxes)&&rnkErr()}
@@ -633,7 +633,7 @@ voc['∪']=(y,x)=>{
   if(x){
     // 1 2∪2 3←→1 2 3 ⍙ 'abc'∪'cad'←→'abcd' ⍙ 1∪1←→,1 ⍙ 1∪2←→1 2 ⍙ 1∪2 1←→1 2 ⍙ 1 2∪2 2 2 2←→1 2
     // 2 3 3∪4 5 3 4←→2 3 3 4 5 4 ⍙ ⍬∪1←→,1 ⍙ 1 2∪⍬←→1 2 ⍙ ⍬∪⍬←→⍬
-    // 1 2∪2 2⍴3 !!! RANK ERROR ⍙ (2 2⍴3)∪4 5 !!! RANK ERROR
+    // 1 2∪2 2⍴3 !! RANK ERROR ⍙ (2 2⍴3)∪4 5 !! RANK ERROR
     // 'ab' 'c'(0 1)∪'ab' 'de'←→'ab' 'c'(0 1)'de'
     if(x.s.length>1||y.s.length>1)rnkErr()
     let r=[],n=y.a.length;for(let i=0;i<n;i++)contains(x.a,y.a[i])||r.push(y.a[i]);return A(x.a.concat(r))
@@ -644,11 +644,11 @@ voc['∪']=(y,x)=>{
   }
 }
 voc['∩']=(y,x)=>{
-  if(x){ // 'abca'∩'dac'←→'aca' ⍙ 1'2'3∩⍳5←→1 3 ⍙ 1∩2←→⍬ ⍙ 1∩2 3⍴4 !!! RANK ERROR
+  if(x){ // 'abca'∩'dac'←→'aca' ⍙ 1'2'3∩⍳5←→1 3 ⍙ 1∩2←→⍬ ⍙ 1∩2 3⍴4 !! RANK ERROR
     if(x.s.length>1||y.s.length>1)rnkErr()
     let r=[],n=x.a.length;for(let i=0;i<n;i++)contains(y.a,x.a[i])&&r.push(x.a[i]);return A(r)
   }else{
-    nyiErr() // ∩1 !!! NONCE ERROR
+    nyiErr() // ∩1 !! NONCE ERROR
   }
 }
 const contains=(a,x)=>{for(let i=0;i<a.length;i++)if(match(x,a[i]))return 1}
@@ -763,11 +763,11 @@ const enlist=(x,r)=>{if(x.isA){const n=x.a.length;for(let i=0;i<n;i++)enlist(x.a
 let Beta
 voc['!']=withId(1,perv(
   // !0 5 21←→1 120 51090942171709440000 ⍙ !1.5 ¯1.5 ¯2.5←→1.3293403881791 ¯3.544907701811 2.3632718012074
-  // !¯200.5←→0 ⍙ !¯1 !!! DOMAIN ERROR ⍙ !¯200 !!! DOMAIN ERROR
+  // !¯200.5←→0 ⍙ !¯1 !! DOMAIN ERROR ⍙ !¯200 !! DOMAIN ERROR
   real(x=>!isInt(x)?Γ(x+1):x<0?domErr():x<smallFactorials.length?smallFactorials[x]:Math.round(Γ(x+1))),
   // 2!4←→6 ⍙ 3!20←→1140 ⍙ 2!6 12 20←→15 66 190 ⍙ (2 3⍴1+⍳6)!2 3⍴3 6 9 12 15 18←→2 3⍴3 15 84 495 3003 18564
   // 0.5!1←→1.2732395447351612 ⍙ 1.2!3.4←→3.795253463731253 ⍙ !/⍬←→1
-  // (2!1000)=499500←→1 ⍙ (998!1000)=499500←→1 ⍙ 0.5!¯1 !!! DOMAIN ERROR
+  // (2!1000)=499500←→1 ⍙ (998!1000)=499500←→1 ⍙ 0.5!¯1 !! DOMAIN ERROR
   Beta=real((k,n)=>{
     let r                                                               //              Neg int?
     switch(4*negInt(k)+2*negInt(n)+negInt(n-k)){                        //              ⍺ ⍵ ⍵-⍺
@@ -812,7 +812,7 @@ let Γ,lnΓ
   }
 })()
 
-// ⍎'+/2 2⍴1 2 3 4'←→3 7 ⍙ ⍴⍎'123 456'←→,2 ⍙ ⍎'{⍵*2}⍳5'←→0 1 4 9 16 ⍙ ⍎'let' !!! ⍙ ⍎'1 2 (3' !!! ⍙ ⍎123 !!!
+// ⍎'+/2 2⍴1 2 3 4'←→3 7 ⍙ ⍴⍎'123 456'←→,2 ⍙ ⍎'{⍵*2}⍳5'←→0 1 4 9 16 ⍙ ⍎'let' !! ⍙ ⍎'1 2 (3' !! ⍙ ⍎123 !!
 voc['⍎']=(y,x)=>x?nyiErr():exec(str(y))
 
 voc['⍷']=(y,x)=>{
@@ -852,7 +852,7 @@ voc['⍷']=(y,x)=>{
 
 voc['⌊']=withId(Infinity,perv(
   // ⌊123 12.3 ¯12.3 ¯123←→123 12 ¯13 ¯123 ⍙ ⌊12j3 1.2j2.3 1.2j¯2.3 ¯1.2j2.3 ¯1.2j¯2.3←→12j3 1j2 1j¯3 ¯1j2 ¯1j¯3
-  // ⌊0 5 ¯5 (○1) ¯1.5←→0 5 ¯5 3 ¯2 ⍙ ⌊'a' !!! DOMAIN ERROR
+  // ⌊0 5 ¯5 (○1) ¯1.5←→0 5 ¯5 3 ¯2 ⍙ ⌊'a' !! DOMAIN ERROR
   Z.floor,
   // 3⌊5←→3 ⍙ ⌊/⍬←→¯
   real((x,y)=>Math.min(x,y))
@@ -860,7 +860,7 @@ voc['⌊']=withId(Infinity,perv(
 
 voc['⌈']=withId(-Infinity,perv(
   // ⌈123 12.3 ¯12.3 ¯123←→123 13 ¯12 ¯123 ⍙ ⌈12j3 1.2j2.3 1.2j¯2.3 ¯1.2j2.3 ¯1.2j¯2.3←→12j3 1j3 1j¯2 ¯1j3 ¯1j¯2
-  // ⌈0 5 ¯5(○1)¯1.5←→0 5 ¯5 4 ¯1 ⍙ ⌈'a' !!! DOMAIN ERROR
+  // ⌈0 5 ¯5(○1)¯1.5←→0 5 ¯5 4 ¯1 ⍙ ⌈'a' !! DOMAIN ERROR
   Z.ceil,
   // 3⌈5←→5 ⍙ ⌈/⍬←→¯¯
   real((x,y)=>Math.max(x,y))
@@ -969,8 +969,8 @@ const grd=(y,x,dir)=>{
   }))
 }
 
-// f←{⍺+2×⍵}⋄f/⍬ !!! DOMAIN ERROR ⍙ f←{⍺+2×⍵}⋄(f⍁123)/⍬←→123 ⍙ f←{⍺+2×⍵}⋄(456⍁f)/⍬←→456
-// f←{⍺+2×⍵}⋄g←f⍁789⋄f/⍬ !!! DOMAIN ERROR ⍙ {}⍁1 2 !!! RANK ERROR ⍙ ({}⍁(1 1 1⍴123))/⍬←→123
+// f←{⍺+2×⍵}⋄f/⍬ !! DOMAIN ERROR ⍙ f←{⍺+2×⍵}⋄(f⍁123)/⍬←→123 ⍙ f←{⍺+2×⍵}⋄(456⍁f)/⍬←→456
+// f←{⍺+2×⍵}⋄g←f⍁789⋄f/⍬ !! DOMAIN ERROR ⍙ {}⍁1 2 !! RANK ERROR ⍙ ({}⍁(1 1 1⍴123))/⍬←→123
 voc['⍁']=conj((f,x)=>{
   if(f.isA){let h=f;f=x;x=h}
   asrt(typeof f==='function');asrt(x.isA);x.a.length===1||rnkErr()
@@ -983,14 +983,14 @@ voc['⍳']=(y,x)=>{
     // 2 5 9 14 20⍳9←→2 ⍙ 2 5 9 14 20⍳6←→5 ⍙ 'abcde'⍳'d'←→3 ⍙ ⎕a⍳'NGN/'←→13 6 13 26
     // 'ab' 'cd' 'efg'⍳'cd' 'efh'←→1 3 ⍙ 1 3 2 0 3⍳⍳5←→3 0 2 1 5
     // 'cat' 'dog' 'mouse'⍳'dog' 'bird'←→1 3
-    // 1⍳1 !!! RANK ERROR ⍙ (1 2⍴3)⍳3 !!! RANK ERROR
+    // 1⍳1 !! RANK ERROR ⍙ (1 2⍴3)⍳3 !! RANK ERROR
     // 1 1⍳1←→0 ⍙ ⍬⍳1 2←→0 0 ⍙ 1 2⍳⍬←→⍬
     x.s.length===1||rnkErr()
     const m=x.a.length,n=y.a.length,r=new Float64Array(n)
     for(let i=0;i<n;i++){r[i]=x.s[0];for(let j=0;j<m;j++)if(match(y.a[i],x.a[j])){r[i]=j;break}}
     return A(r,y.s)
   }else{
-    // ⍳5←→0 1 2 3 4 ⍙ ⍴⍳5←→1⍴5 ⍙ ⍳0←→⍬ ⍙ ⍴⍳0←→,0 ⍙ ⍴⍳2 3 4←→2 3 4 ⍙ ⍳¯1 !!! DOMAIN ERROR
+    // ⍳5←→0 1 2 3 4 ⍙ ⍴⍳5←→1⍴5 ⍙ ⍳0←→⍬ ⍙ ⍴⍳0←→,0 ⍙ ⍴⍳2 3 4←→2 3 4 ⍙ ⍳¯1 !! DOMAIN ERROR
     // ⍳2 3 4←→2 3 4⍴(0 0 0)(0 0 1)(0 0 2)(0 0 3)(0 1 0)(0 1 1)(0 1 2)(0 1 3)(0 2 0)(0 2 1)(0 2 2)(0 2 3)(1 0 0)(1 0 1)(1 0 2)(1 0 3)(1 1 0)(1 1 1)(1 1 2)(1 1 3)(1 2 0)(1 2 1)(1 2 2)(1 2 3)
     y.s.length<=1||rnkErr();for(let i=0;i<y.a.length;i++)isInt(y.a[i],0)||domErr()
     let n=prd(y.a),m=y.a.length,r=new Float64Array(n*m),p=1,q=n
@@ -1026,18 +1026,18 @@ voc['⊂']=(y,x,h)=>{
 
 // 0 0 1 1∨0 1 0 1←→0 1 1 1 ⍙ 12∨18←→6 ⍙ 299∨323←→1 ⍙ 12345∨12345←→12345 ⍙ 0∨123←→123 ⍙ 123∨0←→123 ⍙ ∨/⍬←→0
 // ¯12∨18←→6 ⍙ 12∨¯18←→6 ⍙ ¯12∨¯18←→6 ⍙ 135j¯14∨155j34←→5j12 ⍙ 2 3 4∨0j1 1j2 2j3←→1 1 1 ⍙ 2j2 2j4∨5j5 4j4←→1j1 2
-// 1.5∨2.5 !!! DOMAIN ERROR ⍙ 'a'∨1 !!! DOMAIN ERROR ⍙ 1∨'a' !!! DOMAIN ERROR ⍙ 'a'∨'b' !!! DOMAIN ERROR
+// 1.5∨2.5 !! DOMAIN ERROR ⍙ 'a'∨1 !! DOMAIN ERROR ⍙ 1∨'a' !! DOMAIN ERROR ⍙ 'a'∨'b' !! DOMAIN ERROR
 voc['∨']=withId(0,perv(null,(x,y)=>Z.isint(x)&&Z.isint(y)?Z.gcd(x,y):domErr()))
 
 // 0 0 1 1∧0 1 0 1←→0 0 0 1 ⍙ 1∧3 3⍴1 1 1 0 0 0 1 0 1←→3 3⍴1 1 1 0 0 0 1 0 1 ⍙ ∧/3 3⍴1 1 1 0 0 0 1 0 1←→1 0 0
 // 12∧18←→36 ⍙ 299∧323←→96577 ⍙ 123∧123←→123 ⍙ 0∧123←→0 ⍙ 123∧0←→0 ⍙ ∧/⍬←→1 ⍙ ¯12∧18←→¯36 ⍙ 12∧¯18←→¯36 ⍙ ¯12∧¯18←→36
-// 1.5∧2.5 !!! DOMAIN ERROR ⍙ 'a'∧1 !!! DOMAIN ERROR ⍙ 1∧'a' !!! DOMAIN ERROR ⍙ 'a'∧'b' !!! DOMAIN ERROR
+// 1.5∧2.5 !! DOMAIN ERROR ⍙ 'a'∧1 !! DOMAIN ERROR ⍙ 1∧'a' !! DOMAIN ERROR ⍙ 'a'∧'b' !! DOMAIN ERROR
 // 135j¯14∧155j34←→805j¯1448 ⍙ 2 3 4∧0j1 1j2 2j3←→0j2 3j6 8j12 ⍙ 2j2 2j4∧5j5 4j4←→10j10 ¯4j12
 voc['∧']=withId(1,perv(null,(x,y)=>Z.isint(x)&&Z.isint(y)?Z.lcm(x,y):domErr()))
 
-voc['⍱']=perv(null,real((x,y)=>+!(bool(x)|bool(y)))) // 0 0 1 1⍱0 1 0 1←→1 0 0 0 ⍙ 0⍱2 !!! DOMAIN ERROR
-voc['⍲']=perv(null,real((x,y)=>+!(bool(x)&bool(y)))) // 0 0 1 1⍲0 1 0 1←→1 1 1 0 ⍙ 0⍲2 !!! DOMAIN ERROR
-voc['~']=perv(x=>+!bool(x)) // ~0 1←→1 0 ⍙ ~2 !!! DOMAIN ERROR
+voc['⍱']=perv(null,real((x,y)=>+!(bool(x)|bool(y)))) // 0 0 1 1⍱0 1 0 1←→1 0 0 0 ⍙ 0⍱2 !! DOMAIN ERROR
+voc['⍲']=perv(null,real((x,y)=>+!(bool(x)&bool(y)))) // 0 0 1 1⍲0 1 0 1←→1 1 1 0 ⍙ 0⍲2 !! DOMAIN ERROR
+voc['~']=perv(x=>+!bool(x)) // ~0 1←→1 0 ⍙ ~2 !! DOMAIN ERROR
 
 // ({⍵+1}⍣5)3←→8
 // ({⍵+1}⍣0)3←→3
@@ -1070,10 +1070,10 @@ voc['set_⍞']=x=>{
 }
 
 voc['get_⎕IO']=_=>A.zero // ⎕IO←→0
-voc['set_⎕IO']=x=>match(x,A.zero)?x:domErr() // ⎕IO←0←→0 ⍙ ⎕IO←1 !!!
+voc['set_⎕IO']=x=>match(x,A.zero)?x:domErr() // ⎕IO←0←→0 ⍙ ⎕IO←1 !!
 voc['⎕DL']=cps((y,x,_,cb)=>{let t0=+new Date;setTimeout(_=>{cb(A([new Date-t0]))},unw(y))})
 
-voc['⎕RE']=(y,x)=>{ // 'b(c+)d'⎕RE'abcd'←→1'bcd'(,'c') ⍙ 'B(c+)d'⎕RE'abcd'←→⍬ ⍙ 'a(b'⎕RE'c' !!! DOMAIN ERROR
+voc['⎕RE']=(y,x)=>{ // 'b(c+)d'⎕RE'abcd'←→1'bcd'(,'c') ⍙ 'B(c+)d'⎕RE'abcd'←→⍬ ⍙ 'a(b'⎕RE'c' !! DOMAIN ERROR
   x=str(x),y=str(y)
   let re;try{re=RegExp(x)}catch(e){domErr()}
   let m=re.exec(y);if(!m)return A.zld
@@ -1090,12 +1090,12 @@ voc['get_⎕OFF']=_=>{typeof process==='undefined'&&nyiErr();process.exit(0)}
 voc['?']=(y,x)=>x?deal(y,x):roll(y)
 
 // n←6⋄r←?n⋄(0≤r)∧(r<n)←→1 ⍙ ?1←→0
-// ?0 !!! DOMAIN ERROR ⍙ ?1.5 !!! DOMAIN ERROR ⍙ ?'a' !!! DOMAIN ERROR ⍙ ?1j2 !!! DOMAIN ERROR ⍙ ?∞ !!! DOMAIN ERROR
+// ?0 !! DOMAIN ERROR ⍙ ?1.5 !! DOMAIN ERROR ⍙ ?'a' !! DOMAIN ERROR ⍙ ?1j2 !! DOMAIN ERROR ⍙ ?∞ !! DOMAIN ERROR
 let roll=perv(y=>{isInt(y,1)||domErr();return Math.floor(Math.random()*y)})
 
 // n←100⋄(+/n?n)=(+/⍳n)←→1 # a permutation (an 'n?n' dealing) contains all 0...n
 // n←100⋄A←(n÷2)?n⋄∧/(0≤A),A<n←→1 # any number x in a dealing is 0 <= x < n
-// 0?100←→⍬ ⍙ 0?0←→⍬ ⍙ 1?1←→,0 ⍙ 1?1 1 !!! LENGTH ERROR ⍙ 5?3 !!! DOMAIN ERROR ⍙ ¯1?3 !!! DOMAIN ERROR
+// 0?100←→⍬ ⍙ 0?0←→⍬ ⍙ 1?1←→,0 ⍙ 1?1 1 !! LENGTH ERROR ⍙ 5?3 !! DOMAIN ERROR ⍙ ¯1?3 !! DOMAIN ERROR
 const deal=(y,x)=>{
   x=unw(x);y=unw(y)
   isInt(y,0)&&isInt(x,0,y+1)||domErr()
@@ -1104,8 +1104,7 @@ const deal=(y,x)=>{
   return A(r.slice(0,x))
 }
 
-// ↗'CUSTOM ERROR' !!! CUSTOM ERROR
-voc['↗']=y=>err(str(y))
+voc['↗']=y=>err(str(y)) // ↗'CUSTOM ERROR' !! CUSTOM ERROR
 
 voc['⍴']=(y,x)=>{
   if(x){
@@ -1173,7 +1172,7 @@ voc['/']=adv((y,x,h)=>{
     // +/3←→3 ⍙ +/3 5 8←→16 ⍙ ⌈/82 66 93 13←→93 ⍙ ×/2 3⍴1 2 3 4 5 6←→6 120 ⍙ -/3 0⍴42←→3⍴0
     // 2,/'ab' 'cd' 'ef' 'hi'←→'abcd' 'cdef' 'efhi'
     // 3,/'ab' 'cd' 'ef' 'hi'←→'abcdef' 'cdefhi'
-    // 2+/1+⍳5←→3 5 7 9 ⍙ 5+/1+⍳8←→15 20 25 30 ⍙ 10+/1+⍳10←→,55 ⍙ 11+/1+⍳10←→⍬ ⍙ 12+/1+⍳10 !!! LENGTH ERROR
+    // 2+/1+⍳5←→3 5 7 9 ⍙ 5+/1+⍳8←→15 20 25 30 ⍙ 10+/1+⍳10←→,55 ⍙ 11+/1+⍳10←→⍬ ⍙ 12+/1+⍳10 !! LENGTH ERROR
     // 2-/3 4 9 7←→¯1 ¯5 2 ⍙ ¯2-/3 4 9 7←→1 5 ¯2
     let f=y,g=x,h0=h
     asrt(typeof f==='function')
@@ -1211,27 +1210,14 @@ voc['/']=adv((y,x,h)=>{
       return A(r,s)
     }
   }else{
-    // 0 1 0 1/'abcd'←→'bd'
-    // 1 1 1 1 0/12 14 16 18 20←→12 14 16 18
-    // m←45 60 33 50 66 19⋄(m≥50)/m←→60 50 66
-    // m←45 60 33 50 66 19⋄(m=50)/⍳≢m←→,3
-    // 1/'ab'←→'ab'
-    // 0/'ab'←→⍬
-    // 0 1 0/ 1+2 3⍴⍳6←→2 1⍴2 5
-    // 1 0/[0]1+2 3⍴⍳6←→1 3⍴1 2 3
-    // 1 0⌿   1+2 3⍴⍳6←→1 3⍴1 2 3
-    // 3/5←→5 5 5
-    // 2 ¯2 2/1+2 3⍴⍳6←→2 6⍴  1 1 0 0 3 3  4 4 0 0 6 6
-    // 1 1 ¯2 1 1/1 2(2 2⍴⍳4)3 4←→1 2 0 0 3 4
-    // 2 3 2/'abc'←→'aabbbcc'
-    // 2/'def'←→'ddeeff'
-    // 5 0 5/1 2 3←→1 1 1 1 1 3 3 3 3 3
-    // 2/1+2 3⍴⍳6←→2 6⍴ 1 1 2 2 3 3  4 4 5 5 6 6
-    // 2⌿1+2 3⍴⍳6←→4 3⍴ 1 2 3  1 2 3  4 5 6  4 5 6
-    // 2 3/3 1⍴'abc'←→3 5⍴'aaaaabbbbbccccc'
-    // 2 ¯1 2/[1]3 1⍴7 8 9←→3 5⍴7 7 0 7 7 8 8 0 8 8 9 9 0 9 9
-    // 2 ¯1 2/[1]3 1⍴'abc'←→3 5⍴'aa aabb bbcc cc'
-    // 2 ¯2 2/7←→7 7 0 0 7 7
+    // 0 1 0 1/'abcd'←→'bd'                  ⍙ m←45 60 33 50 66 19⋄(m≥50)/m←→60 50 66 ⍙ 1/'ab'←→'ab'
+    // 1 1 1 1 0/12 14 16 18 20←→12 14 16 18 ⍙ m←45 60 33 50 66 19⋄(m=50)/⍳≢m←→,3     ⍙ 0/'ab'←→⍬
+    // 0 1 0/1+2 3⍴⍳6←→2 1⍴2 5 ⍙ 1 0/[0]1+2 3⍴⍳6←→1 3⍴1 2 3 ⍙ 1 0⌿1+2 3⍴⍳6←→1 3⍴1 2 3 ⍙ 3/5←→5 5 5
+    // 2 ¯2 2/1+2 3⍴⍳6←→2 6⍴  1 1 0 0 3 3  4 4 0 0 6 6 ⍙ 1 1 ¯2 1 1/1 2(2 2⍴⍳4)3 4←→1 2 0 0 3 4
+    // 2 3 2/'abc'←→'aabbbcc' ⍙ 2/'def'←→'ddeeff' ⍙ 5 0 5/1 2 3←→1 1 1 1 1 3 3 3 3 3
+    // 2/1+2 3⍴⍳6←→2 6⍴ 1 1 2 2 3 3  4 4 5 5 6 6 ⍙ 2⌿1+2 3⍴⍳6←→4 3⍴ 1 2 3  1 2 3  4 5 6  4 5 6
+    // 2 ¯1 2/[1]3 1⍴7 8 9←→3 5⍴7 7 0 7 7 8 8 0 8 8 9 9 0 9 9 ⍙ 2 ¯1 2/[1]3 1⍴'abc'←→3 5⍴'aa aabb bbcc cc'
+    // 2 ¯2 2/7←→7 7 0 0 7 7 ⍙ 2 3/3 1⍴'abc'←→3 5⍴'aaaaabbbbbccccc'
     y.s.length||(y=A([unw(y)]))
     h=h?toInt(h,0,y.s.length):y.s.length-1
     x.s.length<=1||rnkErr()
@@ -1259,16 +1245,12 @@ voc['/']=adv((y,x,h)=>{
   }
 })
 
-// 1⌷3 5 8←→5 ⍙ (3 5 8)[1]←→5 ⍙ (3 5 8)[⍬]←→⍬ ⍙ (2 2 0)(1 2)⌷3 3⍴⍳9←→3 2⍴7 8 7 8 1 2 ⍙ ¯1⌷3 5 8 !!! INDEX ERROR
-// 2⌷111 222 333 444←→333
-// (⊂3 2)⌷111 222 333 444←→444 333
+// 1⌷3 5 8←→5 ⍙ (3 5 8)[1]←→5 ⍙ (3 5 8)[⍬]←→⍬ ⍙ (2 2 0)(1 2)⌷3 3⍴⍳9←→3 2⍴7 8 7 8 1 2 ⍙ ¯1⌷3 5 8 !! INDEX ERROR
 // (⊂2 3⍴2 0 3 0 1 2)⌷111 222 333 444←→2 3⍴333 111 444 111 222 333
-// 1 0   ⌷3 4⍴11 12 13 14 21 22 23 24 31 32 33 34←→21
-// 1     ⌷3 4⍴11 12 13 14 21 22 23 24 31 32 33 34←→21 22 23 24
-// 2(1 0)⌷3 4⍴11 12 13 14 21 22 23 24 31 32 33 34←→32 31
-// (1 2)0⌷3 4⍴11 12 13 14 21 22 23 24 31 32 33 34←→21 31
-// a←2 2⍴0⋄a[;0]←1⋄a←→2 2⍴1 0 1 0
-// a←2 3⍴0⋄a[1;0 2]←1⋄a←→2 3⍴0 0 0 1 0 1
+// 1 0   ⌷3 4⍴11 12 13 14 21 22 23 24 31 32 33 34←→21          ⍙ 2⌷111 222 333 444←→333
+// 1     ⌷3 4⍴11 12 13 14 21 22 23 24 31 32 33 34←→21 22 23 24 ⍙ (⊂3 2)⌷111 222 333 444←→444 333
+// 2(1 0)⌷3 4⍴11 12 13 14 21 22 23 24 31 32 33 34←→32 31       ⍙ a←2 2⍴0⋄a[;0]←1⋄a←→2 2⍴1 0 1 0
+// (1 2)0⌷3 4⍴11 12 13 14 21 22 23 24 31 32 33 34←→21 31       ⍙ a←2 3⍴0⋄a[1;0 2]←1⋄a←→2 3⍴0 0 0 1 0 1
 voc['⌷']=(y,x,h)=>{
   if(typeof y==='function')return(u,v)=>y(u,v,x)
   x||nyiErr();x.s.length>1&&rnkErr();x.a.length>y.s.length&&lenErr()
@@ -1293,37 +1275,22 @@ const indexAtSingleAxis=(x,y,h)=>{ // y:subscript
   return A(r,s)
 }
 
-// (23 54 38)[0]←→23
-// (23 54 38)[1]←→54
-// (23 54 38)[2]←→38
-// (23 54 38)[3] !!! INDEX ERROR
-// (23 54 38)[¯1] !!! INDEX ERROR
-// (23 54 38)[0 2]←→23 38
-// (2 3⍴100 101 102 110 111 112)[1;2]←→112
-// (2 3⍴100 101 102 110 111 112)[1;¯1] !!! INDEX ERROR
-// (2 3⍴100 101 102 110 111 112)[10;1] !!! INDEX ERROR
-// (2 3⍴100 101 102 110 111 112)[1;]←→110 111 112
-// (2 3⍴100 101 102 110 111 112)[;1]←→101 111
+// (23 54 38)[0]←→23             ⍙ (2 3⍴100 101 102 110 111 112)[1;2]←→112
+// (23 54 38)[1]←→54             ⍙ (2 3⍴100 101 102 110 111 112)[1;¯1] !! INDEX ERROR
+// (23 54 38)[2]←→38             ⍙ (2 3⍴100 101 102 110 111 112)[10;1] !! INDEX ERROR
+// (23 54 38)[3] !! INDEX ERROR  ⍙ (2 3⍴100 101 102 110 111 112)[1;]←→110 111 112
+// (23 54 38)[¯1] !! INDEX ERROR ⍙ (2 3⍴100 101 102 110 111 112)[;1]←→101 111
+// (23 54 38)[0 2]←→23 38 ⍙ ' X'[(3 3⍴⍳9)∊1 3 6 7 8]←→3 3⍴' X X  XXX'
 // 'hello'[1]←→'e' ⍙ 'ipodlover'[1 2 5 8 3 7 6 0 4]←→'poordevil' ⍙ ('axlrose'[4 3 0 2 5 6 1])[⍳4]←→'oral'
-// (1 2 3)[⍬]←→⍬
-// ⍴(1 2 3)[1 2 3 0 5⍴0]←→1 2 3 0 5
-// (⍳3)[]←→⍳3
-// ⍴(3 3⍴⍳9)[⍬;⍬]←→0 0
-// ' X'[(3 3⍴⍳9)∊1 3 6 7 8]←→3 3⍴' X ','X  ','XXX'
+// (1 2 3)[⍬]←→⍬ ⍙ ⍴(1 2 3)[1 2 3 0 5⍴0]←→1 2 3 0 5 ⍙ (⍳3)[]←→⍳3 ⍙ ⍴(3 3⍴⍳9)[⍬;⍬]←→0 0
 voc._index=({a},y)=>voc['⌷'](y,a[0],a[1])
 
-// a←⍳5⋄a[1 3]←7 8⋄a←→0 7 2 8 4
-// a←⍳5⋄a[1 3]←7⋄a←→0 7 2 7 4
-// a←⍳5⋄a[1]←7 8⋄a !!! RANK ERROR
-// a←1 2 3⋄a[1]←4⋄a←→1 4 3
-// a←2 2⍴⍳4⋄a[0;0]←4⋄a←→2 2⍴4 1 2 3
+// a←⍳5⋄a[1 3]←7 8⋄a←→0 7 2 8 4  ⍙ a←1 2 3⋄a[1]←4⋄a←→1 4 3
+// a←⍳5⋄a[1 3]←7⋄a←→0 7 2 7 4    ⍙ a←2 2⍴⍳4⋄a[0;0]←4⋄a←→2 2⍴4 1 2 3
+// a←⍳5⋄a[1]←7 8⋄a !! RANK ERROR ⍙ a←3 4⍴⍳12⋄a[;1 2]←99←→3 4⍴0 99 99 3 4 99 99 7 8 99 99 11
 // a←5 5⍴0⋄a[1 3;2 4]←2 2⍴1+⍳4⋄a←→5 5⍴0 0 0 0 0 0 0 1 0 2 0 0 0 0 0 0 0 3 0 4 0 0 0 0 0
-// a←'this is a test'⋄a[0 5]←'TI'←→'This Is a test'
-// a←0 4 8⋄10+(a[0 2]←7 9)←→17 14 19
-// a←3 4⍴⍳12⋄a[;1 2]←99←→3 4⍴0 99 99 3 4 99 99 7 8 99 99 11
-// a←1 2 3⋄a[⍬]←4⋄a←→1 2 3
-// a←3 3⍴⍳9⋄a[⍬;1 2]←789⋄a←→3 3⍴⍳9
-// a←1 2 3⋄a[]←4 5 6⋄a←→4 5 6
+// a←'this is a test'⋄a[0 5]←'TI'←→'This Is a test' ⍙ a←0 4 8⋄10+(a[0 2]←7 9)←→17 14 19
+// a←1 2 3⋄a[⍬]←4⋄a←→1 2 3 ⍙ a←3 3⍴⍳9⋄a[⍬;1 2]←789⋄a←→3 3⍴⍳9 ⍙ a←1 2 3⋄a[]←4 5 6⋄a←→4 5 6
 voc._amend=args=>{
   let[value,x,y,h]=args.a.map(u=>u.isA?u:A([u],[]))
   x.s.length>1&&rnkErr()
@@ -1384,9 +1351,9 @@ voc['⊃']=(y,x)=>{
 
 voc['⍉']=(y,x)=>{
   let a,s=[],d=[],d0=strides(y.s)
-  // 0⍉1 2←→1 2 ⍙ (2 2⍴⍳4)⍉2 2 2 2⍴⍳3 !!! RANK ERROR
-  // 1 0⍉2 2 2⍴⍳8 !!! LENGTH ERROR ⍙ ¯1⍉1 2 !!! DOMAIN ERROR ⍙ 'a'⍉1 2 !!! DOMAIN ERROR ⍙ 3⍉0 1 !!! RANK ERROR
-  // 2 0 1⍉2 3 4⍴⎕a←→3 4 2⍴'AMBNCODPEQFRGSHTIUJVKWLX' ⍙ 0 0 2⍉2 3 4⍴⍳24 !!! RANK ERROR
+  // 0⍉1 2←→1 2 ⍙ (2 2⍴⍳4)⍉2 2 2 2⍴⍳3 !! RANK ERROR
+  // 1 0⍉2 2 2⍴⍳8 !! LENGTH ERROR ⍙ ¯1⍉1 2 !! DOMAIN ERROR ⍙ 'a'⍉1 2 !! DOMAIN ERROR ⍙ 3⍉0 1 !! RANK ERROR
+  // 2 0 1⍉2 3 4⍴⎕a←→3 4 2⍴'AMBNCODPEQFRGSHTIUJVKWLX' ⍙ 0 0 2⍉2 3 4⍴⍳24 !! RANK ERROR
   // 0 0⍉3 3⍴⍳9←→0 4 8 ⍙ 0 0⍉2 3⍴⍳9←→0 4 ⍙ 0 0 0⍉3 3 3⍴⍳27←→0 13 26 ⍙ 0 1 0⍉3 3 3⍴⎕a←→3 3⍴'ADGKNQUXA'
   if(x){x.s.length<=1||rnkErr();x.s.length||(x=A([unw(x)]));x.s[0]===y.s.length||lenErr();a=x.a}
   // ⍉⍬←→⍬ ⍙ ⍉''←→'' ⍙ ⍉⍳3←→0 1 2 ⍙ ⍉2 3⍴⍳6←→3 2⍴0 3 1 4 2 5 ⍙ ⍉2 3 4⍴⎕a←→4 3 2⍴'AMEQIUBNFRJVCOGSKWDPHTLX'
@@ -1444,17 +1411,17 @@ const NOUN=1,VRB=2,ADV=3,CNJ=4
     const scp=q.shift(),vars=scp.v // scp:scope node
     ,vst=x=>{
       x.scp=scp
-      switch(x[0]){
+      switch(x[0]){default:asrt(0)
         case':':{const r=vst(x[1]);vst(x[2]);return r}
         case'←':return vstLHS(x[1],vst(x[2]))
         case'X':{
           const s=x[1],v=vars['get_'+s]
           if(v&&v.g===VRB)return NOUN
-          return vars[s]&&vars[s].g||valErr({file:o.file,offset:x.offset,aplCode:o.aplCode}) // x⋄x←0 !!! VALUE ERROR
+          return vars[s]&&vars[s].g||valErr({file:o.file,offset:x.offset,aplCode:o.aplCode}) // x⋄x←0 !! VALUE ERROR
         }
         case'{':{
           for(let i=1;i<x.length;i++){
-            const d=scp.d+1+(x.g!==VRB)   // slot 3 is reserved for a "base pointer"
+            const d=scp.d+1+(x.g!==VRB) // slot 3 is reserved for a "base pointer"
             ,v=extend(Object.create(vars),{'⍵':{i:0,d,g:NOUN},'∇':{i:1,d,g:VRB},'⍺':{i:2,d,g:NOUN},'⍫':{d,g:VRB}})
             q.push(extend(x[i],{scp,d,n:4,v}))
             if(x.g===CNJ){v['⍵⍵']=v['⍹']={i:0,d:d-1,g:VRB};v['∇∇']={i:1,d:d-1,g:CNJ};v['⍺⍺']=v['⍶']={i:2,d:d-1,g:VRB}}
@@ -1463,7 +1430,7 @@ const NOUN=1,VRB=2,ADV=3,CNJ=4
           return x.g||VRB
         }
         case'S':case'N':case'J':case'⍬':return NOUN
-        case'[':{for(let i=2;i<x.length;i++)if(x[i]&&vst(x[i])!==NOUN)synErrAt(x); return vst(x[1])}
+        case'[':{for(let i=2;i<x.length;i++)if(x[i]&&vst(x[i])!==NOUN)synErrAt(x);return vst(x[1])}
         case'.':{
           let a=x.slice(1),h=Array(a.length);for(let i=a.length-1;i>=0;i--)h[i]=vst(a[i])
           // strands
@@ -1501,7 +1468,6 @@ const NOUN=1,VRB=2,ADV=3,CNJ=4
           x.splice(0,9e9,a[0]);extend(x,a[0]);return h[0]
         }
       }
-      asrt(0)
     }
     ,vstLHS=(x,rg)=>{ // rg:right-hand side grammatical category
       x.scp=scp
@@ -1522,21 +1488,21 @@ const NOUN=1,VRB=2,ADV=3,CNJ=4
     case':':{const r=rndr(x[1]),y=rndr(x[2]);return r.concat(JEQ,y.length+2,POP,y,RET)}
     case'←':return rndr(x[2]).concat(rndrLHS(x[1])) // a←5←→5 ⍙ a×a←2 5←→4 25
     // r←3⋄get_c←{2×○r}⋄get_S←{○r*2}⋄bef←.01×⌊100×r c S⋄r←r+1⋄aft←.01×⌊100×r c S⋄bef aft←→(3 18.84 28.27)(4 25.13 50.26)
-    // {⍺}0 !!! VALUE ERROR ⍙ {x}0⋄x←0 !!! VALUE ERROR ⍙ {⍫1⋄2}⍬←→1 ⍙ c←{}⋄x←{c←⍫⋄1}⍬⋄{x=1:c 2⋄x}⍬←→2
+    // {⍺}0 !! VALUE ERROR ⍙ {x}0⋄x←0 !! VALUE ERROR ⍙ {⍫1⋄2}⍬←→1 ⍙ c←{}⋄x←{c←⍫⋄1}⍬⋄{x=1:c 2⋄x}⍬←→2
     case'X':{const s=x[1],vars=x.scp.v,v=vars['get_'+s]
              return s==='⍫'?[CON]:v&&v.g===VRB?[LDC,A.zero,GET,v.d,v.i,MON]:[GET,vars[s].d,vars[s].i]}
     // {1+1}1←→2 ⍙ {⍵=0:1⋄2×∇⍵-1}5←→32 ⍙ {⍵<2:1⋄(∇⍵-1)+∇⍵-2}8←→34 ⍙ ⊂{⍺⍺ ⍺⍺ ⍵}'ab'←→⊂⊂'ab' ⍙ ⊂{⍺⍺ ⍵⍵ ⍵}⌽'ab'←→⊂'ba'
     // ⊂{⍶⍶⍵}'ab'←→⊂⊂'ab' ⍙ ⊂{⍶⍹⍵}⌽'ab'←→⊂'ba' ⍙ +{⍵⍶⍵}1 2←→2 4 ⍙ f←{⍵⍶⍵}⋄+f 1 2←→2 4
     // tw←{⍶⍶⍵}⋄*tw 2←→1618.1779919126539 ⍙ f←{-⍵;⍺×⍵}⋄(f 5)(3 f 5)←→¯5 15 ⍙ f←{;}⋄(f 5)(3 f 5)←→⍬⍬
     // ²←{⍶⍶⍵;⍺⍶⍺⍶⍵}⋄*²2←→1618.1779919126539 ⍙ ²←{⍶⍶⍵;⍺⍶⍺⍶⍵}⋄3*²2←→19683 ⍙ H←{⍵⍶⍹⍵;⍺⍶⍹⍵}⋄+H÷2←→2.5
-    // H←{⍵⍶⍹⍵;⍺⍶⍹⍵}⋄7+H÷2←→7.5 ⍙ {;;} !!!
+    // H←{⍵⍶⍹⍵;⍺⍶⍹⍵}⋄7+H÷2←→7.5 ⍙ {;;} !!
     case'{':{const r=rndr(x[1]),lx=[LAM,r.length].concat(r);let f
              if(x.length===2){f=lx}
              else if(x.length===3){let y=rndr(x[2]),ly=[LAM,y.length].concat(y),v=x.scp.v['⍠']
                                    f=ly.concat(GET,v.d,v.i,lx,DYA)}
              else{synErrAt(x)}
              return x.g===VRB?f:[LAM,f.length+1].concat(f,RET)}
-    // ⍴''←→,0 ⍙ ⍴'x'←→⍬ ⍙ ⍴'xx'←→,2 ⍙ ⍴'a''b'←→,3 ⍙ ⍴'''a'←→,2 ⍙ ⍴'a'''←→,2 ⍙ ⍴''''←→⍬ ⍙ 'a !!!
+    // ⍴''←→,0 ⍙ ⍴'x'←→⍬ ⍙ ⍴'xx'←→,2 ⍙ ⍴'a''b'←→,3 ⍙ ⍴'''a'←→,2 ⍙ ⍴'a'''←→,2 ⍙ ⍴''''←→⍬ ⍙ 'a !!
     case'S':{const s=x[1].slice(1,-1).replace(/''/g,"'");return[LDC,A(s.split(''),s.length===1?[]:[s.length])]}
     // ∞←→¯ ⍙ ¯∞←→¯¯ ⍙ ¯∞j¯∞←→¯¯j¯¯ ⍙ ∞∞←→¯ ¯ ⍙ ∞¯←→¯ ¯
     case'N':{const a=x[1].replace(/[¯∞]/g,'-').split(/j/i).map(x=>x==='-'?Infinity:x==='--'?-Infinity:parseFloat(x))
@@ -1561,8 +1527,8 @@ const NOUN=1,VRB=2,ADV=3,CNJ=4
   }}
   const rndrLHS=x=>{switch(x[0]){default:asrt(0)
     case'X':{const s=x[1],vars=x.scp.v,v=vars['set_'+s];return v&&v.g===VRB?[GET,v.d,v.i,MON]:[SET,vars[s].d,vars[s].i]}
-    // (a b)←1 2⋄a←→1 ⍙ (a b)←1 2⋄b←→2 ⍙ (a b)←+ !!! ⍙ (a b c)←3 4 5⋄a b c←→3 4 5 ⍙ (a b c)←6⋄a b c←→6 6 6
-    // (a b c)←7 8⋄a b c !!! ⍙ ((a b)c)←3(4 5)⋄a b c←→3 3(4 5)
+    // (a b)←1 2⋄a←→1 ⍙ (a b)←1 2⋄b←→2 ⍙ (a b)←+ !! ⍙ (a b c)←3 4 5⋄a b c←→3 4 5 ⍙ (a b c)←6⋄a b c←→6 6 6
+    // (a b c)←7 8⋄a b c !! ⍙ ((a b)c)←3(4 5)⋄a b c←→3 3(4 5)
     case'.':{const n=x.length-1,a=[SPL,n];for(let i=1;i<x.length;i++){a.push.apply(a,rndrLHS(x[i]));a.push(POP)};return a}
     case'[':{const h=[],a=[],v=x.scp.v._amend // index assignment
              for(let i=2;i<x.length;i++)if(x[i]){h.push(i-2);a.push.apply(a,rndr(x[i]))}
@@ -1642,7 +1608,7 @@ if(typeof module!=='undefined'){
     }else{
       const ws=apl.ws(),out=process.stdout
       const f=s=>{
-        try{s.match(/^[\ \t\f\r\n]*$/)||out.write(fmt(ws(s)).join('\n')+'\n')}catch(e){out.write(e+'\n')}
+        try{s.match(/^\s*$/)||out.write(fmt(ws(s)).join('\n')+'\n')}catch(e){out.write(e+'\n')}
         readline('      ',f)
       }
       f('')
