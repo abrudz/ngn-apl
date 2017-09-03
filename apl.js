@@ -1408,21 +1408,20 @@ const NOUN=1,VRB=2,ADV=3,CNJ=4
   gl(ast)
   const q=[ast] // queue for "body" nodes
   while(q.length){
-    const scp=q.shift(),vars=scp.v // scp:scope node
+    const scp=q.shift() // scp:scope node
     ,vst=x=>{
       x.scp=scp
       switch(x[0]){default:asrt(0)
         case':':{const r=vst(x[1]);vst(x[2]);return r}
         case'←':return vstLHS(x[1],vst(x[2]))
         case'X':{
-          const s=x[1],v=vars['get_'+s]
-          if(v&&v.g===VRB)return NOUN
-          return vars[s]&&vars[s].g||valErr({file:o.file,offset:x.offset,aplCode:o.aplCode}) // x⋄x←0 !! VALUE ERROR
+          const s=x[1],v=scp.v['get_'+s];if(v&&v.g===VRB)return NOUN
+          return(scp.v[s]||{}).g||valErr({file:o.file,offset:x.offset,aplCode:o.aplCode}) // x⋄x←0 !! VALUE ERROR
         }
         case'{':{
           for(let i=1;i<x.length;i++){
             const d=scp.d+1+(x.g!==VRB) // slot 3 is reserved for a "base pointer"
-            ,v=extend(Object.create(vars),{'⍵':{i:0,d,g:NOUN},'∇':{i:1,d,g:VRB},'⍺':{i:2,d,g:NOUN},'⍫':{d,g:VRB}})
+            ,v=extend(Object.create(scp.v),{'⍵':{i:0,d,g:NOUN},'∇':{i:1,d,g:VRB},'⍺':{i:2,d,g:NOUN},'⍫':{d,g:VRB}})
             q.push(extend(x[i],{scp,d,n:4,v}))
             if(x.g===CNJ){v['⍵⍵']=v['⍹']={i:0,d:d-1,g:VRB};v['∇∇']={i:1,d:d-1,g:CNJ};v['⍺⍺']=v['⍶']={i:2,d:d-1,g:VRB}}
             else if(x.g===ADV){v['⍺⍺']=v['⍶']={i:0,d:d-1,g:VRB};v['∇∇']={i:1,d:d-1,g:ADV}}
@@ -1473,7 +1472,7 @@ const NOUN=1,VRB=2,ADV=3,CNJ=4
       x.scp=scp
       switch(x[0]){default:asrt(0)
         case'X':const s=x[1];if(s==='∇'||s==='⍫')synErrAt(x)
-                if(vars[s]){vars[s].g!==rg&&synErrAt(x)}else{vars[s]={d:scp.d,i:scp.n++,g:rg}};break
+                if(scp.v[s]){scp.v[s].g!==rg&&synErrAt(x)}else{scp.v[s]={d:scp.d,i:scp.n++,g:rg}};break
         case'.':rg===NOUN||synErrAt(x);for(let i=1;i<x.length;i++)vstLHS(x[i],rg);break
         case'[':rg===NOUN||synErrAt(x);vstLHS(x[1],rg);for(let i=2;i<x.length;i++)x[i]&&vst(x[i]);break
       }
