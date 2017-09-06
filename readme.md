@@ -12,7 +12,7 @@ prototypes, modified assignment (`x+←1`), control structures (`:If`), object-o
 Used in [Paul L Jackson's web site](https://plj541.github.io/APL.js/), [repl.it](https://repl.it/languages/APL),
 and [tio.run](https://tio.run/#apl-ngn).
 
-#Offline usage
+# Offline usage
 
 Download [apl.js](https://ngn.github.io/apl/apl.js) and run it with [NodeJS](https://nodejs.org/) to start a REPL:
 
@@ -25,16 +25,14 @@ An APL script can be given as argument:
 `apl.js` can be `require()`d as a CommonJS module from JavaScript:
 
     var apl=require('./apl')
-    console.log(apl('1 2 3+4 5 6').toString())
+    var r=apl('1 2 3+4 5 6')
 
 or used in an HTML page:
 
     <script src='https://ngn.github.io/apl/apl.js'></script>
-    <script>
-      var r=apl('1 2 3+4 5 6')
-    </script>
+    <script>var r=apl('1 2 3+4 5 6')</script>
 
-#Editor support
+# Editor support
 
 * [Vim keymap and syntax](https://github.com/ngn/vim-apl)
 * [baruchel/vim-notebook](https://github.com/baruchel/vim-notebook): evaluate blocks of APL code in a vim buffer
