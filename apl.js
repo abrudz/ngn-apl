@@ -88,7 +88,6 @@ function Z(re,im){asrt(typeof re==='number');asrt(typeof im==='number'||im==null
   if(re!==re||im!==im)domErr(); this.re=re;this.im=im||0}
 Z.prototype.toString=function(){return fmtNum(this.re)+'J'+fmtNum(this.im)}
 Z.prototype.repr=function(){return'new Z('+repr(this.re)+','+repr(this.im)+')'}
-
 Z.exp=x=>{x=Zify(x);let r=Math.exp(x.re);return smplfy(r*Math.cos(x.im),r*Math.sin(x.im))}
 Z.log=x=>{if(typeof x==='number'&&x>0){return Math.log(x)}
           else{x=Zify(x);return smplfy(Math.log(Math.sqrt(x.re*x.re+x.im*x.im)),Z.dir(x))}}
@@ -101,7 +100,6 @@ Z.div=(x,y)=>{x=Zify(x);y=Zify(y);const d=y.re*y.re+y.im*y.im
               return smplfy((x.re*y.re+x.im*y.im)/d,(y.re*x.im-y.im*x.re)/d)}
 Z.it =x=>{x=Zify(x);return smplfy(-x.im,x.re)} // i times
 Z.nit=x=>{x=Zify(x);return smplfy(x.im,-x.re)} // -i times
-
 Z.pow=(x,y)=>{
   if(typeof x==='number'&&typeof y==='number'&&(x>=0||isInt(y)))return Math.pow(x,y)
   if(typeof y==='number'&&isInt(y,0)){let r=1;while(y){(y&1)&&(r=Z.mul(r,x));x=Z.mul(x,x);y>>=1};return r}
@@ -114,7 +112,6 @@ Z.dir=x=>Math.atan2(x.im,x.re) // direction
 Z.sin=x=>Z.nit(Z.sh(Z.it(x)))
 Z.cos=x=>Z.ch(Z.it(x))
 Z.tg =x=>Z.nit(Z.th(Z.it(x)))
-
 // asin(x)=-i ln(ix+sqrt(1-x^2)) ; acos(x)=-i ln(x+i sqrt(x^2-1)) ; atg(x)=(i/2)(ln(1-ix)-ln(1+ix))
 Z.asin=x=>{x=Zify(x);return Z.nit(Z.log(Z.add(Z.it(x),Z.sqrt(Z.sub(1,Z.pow(x,2))))))}
 Z.acos=x=>{x=Zify(x);const r=Z.nit(Z.log(Z.add(x,Z.sqrt(Z.sub(Z.pow(x,2),1)))))
@@ -123,12 +120,10 @@ Z.atg=x=>{x=Zify(x);const ix=Z.it(x);return Z.mul(new Z(0,.5),Z.sub(Z.log(Z.sub(
 Z.sh=x=>{let a=Z.exp(x);return Z.mul(.5,Z.sub(a,Z.div(1,a)))}
 Z.ch=x=>{let a=Z.exp(x);return Z.mul(.5,Z.add(a,Z.div(1,a)))}
 Z.th=x=>{let a=Z.exp(x),b=Z.div(1,a);return Z.div(Z.sub(a,b),Z.add(a,b))}
-
 // ash(x)=i asin(-ix) ; ach(x)=±i acos(x) ; ath(x)=i atg(-ix)
 Z.ash=x=>Z.it(Z.asin(Z.nit(x)))
 Z.ach=x=>{x=Zify(x);let sign=x.im>0||(!x.im&&x.re<=1)?1:-1;return Z.mul(new Z(0,sign),Z.acos(x))}
 Z.ath=x=>Z.it(Z.atg(Z.nit(x)))
-
 Z.floor=x=>{
   if(typeof x==='number')return Math.floor(x)
   x=Zify(x)
@@ -143,12 +138,10 @@ Z.ceil=x=>{
   if(r+i>=1)r>=i?re--:im--
   return smplfy(re,im)
 }
-
 const iszero=x=>!x||(x instanceof Z&&!x.re&&!x.im)
 Z.residue=(x,y)=>typeof x==='number'&&typeof y==='number'?(x?y-x*Math.floor(y/x):y)
                  :iszero(x)?y:Z.sub(y,Z.mul(x,Z.floor(Z.div(y,x))))
 Z.isint=x=>typeof x==='number'?x===Math.floor(x):x.re===Math.floor(x.re)&&x.im===Math.floor(x.im)
-
 const firstquadrant=x=>{ // rotate into first quadrant
   if(typeof x==='number'){return Math.abs(x)}
   else{x.re<0&&(x=Z.neg(x));x.im<0&&(x=Z.it(x));return x.re?x:x.im}
@@ -163,6 +156,7 @@ Z.gcd=(x,y)=>{
   }
 }
 Z.lcm=(x,y)=>{let p=Z.mul(x,y);return iszero(p)?p:Z.div(p,Z.gcd(x,y))}
+
 const LDC=1,VEC=2,GET=3,SET=4,MON=5,DYA=6,LAM=7,RET=8,POP=9,SPL=10,JEQ=11,EMB=12,CON=13
 ,Proc=function(b,p,size,h){this.b=b;this.p=p;this.size=size;this.h=h;this.toString=_=>'#procedure'}
 ,toFn=f=>(x,y)=>vm(f.b,f.h.concat([[x,f,y,null]]),f.p)
@@ -367,9 +361,7 @@ voc['|']=withId(0,perv(
   numeric(x=>Math.abs(x),Z.mag),
   Z.residue
 ))
-
 voc['⍀']=adv((y,x,h)=>voc['\\'](y,x,h||A.zero))
-
 voc['\\']=adv((y,x,h)=>{
   if(typeof y==='function'){
     asrt(typeof x==='undefined')
@@ -474,18 +466,15 @@ voc['○']=perv(
   }
 )
 voc[',']=(y,x,h)=>{
-  if(!x)nyiErr()
+  x||nyiErr()
   let nAxes=Math.max(x.s.length,y.s.length)
-  if(h){h=unw(h);typeof h!=='number'&&domErr();nAxes&&!(-1<h&&h<nAxes)&&rnkErr()}
-  else{h=nAxes-1}
-
+  if(h){h=unw(h);typeof h!=='number'&&domErr();nAxes&&!(-1<h&&h<nAxes)&&rnkErr()}else{h=nAxes-1}
   if(!x.s.length&&!y.s.length){return A([unw(x),unw(y)])}
   else if(!x.s.length){let s=y.s.slice();if(isInt(h))s[h]=1;x=A(rpt([unw(x)],prd(s)),s)}
   else if(!y.s.length){let s=x.s.slice();if(isInt(h))s[h]=1;y=A(rpt([unw(y)],prd(s)),s)}
   else if(x.s.length+1===y.s.length){isInt(h)||rnkErr();let s=x.s.slice();s.splice(h,0,1);x=A(x.a,s)}
   else if(x.s.length===y.s.length+1){isInt(h)||rnkErr();let s=y.s.slice();s.splice(h,0,1);y=A(y.a,s)}
   else if(x.s.length!==y.s.length){rnkErr()}
-
   asrt(x.s.length===y.s.length)
   for(let i=0;i<x.s.length;i++)if(i!==h&&x.s[i]!==y.s[i])lenErr()
   let s=x.s.slice();if(isInt(h)){s[h]+=y.s[h]}else{s.splice(Math.ceil(h),0,2)}
@@ -513,7 +502,6 @@ voc[',']=(y,x,h)=>{
   }
   return A(r,s)
 }
-
 let eq
 voc['=']=withId(1,perv(null,eq=(x,y)=>+(x instanceof Z&&y instanceof Z?x.re===y.re&&x.im===y.im:x===y)))
 voc['≠']=withId(0,perv(null,(x,y)=>1-eq(y,x)))
@@ -521,17 +509,14 @@ voc['<']=withId(0,perv(null,real((x,y)=>+(x< y))))
 voc['>']=withId(0,perv(null,real((x,y)=>+(x> y))))
 voc['≤']=withId(1,perv(null,real((x,y)=>+(x<=y))))
 voc['≥']=withId(1,perv(null,real((x,y)=>+(x>=y))))
-
 voc['≡']=(y,x)=>x?A.bool[+match(y,x)]:A([depth(y)],[])
 const depth=x=>{if(!x.isA||!x.s.length&&!x.a[0].isA)return 0
                 let r=0,n=x.a.length;for(let i=0;i<n;i++)r=Math.max(r,depth(x.a[i]));return r+1}
-
 voc['∘']=conj((g,f)=>{
   if(typeof f==='function'){if(typeof g==='function'){return(y,x)=>f(g(y),x)}      // f∘g
                             else{return(y,x)=>{x==null||synErr();return f(g,y)}}}  // f∘B
   else{asrt(typeof g==='function');return(y,x)=>{x==null||synErr();return g(y,f)}} // A∘g
 })
-
 voc['∪']=(y,x)=>{
   if(x){
     if(x.s.length>1||y.s.length>1)rnkErr()
@@ -541,16 +526,9 @@ voc['∪']=(y,x)=>{
     let r=[],n=y.a.length;for(let i=0;i<n;i++)contains(r,y.a[i])||r.push(y.a[i]);return A(r)
   }
 }
-voc['∩']=(y,x)=>{
-  if(x){
-    if(x.s.length>1||y.s.length>1)rnkErr()
-    let r=[],n=x.a.length;for(let i=0;i<n;i++)contains(y.a,x.a[i])&&r.push(x.a[i]);return A(r)
-  }else{
-    nyiErr()
-  }
-}
+voc['∩']=(y,x)=>{x||nyiErr();if(x.s.length>1||y.s.length>1)rnkErr()
+                 let r=[],n=x.a.length;for(let i=0;i<n;i++)contains(y.a,x.a[i])&&r.push(x.a[i]);return A(r)}
 const contains=(a,x)=>{for(let i=0;i<a.length;i++)if(match(x,a[i]))return 1}
-
 voc['⊥']=(y,x)=>{
   asrt(x)
   if(!x.s.length)x=A([unw(x)])
@@ -568,9 +546,7 @@ voc['⊥']=(y,x)=>{
   }
   return A(r,x.s.slice(0,-1).concat(y.s.slice(1)))
 }
-
 voc['.']=conj((g,f)=>f===voc['∘']?oprd(g):iprd(g,f))
-
 const oprd=f=>{ // outer product
   asrt(typeof f==='function')
   return(y,x)=>{
@@ -584,7 +560,6 @@ const oprd=f=>{ // outer product
     return A(r,x.s.concat(y.s))
   }
 }
-
 const iprd=(g,f)=>{ // inner product: A f.g B <-> f/¨(⊂[¯1+⍴⍴A]A)∘.g⊂[0]B
   let F=voc['¨'](voc['/'](f)),G=oprd(g)
   return(y,x)=>{if(!x.s.length)x=A([unw(x)])
@@ -592,7 +567,6 @@ const iprd=(g,f)=>{ // inner product: A f.g B <-> f/¨(⊂[¯1+⍴⍴A]A)∘.g�
                 return F(G(voc['⊂'](y,undefined,A([0])),
                            voc['⊂'](x,undefined,A([x.s.length-1]))))}
 }
-
 voc['¨']=adv((f,g)=>{
   asrt(typeof f==='function');asrt(g==null)
   return(y,x)=>{
@@ -615,7 +589,6 @@ voc['¨']=adv((f,g)=>{
     }
   }
 })
-
 voc['⊤']=(y,x)=>{
   x||synErr()
   let s=x.s.concat(y.s),r=Array(prd(s)),n=x.s.length?x.s[0]:1,m=x.a.length/n
@@ -626,15 +599,10 @@ voc['⊤']=(y,x)=>{
   }
   return A(r,s)
 }
-
 voc['∊']=(y,x)=>{
-  if(x){
-    return map(x,u=>{for(let i=0;i<y.a.length;i++)if(match(u,y.a[i]))return 1;return 0})
-  }else{
-    let r=[];enlist(y,r);return A(r)
-  }
+  if(x)return map(x,u=>{for(let i=0;i<y.a.length;i++)if(match(u,y.a[i]))return 1;return 0})
+  let r=[];enlist(y,r);return A(r)
 }
-
 const enlist=(x,r)=>{if(x.isA){const n=x.a.length;for(let i=0;i<n;i++)enlist(x.a[i],r)}else{r.push(x)}}
 let Beta
 voc['!']=withId(1,perv(
@@ -654,7 +622,6 @@ voc['!']=withId(1,perv(
     return isInt(n)&&isInt(k)?Math.round(r):r
   })
 ))
-
 const negInt=x=>isInt(x)&&x<0
 let smallFactorials=[1];(_=>{let x=1;for(let i=1;i<=25;i++)smallFactorials.push(x*=i)})()
 let Γ,lnΓ
@@ -682,9 +649,7 @@ let Γ,lnΓ
     return Math.sqrt(2*Math.PI)*Math.pow(t,z+.5)*Math.exp(-t)*x
   }
 })()
-
 voc['⍎']=(y,x)=>x?nyiErr():exec(str(y))
-
 voc['⍷']=(y,x)=>{
   y||nyiErr()
   const r=new Float64Array(y.a.length)
@@ -708,20 +673,16 @@ voc['⍷']=(y,x)=>{
   }
   return A(r,y.s)
 }
-
 voc['⌊']=withId(Infinity,perv(
   Z.floor,
   real((x,y)=>Math.min(x,y))
 ))
-
 voc['⌈']=withId(-Infinity,perv(
   Z.ceil,
   real((x,y)=>Math.max(x,y))
 ))
-
 voc._fork1=(h,g)=>{asrt(typeof h==='function');asrt(typeof g==='function');return[h,g]}
 voc._fork2=(hg,f)=>{let[h,g]=hg;asrt(typeof h==='function');return(b,a)=>g(h(b,a),f(b,a))}
-
 voc['⍕']=(y,x)=>{x&&nyiErr();let t=fmt(y);return A(t.join(''),[t.length,t[0].length])}
 const fmt=x=>{ // as array of strings
   const t=typeof x
@@ -759,7 +720,6 @@ const fmt=x=>{ // as array of strings
   }
   return a
 }
-
 voc['⍋']=(y,x)=>grd(y,x,1)
 voc['⍒']=(y,x)=>grd(y,x,-1)
 const grd=(y,x,dir)=>{
@@ -788,14 +748,12 @@ const grd=(y,x,dir)=>{
     return(i>j)-(i<j)
   }))
 }
-
 voc['⍁']=conj((f,x)=>{
   if(f.isA){let h=f;f=x;x=h}
   asrt(typeof f==='function');asrt(x.isA);x.a.length===1||rnkErr()
   if(x.s.length)x=A.scal(unw(x))
   return withId(x,(y,x,h)=>f(y,x,h))
 })
-
 voc['⍳']=(y,x)=>{
   if(x){
     x.s.length===1||rnkErr()
@@ -812,7 +770,6 @@ voc['⍳']=(y,x)=>{
     if(m===1){return A(r,y.a)}else{var r1=Array(n);for(let i=0;i<n;i++)r1[i]=A(r.slice(m*i,m*i+m));return A(r1,y.a)}
   }
 }
-
 voc['⊂']=(y,x,h)=>{
   asrt(!x)
   if(isSimple(y))return y
@@ -832,13 +789,11 @@ voc['⊂']=(y,x,h)=>{
   for(let i=0;i<a.length;i++)a[i]=A(a[i],us)
   return A(a,rs)
 }
-
 voc['∨']=withId(0,perv(null,(x,y)=>Z.isint(x)&&Z.isint(y)?Z.gcd(x,y):domErr()))
 voc['∧']=withId(1,perv(null,(x,y)=>Z.isint(x)&&Z.isint(y)?Z.lcm(x,y):domErr()))
 voc['⍱']=perv(null,real((x,y)=>+!(bool(x)|bool(y))))
 voc['⍲']=perv(null,real((x,y)=>+!(bool(x)&bool(y))))
 voc['~']=perv(x=>+!bool(x))
-
 voc['⍣']=conj((g,f)=>{
   if(f.isA&&typeof g==='function'){let h=f;f=g;g=h}else{asrt(typeof f==='function')}
   if(typeof g==='function'){return(y,x)=>{while(1){let y1=f(y,x);if(toInt(g(y,y1),0,2))return y;y=y1}}}
@@ -862,11 +817,9 @@ voc['set_⍞']=x=>{
   if(typeof window!=='undefined'&&typeof window.alert==='function'){window.alert(s)}else{process.stdout.write(s)}
   return x
 }
-
 voc['get_⎕IO']=_=>A.zero
 voc['set_⎕IO']=x=>match(x,A.zero)?x:domErr()
 voc['⎕DL']=cps((y,x,_,cb)=>{let t0=+new Date;setTimeout(_=>{cb(A([new Date-t0]))},unw(y))})
-
 voc['⎕RE']=(y,x)=>{
   x=str(x),y=str(y)
   let re;try{re=RegExp(x)}catch(e){domErr()}
@@ -874,27 +827,20 @@ voc['⎕RE']=(y,x)=>{
   let r=[m.index];for(let i=0;i<m.length;i++)r.push(A(m[i]||''))
   return A(r)
 }
-
 voc['⎕UCS']=(y,x)=>{
   x&&nyiErr();return map(y,u=>isInt(u,0,0x10000)?String.fromCharCode(u):typeof u==='string'?u.charCodeAt(0):domErr())
 }
-
 voc['get_⎕OFF']=_=>{typeof process==='undefined'&&nyiErr();process.exit(0)}
-
 voc['?']=(y,x)=>x?deal(y,x):roll(y)
-
-let roll=perv(y=>{isInt(y,1)||domErr();return Math.floor(Math.random()*y)})
-
-const deal=(y,x)=>{
+const roll=perv(y=>{isInt(y,1)||domErr();return Math.floor(Math.random()*y)})
+,deal=(y,x)=>{
   x=unw(x);y=unw(y)
   isInt(y,0)&&isInt(x,0,y+1)||domErr()
   let r=Array(y);for(let i=0;i<y;i++)r[i]=i
   for(let i=0;i<x;i++){let j=i+Math.floor(Math.random()*(y-i));const h=r[i];r[i]=r[j];r[j]=h}
   return A(r.slice(0,x))
 }
-
 voc['↗']=y=>err(str(y))
-
 voc['⍴']=(y,x)=>{
   if(x){
     x.s.length<=1||rnkErr()
@@ -907,7 +853,6 @@ voc['⍴']=(y,x)=>{
     return A(new Float64Array(y.s))
   }
 }
-
 voc['⌽']=(y,x,h)=>{
   asrt(typeof h==='undefined'||h.isA)
   if(x){
@@ -936,9 +881,7 @@ voc['⌽']=(y,x,h)=>{
     return A(r,y.s)
   }
 }
-
 voc['⊖']=(y,x,h)=>voc['⌽'](y,x,h||A.zero)
-
 voc['⌿']=adv((y,x,h)=>voc['/'](y,x,h||A.zero))
 voc['/']=adv((y,x,h)=>{
   if(typeof y==='function'){
@@ -1004,7 +947,6 @@ voc['/']=adv((y,x,h)=>{
     return A(r,s)
   }
 })
-
 voc['⌷']=(y,x,h)=>{
   if(typeof y==='function')return(u,v)=>y(u,v,x)
   x||nyiErr();x.s.length>1&&rnkErr();x.a.length>y.s.length&&lenErr()
@@ -1028,9 +970,7 @@ const indexAtSingleAxis=(x,y,h)=>{ // y:subscript
   let l=0;for(let i=0;i<ni;i++)for(let j=0;j<nj;j++)for(let k=0;k<nk;k++)r[l++]=x.a[(i*nj0+y.a[j])*nk+k]
   return A(r,s)
 }
-
 voc._index=({a},y)=>voc['⌷'](y,a[0],a[1])
-
 voc._amend=args=>{
   let[value,x,y,h]=args.a.map(u=>u.isA?u:A([u],[]))
   x.s.length>1&&rnkErr()
@@ -1050,9 +990,8 @@ voc._amend=args=>{
   }
   return A(r,y.s)
 }
-
 voc['↑']=(y,x)=>{
-  if(!x)nyiErr()
+  x||nyiErr()
   x.s.length<=1||rnkErr()
   if(!y.s.length)y=A([unw(y)],x.s.length?rpt([1],x.s[0]):[1])
   x.a.length<=y.s.length||rnkErr()
@@ -1077,10 +1016,7 @@ voc['↑']=(y,x)=>{
   }
   return A(r,s)
 }
-voc['⊃']=(y,x)=>{
-  if(x)nyiErr()
-  y=y.a.length?y.a[0]:getProt(y);return y.isA?y:A([y],[])
-}
+voc['⊃']=(y,x)=>{x&&nyiErr();y=y.a.length?y.a[0]:getProt(y);return y.isA?y:A([y],[])}
 voc['⍉']=(y,x)=>{
   let a,s=[],d=[],d0=strides(y.s)
   if(x){x.s.length<=1||rnkErr();x.s.length||(x=A([unw(x)]));x.s[0]===y.s.length||lenErr();a=x.a}
