@@ -56,7 +56,7 @@ I.lb.onmousedown=x=>{
 const get=(x,f)=>{const r=new XMLHttpRequest;r.open('get',x)
                   r.onreadystatechange=x=>{r.readyState===4&&f(r.responseText)};r.send()}
 const runDocTests=_=>{
-  get('../apl.js',x=>{
+  get('../t.apl',x=>{
     const t=collectTests(x)
     I.rslt.classList.remove('err');I.rslt.classList.textContent=''
     let ne=0,nf=0,t0=+new Date // ne:number of executed, nf:number of failed
