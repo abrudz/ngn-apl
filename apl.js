@@ -38,7 +38,14 @@ const prelude=[
 "⍨←{⍵⍶⍵;⍵⍶⍺}"
 ].join('\n')
 
-,A=(a,s=[a.length])=>({isA:1,a,s})
+,A=(a,s=[a.length])=>{
+  if(a.length&&a instanceof Array){
+    let t=1;for(var i=0;i<a.length;i++)if(typeof a[i]!=='number'){t=0;break}
+    if(t)a=new Float64Array(a)
+  }
+  if(!(s instanceof Array)){let s0=s;s=Array(s0.length);for(let i=0;i<s0.length;i++)s[i]=s0[i]}
+  return{isA:1,a,s}
+}
 ,strides=s=>{let r=Array(s.length),u=1;for(let i=r.length-1;i>=0;i--){asrt(isInt(s[i],0));r[i]=u;u*=s[i]};return r}
 ,map=(x,f)=>{const n=x.a.length,r=Array(n);for(let i=0;i<n;i++)r[i]=f(x.a[i]);return A(r,x.s)}
 ,toInt=(x,m,M)=>{let r=unw(x);if(r!==r|0||m!=null&&r<m||M!=null&&M<=r)domErr();return r}
@@ -53,9 +60,15 @@ const prelude=[
 ,extend=(x,y)=>{for(let k in y)x[k]=y[k];return x}
 ,fmtNum=x=>(''+x).replace('Infinity','∞').replace(/-/g,'¯')
 ,rpt=(x,n)=>{
-  if(!n)return x.slice(0,0)
-  let m=n*x.length;while(x.length*2<m)x=x.concat(x)
-  return x.concat(x.slice(0,m-x.length))
+  let m=n*x.length;if(!m)return x.slice(0,0)
+  if(x.set){let r=new(x.constructor)(x.length);r.set(x);while(n<m){r.copyWithin(n,0,n);n*=2};return r}
+  else{while(x.length*2<m)x=x.concat(x);return x.concat(x.slice(0,m-x.length))}
+}
+,cat=(x,y)=>{
+  let z=[]
+  for(let i=0;i<x.length;i++)z.push(x[i])
+  for(let i=0;i<y.length;i++)z.push(y[i])
+  return z
 }
 ,arrEq=(x,y)=>{
   if(x.length!==y.length)return 0
@@ -183,10 +196,10 @@ const LDC=1,VEC=2,GET=3,SET=4,MON=5,DYA=6,LAM=7,RET=8,POP=9,SPL=10,JEQ=11,EMB=12
     case LAM:{let size=b[p++];t.push(new Proc(b,p,size,h));p+=size;break}
     case RET:{if(t.length===1)return t[0];[b,p,h]=t.splice(-4,3);break}
     case POP:{t.pop();break}
-    case SPL:{let n=b[p++],a=t[t.length-1].a.slice().reverse()
-              for(let i=0;i<a.length;i++)if(!a[i].isA)a[i]=A([a[i]],[])
-              if(a.length===1){a=rpt(a,n)}else if(a.length!==n){lenErr()}
-              t.push.apply(t,a);break}
+    case SPL:{let n=b[p++],a=t[t.length-1].a.slice().reverse(),a1=Array(a.length)
+              for(let i=0;i<a.length;i++)a1[i]=a[i].isA?a[i]:A([a[i]],[])
+              if(a1.length===1){a1=rpt(a1,n)}else if(a1.length!==n){lenErr()}
+              t.push.apply(t,a1);break}
     case JEQ:{const n=b[p++];toInt(t[t.length-1],0,2)||(p+=n);break}
     case EMB:{let frm=h[h.length-1];t.push(b[p++](frm[0],frm[2]));break}
     case CON:{let frm=h[h.length-1],cont={b,h:h.map(x=>x.slice()),t:t.slice(0,frm[3]),p:frm[1].p+frm[1].size-1}
@@ -520,7 +533,7 @@ voc['∘']=conj((g,f)=>{
 voc['∪']=(y,x)=>{
   if(x){
     if(x.s.length>1||y.s.length>1)rnkErr()
-    let r=[],n=y.a.length;for(let i=0;i<n;i++)contains(x.a,y.a[i])||r.push(y.a[i]);return A(x.a.concat(r))
+    let r=[],n=y.a.length;for(let i=0;i<n;i++)contains(x.a,y.a[i])||r.push(y.a[i]);return A(cat(x.a,r))
   }else{
     if(y.s.length>1)rnkErr()
     let r=[],n=y.a.length;for(let i=0;i<n;i++)contains(r,y.a[i])||r.push(y.a[i]);return A(r)
@@ -924,10 +937,12 @@ voc['/']=adv((y,x,h)=>{
     y.s.length||(y=A([unw(y)]))
     h=h?toInt(h,0,y.s.length):y.s.length-1
     x.s.length<=1||rnkErr()
-    let a=x.a.slice(),n=y.s[h]
+    let a=[],n=y.s[h]
+    for(let i=0;i<x.a.length;i++)a[i]=x.a[i]
     if(a.length===1)a=rpt(a,n)
     if(n!==1&&n!==a.length)lenErr()
-    let b=[],s=y.s.slice();s[h]=0
+    let b=[],s=[];for(let i=0;i<y.s.length;i++)s[i]=y.s[i]
+    s[h]=0
     for(let i=0;i<a.length;i++){
       let u=a[i];isInt(u)||domErr();s[h]+=Math.abs(u)
       let nj=Math.abs(u);for(let j=0;j<nj;j++)b.push(u>0?i:null)
