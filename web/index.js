@@ -6,13 +6,10 @@ if(location.hash){const a=location.hash.substring(1).split(',');for(let i=0;i<a.
 I.code.value=hp.code||'';I.code.focus()
 I.perm.onmouseover=I.perm.onfocus=_=>{I.perm.href='#code='+escape(I.code.value);return!1}
 I.go.onclick=_=>{
-  try{
-    const s=I.code.value;I.rslt.classList.remove('err')
-    if(s===')t'){I.rslt.textContent='Running tests...\n';setTimeout(runDocTests,1)}
-    else{I.rslt.textContent=apl.fmt(apl(s)).join('\n')+'\n'}
-  }catch(e){
-    console&&console.error&&console.error(e.stack);I.rslt.classList.add('err');I.rslt.textContent=e
-  }
+  try{const s=I.code.value;I.rslt.classList.remove('err')
+      if(s===')t'){I.rslt.textContent='Running tests...\n';setTimeout(runDocTests,1)}
+      else{I.rslt.textContent=apl.fmt(apl(s)).join('\n')+'\n'}}
+  catch(e){console&&console.error&&console.error(e.stack);I.rslt.classList.add('err');I.rslt.textContent=e}
   return!1
 }
 hp.run&&I.go.click()
@@ -24,9 +21,9 @@ I.code.onkeydown=x=>{switch(x.ctrlKey+2*x.shiftKey+4*x.altKey+8*x.metaKey+100*x.
              return!1}
 }}
 const hc={'<':'&lt;','&':'&amp;',"'":'&apos;','"':'&quot;'},he=x=>x.replace(/[<&'"]/g,c=>hc[c])
-const tcs='<-←xx×:-÷*o⍟[-⌹oo○ff⌈FF⌈ll⌊LL⌊tt⊥TT⊤-|⊣|-⊢~~≈=/≠<=≤>=≥==≡=-≢vv∨^^∧^~⍲v~⍱^|↑v|↓<<⊂>>⊃[|⌷A|⍋V|⍒ii⍳ee∊e-⍷'+
+,tcs='<-←xx×:-÷*o⍟[-⌹oo○ff⌈FF⌈ll⌊LL⌊tt⊥TT⊤-|⊣|-⊢~~≈=/≠<=≤>=≥==≡=-≢vv∨^^∧^~⍲v~⍱^|↑v|↓<<⊂>>⊃[|⌷A|⍋V|⍒ii⍳ee∊e-⍷'+
 'uu∪nn∩/-⌿\\-⍀,-⍪rr⍴pp⍴o|⌽o-⊖o\\⍉..¨~:⍨*:⍣o.∘[\'⍞[]⎕[:⍠[=⌸ot⍎oT⍕<>⋄on⍝aa⍺ww⍵a-⍶w-⍹VV∇--¯88∞0~⍬V~⍫//↗[/⍁'
-const lbs=['←assign','+conjugate;add','-negate;subtract','×signum;multiply','÷reciprocal;divide','*exp;power','⍟ln;log',
+,lbs=['←assign','+conjugate;add','-negate;subtract','×signum;multiply','÷reciprocal;divide','*exp;power','⍟ln;log',
 '⌹matrix inverse;matrix divide','○pi;circular','!factorial;binomial','?roll;deal','|magnitude;residue',
 '⌈ceiling;max','⌊floor;min','⊥decode','⊤encode','⊣left','⊢right','=equals','≈approx','≠not equals',
 '≤lesser or equal to','<less than','>greater than','≥greater or equal to','≡depth;match','≢tally;not match','∨or',
@@ -39,7 +36,7 @@ const lbs=['←assign','+conjugate;add','-negate;subtract','×signum;multiply','
 '⌸key operator','⍎execute','⍕format','⋄statement separator','⍝comment','⍺left argument','⍵right argument',
 '⍶left operand','⍹right operand','∇recursion','¯negative','∞infinity','⍬empty numeric vector',
 '⍫"return" reified as a function','↗throw','⍁identity element operator']
-const tc={} // tab completions
+,tc={} // tab completions
 for(let i=0;i<tcs.length;i+=3)tc[tcs[i]+tcs[i+1]]=tcs[i+2]
 for(let i=0;i<tcs.length;i+=3){let k=tcs[i+1]+tcs[i];tc[k]=tc[k]||tcs[i+2]}
 let lbh='';for(let i=0;i<lbs.length;i++){
@@ -55,21 +52,16 @@ I.lb.onmousedown=x=>{
 }
 const get=(x,f)=>{const r=new XMLHttpRequest;r.open('get',x)
                   r.onreadystatechange=x=>{r.readyState===4&&f(r.responseText)};r.send()}
-const runDocTests=_=>{
-  get('../t.apl',x=>{
-    const t=collectTests(x)
-    I.rslt.classList.remove('err');I.rslt.classList.textContent=''
-    let ne=0,nf=0,t0=+new Date // ne:number of executed, nf:number of failed
-    for(let i=0;i<t.length;i++){
-      ne++;let x=t[i],o=runDocTest(x,apl,apl.aprx)
-      if(o){
-        nf++
-        I.rslt.textContent+='Test failed: '+JSON.stringify(x[0])+'\n'+
-                            '             '+JSON.stringify(x[2])+'\n'+
-                            (o.m?o.m+'\n':'')+(o.e?o.e.stack+'\n':'')
-      }
-    }
-    I.rslt.textContent+=(nf?nf+' out of '+ne+' tests failed':'All '+ne+' tests passed')+' in '+(new Date-t0)+' ms.\n'
-  })
-}
+,runDocTests=_=>{get('../t.apl',x=>{
+  const t=collectTests(x)
+  I.rslt.classList.remove('err');I.rslt.classList.textContent=''
+  let ne=0,nf=0,t0=+new Date // ne:number of executed, nf:number of failed
+  for(let i=0;i<t.length;i++){
+    ne++;let x=t[i],o=runDocTest(x,apl,apl.aprx)
+    if(o){nf++;I.rslt.textContent+='Test failed: '+JSON.stringify(x[0])+'\n'+
+                                   '             '+JSON.stringify(x[2])+'\n'+
+                                   (o.m?o.m+'\n':'')+(o.e?o.e.stack+'\n':'')}
+  }
+  I.rslt.textContent+=(nf?nf+' out of '+ne+' tests failed':'All '+ne+' tests passed')+' in '+(new Date-t0)+' ms.\n'
+})}
 })();

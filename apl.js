@@ -1,19 +1,14 @@
 //usr/bin/env node "$0" $@;exit $?
 'use strict'
-
 const prelude=[
 "⍬←() ⋄ ⎕d←'0123456789' ⋄ ⎕a←'ABCDEFGHIJKLMNOPQRSTUVWXYZ' ⋄ ⎕á←'ÁÂÃÇÈÊËÌÍÎÏÐÒÓÔÕÙÚÛÝþãìðòõ'",
 "~←~⍠{(~⍺∊⍵)/⍺}",
 "_atop←{⍶⍹⍵;⍶⍺⍹⍵}",
-"↑←{",
-"  0=⍴⍴⍵:⊃⍵ ⋄ 0=×/⍴⍵:⍵ ⋄ shape←⍴⍵ ⋄ ⍵←,⍵ ⋄ r←⌈/≢¨shapes←⍴¨⍵ ⋄ max←⊃⌈/shapes←(⍴↓(r⍴1)∘,)¨shapes",
-"  (shape,max)⍴⊃⍪/shapes{max↑⍺⍴⍵}¨⍵",
-"}⍠↑",
-"⊃←⊃⍠{;",
-"  1<⍴⍴⍺:↗'RANK ERROR' ⋄ x←⍵",
-"  {1<⍴⍴⍵:↗'RANK ERROR' ⋄ ⍵←,⍵ ⋄ (⍴⍵)≠⍴⍴x:↗'RANK ERROR' ⋄ ∨/⍵≥⍴x:↗'INDEX ERROR' ⋄ x←⊃⍵⌷x}¨⍺",
-"  x",
-"}",
+"↑←{0=⍴⍴⍵:⊃⍵ ⋄ 0=×/⍴⍵:⍵ ⋄ shape←⍴⍵ ⋄ ⍵←,⍵ ⋄ r←⌈/≢¨shapes←⍴¨⍵ ⋄ max←⊃⌈/shapes←(⍴↓(r⍴1)∘,)¨shapes",
+"  (shape,max)⍴⊃⍪/shapes{max↑⍺⍴⍵}¨⍵}⍠↑",
+"⊃←⊃⍠{;1<⍴⍴⍺:↗'RANK ERROR' ⋄ x←⍵",
+"      {1<⍴⍴⍵:↗'RANK ERROR' ⋄ ⍵←,⍵ ⋄ (⍴⍵)≠⍴⍴x:↗'RANK ERROR' ⋄ ∨/⍵≥⍴x:↗'INDEX ERROR' ⋄ x←⊃⍵⌷x}¨⍺",
+"      x}",
 "⊂←⊂⍠{1<⍴⍴⍺:↗'RANK ERROR' ⋄ 1≠⍴⍴⍵:↗'NONCE ERROR' ⋄ ⍺←,⍺=0",
 "     keep←~1 1⍷⍺ ⋄ sel←keep/⍺ ⋄ dat←keep/⍵",
 "     {1=1↑sel:{sel←1↓sel ⋄ dat←1↓dat}⍬}⍬",
@@ -173,39 +168,37 @@ Z.lcm=(x,y)=>{let p=Z.mul(x,y);return iszero(p)?p:Z.div(p,Z.gcd(x,y))}
 const LDC=1,VEC=2,GET=3,SET=4,MON=5,DYA=6,LAM=7,RET=8,POP=9,SPL=10,JEQ=11,EMB=12,CON=13
 ,Proc=function(b,p,size,h){this.b=b;this.p=p;this.size=size;this.h=h;this.toString=_=>'#procedure'}
 ,toFn=f=>(x,y)=>vm(f.b,f.h.concat([[x,f,y,null]]),f.p)
-,vm=(b,h,p=0,t=[])=>{ // b:bytecode,h:environment,p:program counter,t:stack
-  while(1)switch(b[p++]){default:asrt(0)
-    case LDC:t.push(b[p++]);break
-    case VEC:{let a=t.splice(t.length-b[p++]);for(let i=0;i<a.length;i++)if(isSimple(a[i]))a[i]=unw(a[i])
-              t.push(A(a));break}
-    case GET:{let r=h[b[p++]][b[p++]];r!=null||valErr();t.push(r);break}
-    case SET:{h[b[p++]][b[p++]]=t[t.length-1];break}
-    case MON:{let[w,f]=t.splice(-2)
-              if(typeof f==='function'){if(w instanceof Proc)w=toFn(w)
-                                        if(f.cps){f(w,undefined,undefined,r=>{t.push(r);vm(b,h,p,t)});return}
-                                        t.push(f(w))}
-              else{let bp=t.length;t.push(b,p,h);b=f.b;p=f.p;h=f.h.concat([[w,f,null,bp]])}
-              break}
-    case DYA:{let[w,f,a]=t.splice(-3)
-              if(typeof f==='function'){if(w instanceof Proc)w=toFn(w)
-                                        if(a instanceof Proc)a=toFn(a)
-                                        if(f.cps){f(w,a,undefined,r=>{t.push(r);vm(b,h,p,t)});return}
-                                        t.push(f(w,a))}
-              else{let bp=t.length;t.push(b,p,h);b=f.b;p=f.p;h=f.h.concat([[w,f,a,bp]])}
-              break}
-    case LAM:{let size=b[p++];t.push(new Proc(b,p,size,h));p+=size;break}
-    case RET:{if(t.length===1)return t[0];[b,p,h]=t.splice(-4,3);break}
-    case POP:{t.pop();break}
-    case SPL:{let n=b[p++],a=t[t.length-1].a.slice().reverse(),a1=Array(a.length)
-              for(let i=0;i<a.length;i++)a1[i]=a[i].isA?a[i]:A([a[i]],[])
-              if(a1.length===1){a1=rpt(a1,n)}else if(a1.length!==n){lenErr()}
-              t.push.apply(t,a1);break}
-    case JEQ:{const n=b[p++];toInt(t[t.length-1],0,2)||(p+=n);break}
-    case EMB:{let frm=h[h.length-1];t.push(b[p++](frm[0],frm[2]));break}
-    case CON:{let frm=h[h.length-1],cont={b,h:h.map(x=>x.slice()),t:t.slice(0,frm[3]),p:frm[1].p+frm[1].size-1}
-              asrt(b[cont.p]===RET);t.push(r=>{b=cont.b;h=cont.h;t=cont.t;p=cont.p;t.push(r)});break}
-  }
-}
+,vm=(b,h,p=0,t=[])=>{while(1)switch(b[p++]){default:asrt(0) // b:bytecode,h:environment,p:program counter,t:stack
+  case LDC:t.push(b[p++]);break
+  case VEC:{let a=t.splice(t.length-b[p++]);for(let i=0;i<a.length;i++)if(isSimple(a[i]))a[i]=unw(a[i])
+            t.push(A(a));break}
+  case GET:{let r=h[b[p++]][b[p++]];r!=null||valErr();t.push(r);break}
+  case SET:{h[b[p++]][b[p++]]=t[t.length-1];break}
+  case MON:{let[w,f]=t.splice(-2)
+            if(typeof f==='function'){if(w instanceof Proc)w=toFn(w)
+                                      if(f.cps){f(w,undefined,undefined,r=>{t.push(r);vm(b,h,p,t)});return}
+                                      t.push(f(w))}
+            else{let bp=t.length;t.push(b,p,h);b=f.b;p=f.p;h=f.h.concat([[w,f,null,bp]])}
+            break}
+  case DYA:{let[w,f,a]=t.splice(-3)
+            if(typeof f==='function'){if(w instanceof Proc)w=toFn(w)
+                                      if(a instanceof Proc)a=toFn(a)
+                                      if(f.cps){f(w,a,undefined,r=>{t.push(r);vm(b,h,p,t)});return}
+                                      t.push(f(w,a))}
+            else{let bp=t.length;t.push(b,p,h);b=f.b;p=f.p;h=f.h.concat([[w,f,a,bp]])}
+            break}
+  case LAM:{let size=b[p++];t.push(new Proc(b,p,size,h));p+=size;break}
+  case RET:{if(t.length===1)return t[0];[b,p,h]=t.splice(-4,3);break}
+  case POP:{t.pop();break}
+  case SPL:{let n=b[p++],a=t[t.length-1].a.slice().reverse(),a1=Array(a.length)
+            for(let i=0;i<a.length;i++)a1[i]=a[i].isA?a[i]:A([a[i]],[])
+            if(a1.length===1){a1=rpt(a1,n)}else if(a1.length!==n){lenErr()}
+            t.push.apply(t,a1);break}
+  case JEQ:{const n=b[p++];toInt(t[t.length-1],0,2)||(p+=n);break}
+  case EMB:{let frm=h[h.length-1];t.push(b[p++](frm[0],frm[2]));break}
+  case CON:{let frm=h[h.length-1],cont={b,h:h.map(x=>x.slice()),t:t.slice(0,frm[3]),p:frm[1].p+frm[1].size-1}
+            asrt(b[cont.p]===RET);t.push(r=>{b=cont.b;h=cont.h;t=cont.t;p=cont.p;t.push(r)});break}
+}}
 const ltr='_A-Za-zªµºÀ-ÖØ-öø-ˁˆ-ˑˠ-ˤˬˮͰ-ʹͶ-ͷͺ-ͽΆΈ-ΊΌΎ-ΡΣ-ϵϷ-ҁҊ-ԧԱ-Ֆՙա-ևא-תװ-ײؠ-يٮ-ٯٱ-ۓەۥ-ۦۮ-ۯۺ-ۼۿܐܒ-ܯݍ-ޥޱߊ-ߪߴ-ߵߺࠀ-ࠕࠚࠤࠨࡀ-ࡘࢠࢢ-ࢬऄ-हऽॐक़-ॡॱ-ॷॹ-ॿঅ-ঌএ-ঐও-নপ-রলশ-হঽৎড়-ঢ়য়-ৡৰ-ৱਅ-ਊਏ-ਐਓ-ਨਪ-ਰਲ-ਲ਼ਵ-ਸ਼ਸ-ਹਖ਼-ੜਫ਼ੲ-ੴઅ-ઍએ-ઑઓ-નપ-રલ-ળવ-હઽૐૠ-ૡଅ-ଌଏ-ଐଓ-ନପ-ରଲ-ଳଵ-ହଽଡ଼-ଢ଼ୟ-ୡୱஃஅ-ஊஎ-ஐஒ-கங-சஜஞ-டண-தந-பம-ஹௐఅ-ఌఎ-ఐఒ-నప-ళవ-హఽౘ-ౙౠ-ౡಅ-ಌಎ-ಐಒ-ನಪ-ಳವ-ಹಽೞೠ-ೡೱ-ೲഅ-ഌഎ-ഐഒ-ഺഽൎൠ-ൡൺ-ൿඅ-ඖක-නඳ-රලව-ෆก-ะา-ำเ-ๆກ-ຂຄງ-ຈຊຍດ-ທນ-ຟມ-ຣລວສ-ຫອ-ະາ-ຳຽເ-ໄໆໜ-ໟༀཀ-ཇཉ-ཬྈ-ྌက-ဪဿၐ-ၕၚ-ၝၡၥ-ၦၮ-ၰၵ-ႁႎႠ-ჅჇჍა-ჺჼ-ቈቊ-ቍቐ-ቖቘቚ-ቝበ-ኈኊ-ኍነ-ኰኲ-ኵኸ-ኾዀዂ-ዅወ-ዖዘ-ጐጒ-ጕጘ-ፚᎀ-ᎏᎠ-Ᏼᐁ-ᙬᙯ-ᙿᚁ-ᚚᚠ-ᛪᜀ-ᜌᜎ-ᜑᜠ-ᜱᝀ-ᝑᝠ-ᝬᝮ-ᝰក-ឳៗៜᠠ-ᡷᢀ-ᢨᢪᢰ-ᣵᤀ-ᤜᥐ-ᥭᥰ-ᥴᦀ-ᦫᧁ-ᧇᨀ-ᨖᨠ-ᩔᪧᬅ-ᬳᭅ-ᭋᮃ-ᮠᮮ-ᮯᮺ-ᯥᰀ-ᰣᱍ-ᱏᱚ-ᱽᳩ-ᳬᳮ-ᳱᳵ-ᳶᴀ-ᶿḀ-ἕἘ-Ἕἠ-ὅὈ-Ὅὐ-ὗὙὛὝὟ-ώᾀ-ᾴᾶ-ᾼιῂ-ῄῆ-ῌῐ-ΐῖ-Ίῠ-Ῥῲ-ῴῶ-ῼⁱⁿₐ-ₜℂℇℊ-ℓℕℙ-ℝℤΩℨK-ℭℯ-ℹℼ-ℿⅅ-ⅉⅎↃ-ↄⰀ-Ⱞⰰ-ⱞⱠ-ⳤⳫ-ⳮⳲ-ⳳⴀ-ⴥⴧⴭⴰ-ⵧⵯⶀ-ⶖⶠ-ⶦⶨ-ⶮⶰ-ⶶⶸ-ⶾⷀ-ⷆⷈ-ⷎⷐ-ⷖⷘ-ⷞⸯ々-〆〱-〵〻-〼ぁ-ゖゝ-ゟァ-ヺー-ヿㄅ-ㄭㄱ-ㆎㆠ-ㆺㇰ-ㇿ㐀-䶵一-鿌ꀀ-ꒌꓐ-ꓽꔀ-ꘌꘐ-ꘟꘪ-ꘫꙀ-ꙮꙿ-ꚗꚠ-ꛥꜗ-ꜟꜢ-ꞈꞋ-ꞎꞐ-ꞓꞠ-Ɦꟸ-ꠁꠃ-ꠅꠇ-ꠊꠌ-ꠢꡀ-ꡳꢂ-ꢳꣲ-ꣷꣻꤊ-ꤥꤰ-ꥆꥠ-ꥼꦄ-ꦲꧏꨀ-ꨨꩀ-ꩂꩄ-ꩋꩠ-ꩶꩺꪀ-ꪯꪱꪵ-ꪶꪹ-ꪽꫀꫂꫛ-ꫝꫠ-ꫪꫲ-ꫴꬁ-ꬆꬉ-ꬎꬑ-ꬖꬠ-ꬦꬨ-ꬮꯀ-ꯢ가-힣ힰ-ퟆퟋ-ퟻ豈-舘並-龎ﬀ-ﬆﬓ-ﬗיִײַ-ﬨשׁ-זּטּ-לּמּנּ-סּףּ-פּצּ-ﮱﯓ-ﴽﵐ-ﶏﶒ-ﷇﷰ-ﷻﹰ-ﹴﹶ-ﻼＡ-Ｚａ-ｚｦ-ﾾￂ-ￇￊ-ￏￒ-ￗￚ-ￜ'
 ,td=[
   ['-',/^ +|^[⍝\#].*/],       // whitespace and comments
@@ -232,18 +225,8 @@ const ltr='_A-Za-zªµºÀ-ÖØ-öø-ˁˆ-ˑˠ-ˤˬˮͰ-ʹͶ-ͷͺ-ͽΆΈ-ΊΌΎ-
     i+=v.length
   }
   tkns.push({t:'$',v:'',o:i,s:s})
-  // AST node types:          The compiler replaces '.' nodes with:
-  // 'B' body     a⋄b         'V' vector      1 2
-  // ':' guard    a:b         'M' monadic     +1
-  // 'N' number   1           'D' dyadic      1+2
-  // 'S' string   'a'         'A' adverb      +/
-  // 'X' symbol   a           'C' conjunction +.×
-  // 'J' embedded «a»         'T' atop        +÷
-  // '⍬' empty    ()          'F' fork        +÷⍴
-  // '{' lambda   {}
-  // '[' index    a[b]
-  // '←' assign   a←b
-  // '.' expr     a b
+  // AST node types: 'B' a⋄b  ':' a:b  'N' 1  'S' 'a'  'X' a  'J' «a»  '⍬' ()  '{' {}  '[' a[b]  '←' a←b  '.' a b
+  // '.' gets replaced with: 'V' 1 2  'M' +1  'D' 1+2  'A' +/  'C' +.×  'T' +÷  'F' +÷≢
   i=1;let tkn=tkns[0] // single-token lookahead
   const cnsm=x=>x.includes(tkn.t)?tkn=tkns[i++]:0 // consume
   ,dmnd=x=>{tkn.t===x?(tkn=tkns[i++]):prsErr()} // demand
@@ -1237,7 +1220,7 @@ const readline=(p,f)=>{ // p:prompt
 }
 if(typeof module!=='undefined'){
   module.exports=apl
-  if(module===require.main)(_=>{
+  if(module===require.main){
     let usage='Usage: apl.js [options] [filename.apl]\n'+
               'Options:\n'+
               '  -l --linewise   Process stdin line by line and disable prompt\n'
@@ -1277,5 +1260,5 @@ if(typeof module!=='undefined'){
       }
       f('')
     }
-  })()
+  }
 }
