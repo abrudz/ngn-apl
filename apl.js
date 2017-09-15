@@ -115,12 +115,11 @@ Z.pow=(x,y)=>{
   return Z.exp(Z.mul(y,Z.log(x)))
 }
 Z.sqrt=x=>Z.pow(x,.5)
-Z.mag=x=>Math.sqrt(x.re*x.re+x.im*x.im) // magnitude
-Z.dir=x=>Math.atan2(x.im,x.re) // direction
+Z.mag=x=>Math.sqrt(x.re*x.re+x.im*x.im)
+Z.dir=x=>Math.atan2(x.im,x.re)
 Z.sin=x=>Z.nit(Z.sh(Z.it(x)))
 Z.cos=x=>Z.ch(Z.it(x))
 Z.tg =x=>Z.nit(Z.th(Z.it(x)))
-// asin(x)=-i ln(ix+sqrt(1-x^2)) ; acos(x)=-i ln(x+i sqrt(x^2-1)) ; atg(x)=(i/2)(ln(1-ix)-ln(1+ix))
 Z.asin=x=>{x=Zify(x);return Z.nit(Z.log(Z.add(Z.it(x),Z.sqrt(Z.sub(1,Z.pow(x,2))))))}
 Z.acos=x=>{x=Zify(x);const r=Z.nit(Z.log(Z.add(x,Z.sqrt(Z.sub(Z.pow(x,2),1)))))
            return r instanceof Z&&(r.re<0||(r.re===0&&r.im<0))?Z.neg(r):r} // dubious?
@@ -128,7 +127,6 @@ Z.atg=x=>{x=Zify(x);const ix=Z.it(x);return Z.mul(new Z(0,.5),Z.sub(Z.log(Z.sub(
 Z.sh=x=>{let a=Z.exp(x);return Z.mul(.5,Z.sub(a,Z.div(1,a)))}
 Z.ch=x=>{let a=Z.exp(x);return Z.mul(.5,Z.add(a,Z.div(1,a)))}
 Z.th=x=>{let a=Z.exp(x),b=Z.div(1,a);return Z.div(Z.sub(a,b),Z.add(a,b))}
-// ash(x)=i asin(-ix) ; ach(x)=±i acos(x) ; ath(x)=i atg(-ix)
 Z.ash=x=>Z.it(Z.asin(Z.nit(x)))
 Z.ach=x=>{x=Zify(x);let sign=x.im>0||(!x.im&&x.re<=1)?1:-1;return Z.mul(new Z(0,sign),Z.acos(x))}
 Z.ath=x=>Z.it(Z.atg(Z.nit(x)))
@@ -141,8 +139,7 @@ Z.floor=x=>{
 }
 Z.ceil=x=>{
   if(typeof x==='number')return Math.ceil(x)
-  x=Zify(x)
-  let re=Math.ceil(x.re),im=Math.ceil(x.im),r=re-x.re,i=im-x.im
+  x=Zify(x);let re=Math.ceil(x.re),im=Math.ceil(x.im),r=re-x.re,i=im-x.im
   if(r+i>=1)r>=i?re--:im--
   return smplfy(re,im)
 }
@@ -150,18 +147,11 @@ const iszero=x=>!x||(x instanceof Z&&!x.re&&!x.im)
 Z.residue=(x,y)=>typeof x==='number'&&typeof y==='number'?(x?y-x*Math.floor(y/x):y)
                  :iszero(x)?y:Z.sub(y,Z.mul(x,Z.floor(Z.div(y,x))))
 Z.isint=x=>typeof x==='number'?x===Math.floor(x):x.re===Math.floor(x.re)&&x.im===Math.floor(x.im)
-const firstquadrant=x=>{ // rotate into first quadrant
-  if(typeof x==='number'){return Math.abs(x)}
-  else{x.re<0&&(x=Z.neg(x));x.im<0&&(x=Z.it(x));return x.re?x:x.im}
-}
 Z.gcd=(x,y)=>{
-  if(typeof x==='number'&&typeof y==='number'){
-    while(y){let z=y;y=x%y;x=z}
-    return Math.abs(x)
-  }else{
-    while(!iszero(y)){let z=y;y=Z.residue(y,x);x=z}
-    return firstquadrant(x)
-  }
+  if(typeof x==='number'&&typeof y==='number'){while(y){let z=y;y=x%y;x=z}return Math.abs(x)}
+  while(!iszero(y)){let z=y;y=Z.residue(y,x);x=z}
+  if(typeof x==='number'){return Math.abs(x)} // rotate into first quadrant
+  else{x.re<0&&(x=Z.neg(x));x.im<0&&(x=Z.it(x));return x.re?x:x.im}
 }
 Z.lcm=(x,y)=>{let p=Z.mul(x,y);return iszero(p)?p:Z.div(p,Z.gcd(x,y))}
 
