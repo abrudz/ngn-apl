@@ -65,11 +65,6 @@ const prelude=[
   for(let i=0;i<y.length;i++)z.push(y[i])
   return z
 }
-,arrEq=(x,y)=>{
-  if(x.length!==y.length)return 0
-  for(let i=0;i<x.length;i++)if(x[i]!==y[i])return 0
-  return 1
-}
 ,err=(s,o)=>{
   let m
   if(o&&o.aplCode&&o.offset!=null){
@@ -565,7 +560,8 @@ voc['¨']=adv((f,g)=>{
       for(let i=0;i<n;i++){const u=x.a[i],w=f(v,u.isA?u:A([u],[]));r[i]=w.s.length?w:unw(w)}
       return A(r,x.s)
     }else{
-      const n=x.a.length,r=Array(n);arrEq(x.s,y.s)||lenErr()
+      const n=x.a.length,r=Array(n)
+      x.s.length===y.s.length||rnkErr();for(let i=0;i<x.s.length;i++)if(x.s[i]!==y.s[i])lenErr()
       for(let i=0;i<n;i++){const u=x.a[i],v=y.a[i],w=f(v.isA?v:A([v],[]),u.isA?u:A([u],[]));r[i]=w.s.length?w:unw(w)}
       return A(r,x.s)
     }
