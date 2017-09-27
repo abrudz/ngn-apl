@@ -76,8 +76,10 @@ const prelude=[
 ,nyiErr=o=>err( 'NONCE ERROR',o)
 ,valErr=o=>err( 'VALUE ERROR',o)
 
-A.bool=[A.zero=A([0],[]),A.one=A([1],[])]
-A.zld=A([],[0]);A.scal=x=>A([x],[])
+A.bool=[A.zero=A(new Float64Array([0]),[]),
+        A.one =A(new Float64Array([1]),[])]
+A.zld=A(new Float64Array(),[0])
+A.scal=x=>A([x],[])
 
 const Zify=x=>typeof x==='number'?new Z(x,0):x instanceof Z?x:domErr() // complexify
 const smplfy=(re,im)=>im===0?re:new Z(re,im)
