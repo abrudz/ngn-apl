@@ -59,12 +59,6 @@ const prelude=[
   if(x.set){let r=new(x.constructor)(x.length);r.set(x);while(n<m){r.copyWithin(n,0,n);n*=2};return r}
   else{while(x.length*2<m)x=x.concat(x);return x.concat(x.slice(0,m-x.length))}
 }
-,cat=(x,y)=>{
-  let z=[]
-  for(let i=0;i<x.length;i++)z.push(x[i])
-  for(let i=0;i<y.length;i++)z.push(y[i])
-  return z
-}
 ,err=(s,o)=>{
   let m
   if(o&&o.aplCode&&o.offset!=null){
@@ -497,7 +491,10 @@ voc['∘']=conj((g,f)=>{
 voc['∪']=(y,x)=>{
   if(x){
     if(x.s.length>1||y.s.length>1)rnkErr()
-    let r=[],n=y.a.length;for(let i=0;i<n;i++)contains(x.a,y.a[i])||r.push(y.a[i]);return A(cat(x.a,r))
+    let m=x.a.length,n=y.a.length,r=Array(m)
+    for(let i=0;i<m;i++)r[i]=x.a[i]
+    for(let i=0;i<n;i++)contains(x.a,y.a[i])||r.push(y.a[i])
+    return A(r)
   }else{
     if(y.s.length>1)rnkErr()
     let r=[],n=y.a.length;for(let i=0;i<n;i++)contains(r,y.a[i])||r.push(y.a[i]);return A(r)
