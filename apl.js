@@ -135,12 +135,12 @@ Z.ceil=x=>{
   return smplfy(re,im)
 }
 const iszero=x=>!x||(x instanceof Z&&!x.re&&!x.im)
-Z.residue=(x,y)=>typeof x==='number'&&typeof y==='number'?(x?y-x*Math.floor(y/x):y)
+Z.mod=(x,y)=>typeof x==='number'&&typeof y==='number'?(x?y-x*Math.floor(y/x):y)
                  :iszero(x)?y:Z.sub(y,Z.mul(x,Z.floor(Z.div(y,x))))
 Z.isint=x=>typeof x==='number'?x===Math.floor(x):x.re===Math.floor(x.re)&&x.im===Math.floor(x.im)
 Z.gcd=(x,y)=>{
   if(typeof x==='number'&&typeof y==='number'){while(y){let z=y;y=x%y;x=z}return Math.abs(x)}
-  while(!iszero(y)){let z=y;y=Z.residue(y,x);x=z}
+  while(!iszero(y)){let z=y;y=Z.mod(y,x);x=z}
   if(typeof x==='number'){return Math.abs(x)} // rotate into first quadrant
   else{x.re<0&&(x=Z.neg(x));x.im<0&&(x=Z.it(x));return x.re?x:x.im}
 }
@@ -332,7 +332,7 @@ voc['⍟']=perv(
 )
 voc['|']=withId(0,perv(
   numeric(x=>Math.abs(x),Z.mag),
-  Z.residue
+  Z.mod
 ))
 voc['⍀']=adv((y,x,h)=>voc['\\'](y,x,h||A.zero))
 voc['\\']=adv((y,x,h)=>{
@@ -571,8 +571,8 @@ voc['⊤']=(y,x)=>{
   let s=x.s.concat(y.s),r=Array(prd(s)),n=x.s.length?x.s[0]:1,m=x.a.length/n
   for(let i=0;i<m;i++)for(let j=0;j<y.a.length;j++){
     let v=y.a[j];v=typeof v==='number'?Math.abs(v):v
-    for(let k=n-1;k>=0;k--){let u=x.a[k*m+i];r[(k*m+i)*y.a.length+j]=iszero(u)?v:Z.residue(u,v)
-                            v=iszero(u)?0:Z.div(Z.sub(v,Z.residue(u,v)),u)}
+    for(let k=n-1;k>=0;k--){let u=x.a[k*m+i];r[(k*m+i)*y.a.length+j]=iszero(u)?v:Z.mod(u,v)
+                            v=iszero(u)?0:Z.div(Z.sub(v,Z.mod(u,v)),u)}
   }
   return A(r,s)
 }
