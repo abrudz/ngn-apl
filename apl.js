@@ -155,18 +155,18 @@ const LDC=1,VEC=2,GET=3,SET=4,MON=5,DYA=6,LAM=7,RET=8,POP=9,SPL=10,JEQ=11,EMB=12
             t.push(A(a));break}
   case GET:{let r=h[b[p++]][b[p++]];r!=null||valErr();t.push(r);break}
   case SET:{h[b[p++]][b[p++]]=t[t.length-1];break}
-  case MON:{let[w,f]=t.splice(-2)
-            if(typeof f==='function'){if(w instanceof Proc)w=toFn(w)
-                                      if(f.cps){f(w,undefined,undefined,r=>{t.push(r);vm(b,h,p,t)});return}
-                                      t.push(f(w))}
-            else{let bp=t.length;t.push(b,p,h);b=f.b;p=f.p;h=f.h.concat([[w,f,null,bp]])}
+  case MON:{let[x,f]=t.splice(-2)
+            if(typeof f==='function'){if(x instanceof Proc)x=toFn(x)
+                                      if(f.cps){f(x,undefined,undefined,r=>{t.push(r);vm(b,h,p,t)});return}
+                                      t.push(f(x))}
+            else{let bp=t.length;t.push(b,p,h);b=f.b;p=f.p;h=f.h.concat([[x,f,null,bp]])}
             break}
-  case DYA:{let[w,f,a]=t.splice(-3)
-            if(typeof f==='function'){if(w instanceof Proc)w=toFn(w)
-                                      if(a instanceof Proc)a=toFn(a)
-                                      if(f.cps){f(w,a,undefined,r=>{t.push(r);vm(b,h,p,t)});return}
-                                      t.push(f(w,a))}
-            else{let bp=t.length;t.push(b,p,h);b=f.b;p=f.p;h=f.h.concat([[w,f,a,bp]])}
+  case DYA:{let[y,f,x]=t.splice(-3)
+            if(typeof f==='function'){if(y instanceof Proc)y=toFn(y)
+                                      if(x instanceof Proc)x=toFn(x)
+                                      if(f.cps){f(y,x,undefined,r=>{t.push(r);vm(b,h,p,t)});return}
+                                      t.push(f(y,x))}
+            else{let bp=t.length;t.push(b,p,h);b=f.b;p=f.p;h=f.h.concat([[y,f,x,bp]])}
             break}
   case LAM:{let size=b[p++];t.push(new Proc(b,p,size,h));p+=size;break}
   case RET:{if(t.length===1)return t[0];[b,p,h]=t.splice(-4,3);break}
