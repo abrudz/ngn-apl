@@ -288,16 +288,6 @@ const voc={}
   }
 }
 ,bool=x=>(x&1)!==x?domErr():x
-,axisList=(h,rank)=>{
-  asrt(isInt(rank,0))
-  if(h==null)return[]
-  asrt(h.isA)
-  if(h.s.length!==1||h.s[0]!==1)synErr() // [sic]
-  let z=unw(h)
-  if(z.isA){for(let i=0;i<z.a.length;i++){isInt(z.a[i],0,rank)||domErr();z.a.indexOf(z.a[i])<i&&domErr()};return z.a}
-  if(isInt(z,0,rank))return[z]
-  domErr()
-}
 ,withId=(x,f)=>{f.identity=x.isA?x:A.scal(x);return f}
 ,adv =f=>{f.adv =1;return f}
 ,conj=f=>{f.conj=1;return f}
@@ -748,7 +738,14 @@ voc['⍳']=(y,x)=>{
 voc['⊂']=(y,x,h)=>{
   asrt(!x)
   if(isSimple(y))return y
-  if(h==null){h=[];for(let i=0;i<y.s.length;i++)h.push(i)}else{h=axisList(h,y.s.length)}
+  if(h==null){
+    h=[];for(let i=0;i<y.s.length;i++)h.push(i)
+  }else{
+    if(h.s.length!==1||h.s[0]!==1)synErr()
+    let k=unw(h)
+    if(k.isA){h=k.a;for(let i=0;i<k.a.length;i++){isInt(k.a[i],0,y.s.length)||domErr();k.a.indexOf(k.a[i])<i&&domErr()}}
+    else{h=[k];if(!isInt(k,0,y.s.length))domErr()}
+  }
   let rh=[],m=new Uint8Array(y.s.length) // m:axisMask
   for(let k=0;k<y.s.length;k++){if(h.indexOf(k)<0){rh.push(k)}else{m[k]=1}}
   let rs=rh.map(k=>y.s[k]), rd=strides(rs)
