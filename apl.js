@@ -35,14 +35,13 @@ const prelude=[
 
 ,A=(a,s=[a.length])=>{
   if(a.length&&a instanceof Array){
-    let t=1;for(var i=0;i<a.length;i++)if(typeof a[i]!=='number'){t=0;break}
+    let t=1;for(let i=0;i<a.length;i++)if(typeof a[i]!=='number'){t=0;break}
     if(t)a=new Float64Array(a)
   }
   if(!(s instanceof Array)){let s0=s;s=Array(s0.length);for(let i=0;i<s0.length;i++)s[i]=s0[i]}
   return{isA:1,a,s}
 }
 ,strides=s=>{let r=Array(s.length),u=1;for(let i=r.length-1;i>=0;i--){asrt(isInt(s[i],0));r[i]=u;u*=s[i]};return r}
-,map=(x,f)=>{const n=x.a.length,r=Array(n);for(let i=0;i<n;i++)r[i]=f(x.a[i]);return A(r,x.s)}
 ,toInt=(x,m,M)=>{let r=unw(x);if(r!==r|0||m!=null&&r<m||M!=null&&M<=r)domErr();return r}
 ,str=x=>{x.s.length>1&&rnkErr();for(let i=0;i<x.a.length;i++)typeof x.a[i]!=='string'&&domErr();return x.a.join('')}
 ,isSimple=x=>!x.s.length&&!x.a[0].isA
@@ -244,7 +243,10 @@ const ltr='_A-Za-zªµºÀ-ÖØ-öø-ˁˆ-ˑˠ-ˤˬˮͰ-ʹͶ-ͷͺ-ͽΆΈ-ΊΌΎ-
 }
 const voc={}
 ,perv=(f1,f2)=>{ // pervasive f1:monad, f2:dyad
-  let g1=!f1?nyiErr:x=>{if(x.isA)return map(x,g1);let r=f1(x);typeof r==='number'&&r!==r&&domErr();return r}
+  let g1=!f1?nyiErr:x=>{
+    if(x.isA){let r=Array(x.a.length);for(let i=0;i<x.a.length;i++)r[i]=g1(x.a[i]);return A(r,x.s)}
+    let r=f1(x);typeof r==='number'&&r!==r&&domErr();return r
+  }
   let g2=!f2?nyiErr:(x,y)=>{switch((!x.isA?10:x.a.length===1?20:30)+(!y.isA?1:y.a.length===1?2:3)){
     case 11:{let r=f2(x,y);typeof r==='number'&&r!==r&&domErr();return r}
     case 12:case 13:{const n=y.a.length,r=Array(n);for(let i=0;i<n;i++)r[i]=g2(x,y.a[i]);return A(r,y.s)}
@@ -536,7 +538,7 @@ voc['¨']=adv((f,g)=>{
   return(y,x)=>{
     if(!x){
       const n=y.a.length,r=Array(n)
-      for(var i=0;i<n;i++){const u=y.a[i],v=f(u.isA?u:A([u],[]));asrt(v.isA);r[i]=v.s.length?v:unw(v)}
+      for(let i=0;i<n;i++){const u=y.a[i],v=f(u.isA?u:A([u],[]));asrt(v.isA);r[i]=v.s.length?v:unw(v)}
       return A(r,y.s)
     }else if(x.a.length===1){
       const n=y.a.length,r=Array(n),u=x.a[0].isA?x.a[0]:A([x.a[0]],[])
@@ -565,7 +567,11 @@ voc['⊤']=(y,x)=>{
   return A(r,s)
 }
 voc['∊']=(y,x)=>{
-  if(x)return map(x,u=>{for(let i=0;i<y.a.length;i++)if(match(u,y.a[i]))return 1;return 0})
+  if(x){
+    let r=new Float64Array(x.a.length)
+    for(let i=0;i<x.a.length;i++)for(let j=0;j<y.a.length;j++)if(match(x.a[i],y.a[j])){r[i]=1;break}
+    return A(r,x.s)
+  }
   let r=[];enlist(y,r);return A(r)
 }
 const enlist=(x,r)=>{if(x.isA){const n=x.a.length;for(let i=0;i<n;i++)enlist(x.a[i],r)}else{r.push(x)}}
@@ -732,7 +738,7 @@ voc['⍳']=(y,x)=>{
       let ai=y.a[i],u=i-m;q/=y.a[i];for(let j=0;j<p;j++)for(let k=0;k<ai;k++)for(let l=0;l<q;l++)r[u+=m]=k
       p*=ai
     }
-    if(m===1){return A(r,y.a)}else{var r1=Array(n);for(let i=0;i<n;i++)r1[i]=A(r.slice(m*i,m*i+m));return A(r1,y.a)}
+    if(m===1){return A(r,y.a)}else{let r1=Array(n);for(let i=0;i<n;i++)r1[i]=A(r.slice(m*i,m*i+m));return A(r1,y.a)}
   }
 }
 voc['⊂']=(y,x,h)=>{
@@ -800,7 +806,11 @@ voc['⎕RE']=(y,x)=>{
   return A(r)
 }
 voc['⎕UCS']=(y,x)=>{
-  x&&nyiErr();return map(y,u=>isInt(u,0,0x10000)?String.fromCharCode(u):typeof u==='string'?u.charCodeAt(0):domErr())
+  x&&nyiErr();let r=Array(y.a.length)
+  for(let i=0;i<y.a.length;i++){
+    let u=y.a[i];r[i]=isInt(u,0,0x10000)?String.fromCharCode(u):typeof u==='string'?u.charCodeAt(0):domErr()
+  }
+  return A(r,y.s)
 }
 voc['get_⎕OFF']=_=>{typeof process==='undefined'&&nyiErr();process.exit(0)}
 voc['?']=(y,x)=>x?deal(y,x):roll(y)
