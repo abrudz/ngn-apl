@@ -189,57 +189,49 @@ const ltr='_A-Za-zªµºÀ-ÖØ-öø-ˁˆ-ˑˠ-ˤˬˮͰ-ʹͶ-ͷͺ-ͽΆΈ-ΊΌΎ-
 ,prs=(s,o)=>{
   // tokens are {t:type,v:value,o:offset,s:aplCode}
   // "stk" tracks bracket nesting and causes '\n' tokens to be dropped when the latest unclosed bracket is '(' or '['
-  let i=0,tkns=[],stk=['{'],l=s.length // i:offset in s
+  let i=0,a=[],stk=['{'],l=s.length // i:offset in s, a:tokens
   while(i<l){
     let m,t,v,r=s.slice(i) // m:match object, t:type, v:value, r:remaining source code
     for(let j=0;j<td.length;j++)if(m=r.match(td[j][1])){v=m[0];t=td[j][0];t==='.'&&(t=v);break}
     t||synErr({file:o?o.file:null,o:i,s:s})
     '([{'.includes(t)?stk.push(t):')]}'.includes(t)?stk.pop():0
-    if(t!=='-'&&(t!=='\n'||stk[stk.length-1]==='{'))tkns.push({t:t,v:v[0]==='⎕'?v.toUpperCase():v,o:i,s:s})
+    if(t!=='-'&&(t!=='\n'||stk[stk.length-1]==='{'))a.push({t:t,v:v[0]==='⎕'?v.toUpperCase():v,o:i,s:s})
     i+=v.length
   }
-  tkns.push({t:'$',v:'',o:i,s:s})
+  a.push({t:'$',v:'',o:i,s})
   // AST node types: 'B' a⋄b  ':' a:b  'N' 1  'S' 'a'  'X' a  'J' «a»  '⍬' ()  '{' {}  '[' a[b]  '←' a←b  '.' a b
   // '.' gets replaced with: 'V' 1 2  'M' +1  'D' 1+2  'A' +/  'C' +.×  'T' +÷  'F' +÷≢
-  i=1;let tkn=tkns[0] // single-token lookahead
-  const cnsm=x=>x.includes(tkn.t)?tkn=tkns[i++]:0 // consume
-  ,dmnd=x=>{tkn.t===x?(tkn=tkns[i++]):prsErr()} // demand
-  ,prsErr=x=>{synErr({file:o.file,offset:tkn.o,aplCode:s})}
+  i=0 // offset in a
+  const dmnd=x=>a[i].t===x?i++:prsErr()
+  ,prsErr=x=>synErr({file:o.file,offset:a[i].o,aplCode:s})
   ,body=_=>{
     let r=['B']
     while(1){
-      if('$};'.includes(tkn.t))return r
-      while(cnsm('⋄\n')){}
-      if('$};'.includes(tkn.t))return r
-      let e=expr()
-      if(cnsm(':'))e=[':',e,expr()]
+      while('⋄\n'.includes(a[i].t))i++
+      if('$};'.includes(a[i].t))return r
+      let e=expr();if(a[i].t===':'){i++;e=[':',e,expr()]}
       r.push(e)
     }
   }
   ,expr=_=>{
-    let r=['.'],item
+    let r=['.'],x
     while(1){
-      let tkn0=tkn
-      if(cnsm('NSXJ')){item=[tkn0.t,tkn0.v]}
-      else if(cnsm('(')){if(cnsm(')')){item=['⍬']}else{item=expr();dmnd(')')}}
-      else if(cnsm('{')){item=['{',body()];while(cnsm(';'))item.push(body());dmnd('}')}
+      if('NSXJ'.includes(a[i].t)){x=[a[i].t,a[i].v];i++}
+      else if(a[i].t==='('){i++;if(a[i].t===')'){i++;x=['⍬']}else{x=expr();dmnd(')')}}
+      else if(a[i].t==='{'){i++;x=['{',body()];while(a[i].t===';'){i++;x.push(body())}dmnd('}')}
       else{prsErr()}
-      if(cnsm('[')){
-        item=['[',item]
-        while(1){
-          if(cnsm(';')){item.push(null)}
-          else if(tkn.t===']'){item.push(null);break}
-          else{item.push(expr());if(tkn.t===']'){break}else{dmnd(';')}}
-        }
+      if(a[i].t==='['){
+        i++;x=['[',x]
+        while(1){if(a[i].t===';'){i++;x.push(null)}
+                 else if(a[i].t===']'){x.push(null);break}
+                 else{x.push(expr());if(a[i].t===']'){break}else{dmnd(';')}}}
         dmnd(']')
       }
-      if(cnsm('←'))return r.concat([['←',item,expr()]])
-      r.push(item)
-      if(')]}:;⋄\n$'.includes(tkn.t))return r
+      if(a[i].t==='←'){i++;return r.concat([['←',x,expr()]])}
+      r.push(x);if(')]}:;⋄\n$'.includes(a[i].t))return r
     }
   }
-  ,r=body()
-  dmnd('$');return r
+  return[body(),dmnd('$')][0]
 }
 const voc={}
 ,perv=(f1,f2)=>{ // pervasive f1:monad, f2:dyad
