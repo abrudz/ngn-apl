@@ -7,22 +7,20 @@ body,textarea,input{font-family:a,monospace}
 #logo,#perm{font-weight:bold;font-size:large}
 a{color:#008;text-decoration:none}
 a:hover{text-decoration:underline}
-#lb b{font-weight:normal;padding:1px;cursor:pointer;display:inline-block}
-#lb b:hover{color:#fff;background-color:#008}
 #perm{float:right}
-#code{width:100%}
-#code.bq{outline:solid #00f 1px}
+#code{width:100%;outline:none}
 #go{float:right;width:64px}
 #rslt{margin-top:16px;white-space:pre}
 #rslt.err{color:red}
 </style></head><body>
 <a id=perm href=# title='bookmarkable link to the APL code below'>#</a>
 <a id=logo href=https://github.com/ngn/apl#readme title='project home at github'>ngn/apl</a>
-<!--<a href=https://github.com/ngn/apl/tree/master/examples target=_blank>examples</a>-->
-<div id=lb>&nbsp;</div>
 <textarea id=code rows=8 autofocus></textarea>
 <input id=go type=submit value=⍎ title='Execute (Ctrl-Enter)'>
 <div id=rslt></div>
-<script src=../apl.js></script><script src=../t.js></script><script src=index.js></script>
+<script src=../apl.js></script>
+<script src=../lb.js ></script>
+<script src=../t.js  ></script>
+<script src=index.js ></script>
 </body>
 </html>
