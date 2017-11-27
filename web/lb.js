@@ -30,6 +30,9 @@ let lbh='';for(let i=0;i<lbs.length;i++){
 let d=document,el=d.createElement('div');el.innerHTML=
 `<div class=ngn_lb>${lbh}</div>
  <style>
+  @font-face{font-family:"Apl385 Unicode";src:url(https://ngn.github.com/ngn/apl/web/Apl385.woff)format('woff');}
+ </style>
+ <style>
   body{padding-top:24px!important}
   .ngn_lb{position:fixed;top:0;left:0;right:0;height:24px;line-height:24px;background-color:#eee;color:#000;
     cursor:default;overflow:hidden;font-family:"APL385 Unicode",monospace;white-space:pre;wrap:no-wrap;
@@ -42,7 +45,7 @@ d.body.appendChild(el)
 let t,lb=el.firstChild,bqm=0 //t:textarea, lb:language bar, bqm:backquote mode
 let pd=x=>x.preventDefault()
 lb.onmousedown=x=>{
-  if(x.target.nodeName!=='B')return
+  if(x.target.nodeName!=='B'||!t)return
   let i=t.selectionStart,j=t.selectionEnd,v=t.value,s=x.target.textContent
   if(i!=null&&j!=null){t.value=v.slice(0,i)+s+v.slice(j);t.selectionStart=t.selectionEnd=i+s.length}
   pd(x)
@@ -60,7 +63,8 @@ let fk=x=>{
   }
 }
 let ff=x=>{
-  let t0=x.target,nn=t0.nodeName.toLowerCase();if(!(nn==='textarea'||nn==='input'&&t0.type==='text'))return
+  let t0=x.target,nn=t0.nodeName.toLowerCase()
+  if(nn!=='textarea'&&(nn!=='input'||t0.type!=='text'&&t0.type!=='search'))return
   t=t0;if(!t.ngn){t.ngn=1;t.addEventListener('keydown',fk)}
 }
 d.addEventListener('focus',ff,!0);let ae=d.activeElement;ae&&ff({type:'focus',target:ae})
