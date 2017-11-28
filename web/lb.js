@@ -55,7 +55,7 @@ lb.addEventListener('DOMMouseScroll',x=>{pd(x);lb.onmousewheel({wheelDelta:x.det
 let fk=x=>{
   let t=x.target
   if(bqm){let i=t.selectionStart,v=t.value,c=bqc[x.key];if(x.which>31){bqm=0;d.body.classList.remove('ngn_bq')}
-          if(c){t.value=v.slice(0,i)+c+v.slice(i);t.selectionStart=t.selectionEnd=i+1;pd(x)}}
+          if(c){t.value=v.slice(0,i)+c+v.slice(i);t.selectionStart=t.selectionEnd=i+1;pd(x);return!1}}
   switch(x.ctrlKey+2*x.shiftKey+4*x.altKey+8*x.metaKey+100*x.which){
     case 19200:bqm=1;d.body.classList.add('ngn_bq');pd(x);break //`
     case   900:{let i=t.selectionStart,v=t.value,c=tc[v.slice(i-2,i)] //tab
