@@ -28,7 +28,7 @@ let lbh='';for(let i=0;i<lbs.length;i++){
   lbh+='<b title="'+he(lbs[i].slice(1))+(ks.length?'\n'+ks.join(''):'')+'">'+lbs[i][0]+'</b>'
 }
 let d=document,el=d.createElement('div');el.innerHTML=
-`<div class=ngn_lb>${lbh}</div>
+`<div class=ngn_lb><span class=ngn_x title=Close>❎</span>${lbh}</div>
  <style>@font-face{font-family:"Apl385 Unicode";src:url(Apl385.woff)format('woff');}</style>
  <style>
   .ngn_lb{position:fixed;top:0;left:0;right:0;background-color:#eee;color:#000;cursor:default;z-index:2147483647;
@@ -36,12 +36,15 @@ let d=document,el=d.createElement('div');el.innerHTML=
   .ngn_lb b{cursor:pointer;padding:0 1px;font-weight:normal;float:left}
   .ngn_lb b:hover{background-color:#008;color:#fff}
   .ngn_bq .ngn_lb{color:#c00}
+  .ngn_x{color:#888;cursor:pointer}
+  .ngn_x:hover{color:#f00}
  </style>`
 d.body.appendChild(el)
 let t,ts=[],lb=el.firstChild,bqm=0 //t:textarea or input, lb:language bar, bqm:backquote mode
 let pd=x=>x.preventDefault()
 let ev=(x,t,f,c)=>x.addEventListener(t,f,c)
 ev(lb,'mousedown',x=>{
+  if(x.target.classList.contains('ngn_x')){lb.hidden=1;upd();return!1}
   if(x.target.nodeName==='B'&&!t){let i=t.selectionStart,j=t.selectionEnd,v=t.value,s=x.target.textContent
     if(i!=null&&j!=null){t.value=v.slice(0,i)+s+v.slice(j);t.selectionStart=t.selectionEnd=i+s.length};pd(x);return!1}
 })
