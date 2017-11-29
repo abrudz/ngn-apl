@@ -52,7 +52,8 @@ let fk=x=>{
   switch(x.ctrlKey+2*x.shiftKey+4*x.altKey+8*x.metaKey+100*x.which){
     case 19200:bqm=1;d.body.classList.add('ngn_bq');pd(x);break //`
     case   900:{let i=t.selectionStart,v=t.value,c=tc[v.slice(i-2,i)] //tab
-                if(c){t.value=v.slice(0,i-2)+c+v.slice(i);t.selectionStart=t.selectionEnd=i-1} pd(x);break}
+                if(c){t.value=v.slice(0,i-2)+c+v.slice(i);t.selectionStart=t.selectionEnd=i-1;pd(x)}
+                break}
   }
 }
 let ff=x=>{
