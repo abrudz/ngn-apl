@@ -36,7 +36,7 @@ let d=document,el=d.createElement('div');el.innerHTML=
   .ngn_lb b{cursor:pointer;padding:0 1px;font-weight:normal;float:left}
   .ngn_lb b:hover{background-color:#008;color:#fff}
   .ngn_bq .ngn_lb{color:#c00}
-  .ngn_x{color:#888;cursor:pointer}
+  .ngn_x{float:right;color:#888;cursor:pointer}
   .ngn_x:hover{color:#f00}
  </style>`
 d.body.appendChild(el)
