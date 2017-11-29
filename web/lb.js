@@ -29,29 +29,22 @@ let lbh='';for(let i=0;i<lbs.length;i++){
 }
 let d=document,el=d.createElement('div');el.innerHTML=
 `<div class=ngn_lb>${lbh}</div>
+ <style>@font-face{font-family:"Apl385 Unicode";src:url(Apl385.woff)format('woff');}</style>
  <style>
-  @font-face{font-family:"Apl385 Unicode";src:url(https://ngn.github.com/ngn/apl/web/Apl385.woff)format('woff');}
- </style>
- <style>
-  body{padding-top:24px!important}
-  .ngn_lb{position:fixed;top:0;left:0;right:0;height:24px;line-height:24px;background-color:#eee;color:#000;
-    cursor:default;overflow:hidden;font-family:"APL385 Unicode",monospace;white-space:pre;wrap:no-wrap;
-    border-bottom:solid #ccc 1px;z-index:2147483647}
-  .ngn_lb b{cursor:pointer;padding:0 1px;font-weight:normal}
+  .ngn_lb{position:fixed;top:0;left:0;right:0;background-color:#eee;color:#000;cursor:default;z-index:2147483647;
+    font-family:"Apl385 Unicode",monospace;border-bottom:solid #ccc 1px;padding:0 4px;word-wrap:break-word}
+  .ngn_lb b{cursor:pointer;padding:0 1px;font-weight:normal;float:left}
   .ngn_lb b:hover{background-color:#008;color:#fff}
   .ngn_bq .ngn_lb{color:#c00}
  </style>`
 d.body.appendChild(el)
-let t,lb=el.firstChild,bqm=0 //t:textarea, lb:language bar, bqm:backquote mode
+let t,ts=[],lb=el.firstChild,bqm=0 //t:textarea or input, lb:language bar, bqm:backquote mode
 let pd=x=>x.preventDefault()
-lb.onmousedown=x=>{
-  if(x.target.nodeName!=='B'||!t)return
-  let i=t.selectionStart,j=t.selectionEnd,v=t.value,s=x.target.textContent
-  if(i!=null&&j!=null){t.value=v.slice(0,i)+s+v.slice(j);t.selectionStart=t.selectionEnd=i+s.length}
-  pd(x)
-}
-lb.onmousewheel=x=>{lb.scrollLeft-=x.wheelDelta/60}
-lb.addEventListener('DOMMouseScroll',x=>{pd(x);lb.onmousewheel({wheelDelta:x.detail*-120})}) //firefox
+let ev=(x,t,f,c)=>x.addEventListener(t,f,c)
+ev(lb,'mousedown',x=>{
+  if(x.target.nodeName==='B'&&!t){let i=t.selectionStart,j=t.selectionEnd,v=t.value,s=x.target.textContent
+    if(i!=null&&j!=null){t.value=v.slice(0,i)+s+v.slice(j);t.selectionStart=t.selectionEnd=i+s.length};pd(x);return!1}
+})
 let fk=x=>{
   let t=x.target
   if(bqm){let i=t.selectionStart,v=t.value,c=bqc[x.key];if(x.which>31){bqm=0;d.body.classList.remove('ngn_bq')}
@@ -65,7 +58,9 @@ let fk=x=>{
 let ff=x=>{
   let t0=x.target,nn=t0.nodeName.toLowerCase()
   if(nn!=='textarea'&&(nn!=='input'||t0.type!=='text'&&t0.type!=='search'))return
-  t=t0;if(!t.ngn){t.ngn=1;t.addEventListener('keydown',fk)}
+  t=t0;if(!t.ngn){t.ngn=1;ts.push(t);ev(t,'keydown',fk)}
 }
-d.addEventListener('focus',ff,!0);let ae=d.activeElement;ae&&ff({type:'focus',target:ae})
+let upd=_=>{d.body.style.marginTop=lb.clientHeight+'px'}
+upd();ev(window,'resize',upd)
+ev(d,'focus',ff,!0);let ae=d.activeElement;ae&&ff({type:'focus',target:ae})
 })();
