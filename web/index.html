@@ -7,13 +7,16 @@ body,textarea,input{font-family:a,monospace}
 #logo,#perm{font-weight:bold;font-size:large}
 a{color:#008;text-decoration:none}
 a:hover{text-decoration:underline}
-#perm{float:right}
 #code{width:100%;outline:none}
 #go{float:right;width:64px}
 #rslt{margin-top:16px;white-space:pre}
 #rslt.err{color:red}
 </style></head><body>
-<a id=perm href=# title='bookmarkable link to the APL code below'>#</a>
+<span style=float:right>
+ <a href='javascript:(d=>{let e=d.createElement("script");e.src="https://ngn.github.io/apl/web/lb.js";d.body.appendChild(e)})(document)'
+    id=lbbm title='bookmarklet - language bar in (almost) any web page'>lb</a>
+ <a id=perm href=# title='bookmarkable link to the APL code below'>#</a>
+</span>
 <a id=logo href=https://github.com/ngn/apl#readme title='project home at github'>ngn/apl</a>
 <textarea id=code rows=8 autofocus></textarea>
 <input id=go type=submit value=⍎ title='Execute (Ctrl-Enter)'>
