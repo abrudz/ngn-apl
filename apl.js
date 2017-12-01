@@ -1,7 +1,7 @@
 //usr/bin/env node "$0" $@;exit $?
 'use strict'
 const prelude=`
-⍬←() ⋄ ⎕d←'0123456789' ⋄ ⎕a←'ABCDEFGHIJKLMNOPQRSTUVWXYZ' ⋄ ⎕á←'ÁÂÃÇÈÊËÌÍÎÏÐÒÓÔÕÙÚÛÝþãìðòõ'
+⍬←() ⋄ ⎕d←'0123456789' ⋄ ⎕a←'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
 ~←~⍠{(~⍺∊⍵)/⍺}
 _atop←{⍶⍹⍵;⍶⍺⍹⍵}
 ↑←{0=⍴⍴⍵:⊃⍵ ⋄ 0=×/⍴⍵:⍵ ⋄ shape←⍴⍵ ⋄ ⍵←,⍵ ⋄ r←⌈/≢¨shapes←⍴¨⍵ ⋄ max←⊃⌈/shapes←(⍴↓(r⍴1)∘,)¨shapes
@@ -30,7 +30,9 @@ _atop←{⍶⍹⍵;⍶⍺⍹⍵}
    0=⍴⍴⍵:÷⍵ ⋄ 1=⍴⍴⍵:,∇⍪⍵ ⋄ 2≠⍴⍴⍵:↗'RANK ERROR' ⋄ 0∊≥/⍴⍵:↗'LENGTH ERROR' ⋄ (Q R)←QR ⍵ ⋄ (Rinv R)+.×+⍉Q
    ;
    (⌹⍵)+.×⍺}
-⍨←{⍵⍶⍵;⍵⍶⍺}`
+⍨←{⍵⍶⍵;⍵⍶⍺}
+≈←{1e¯14>|⍺-⍵}
+`
 
 ,A=(a,s=[a.length])=>{
   if(a.length&&a instanceof Array){
