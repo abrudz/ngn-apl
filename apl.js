@@ -1,37 +1,36 @@
 //usr/bin/env node "$0" $@;exit $?
 'use strict'
-const prelude=[
-"⍬←() ⋄ ⎕d←'0123456789' ⋄ ⎕a←'ABCDEFGHIJKLMNOPQRSTUVWXYZ' ⋄ ⎕á←'ÁÂÃÇÈÊËÌÍÎÏÐÒÓÔÕÙÚÛÝþãìðòõ'",
-"~←~⍠{(~⍺∊⍵)/⍺}",
-"_atop←{⍶⍹⍵;⍶⍺⍹⍵}",
-"↑←{0=⍴⍴⍵:⊃⍵ ⋄ 0=×/⍴⍵:⍵ ⋄ shape←⍴⍵ ⋄ ⍵←,⍵ ⋄ r←⌈/≢¨shapes←⍴¨⍵ ⋄ max←⊃⌈/shapes←(⍴↓(r⍴1)∘,)¨shapes",
-"  (shape,max)⍴⊃⍪/shapes{max↑⍺⍴⍵}¨⍵}⍠↑",
-"⊃←⊃⍠{;1<⍴⍴⍺:↗'RANK ERROR' ⋄ x←⍵",
-"      {1<⍴⍴⍵:↗'RANK ERROR' ⋄ ⍵←,⍵ ⋄ (⍴⍵)≠⍴⍴x:↗'RANK ERROR' ⋄ ∨/⍵≥⍴x:↗'INDEX ERROR' ⋄ x←⊃⍵⌷x}¨⍺",
-"      x}",
-"⊂←⊂⍠{1<⍴⍴⍺:↗'RANK ERROR' ⋄ 1≠⍴⍴⍵:↗'NONCE ERROR' ⋄ ⍺←,⍺=0",
-"     keep←~1 1⍷⍺ ⋄ sel←keep/⍺ ⋄ dat←keep/⍵",
-"     {1=1↑sel:{sel←1↓sel ⋄ dat←1↓dat}⍬}⍬",
-"     {1=¯1↑sel:{sel←¯1↓sel ⋄ dat←¯1↓dat}⍬}⍬",
-"     sel←(⍴sel),⍨sel/⍳⍴sel ⋄ drop←0",
-"     sel{∆←drop↓⍺↑⍵ ⋄ drop←⍺+1 ⋄ ∆}¨⊂dat}",
-"↓←{0=⍴⍴⍵:⍵ ⋄ ⊂[¯1+⍴⍴⍵]⍵",
-"   ;",
-"   1<⍴⍴⍺:↗'RANK ERROR' ⋄ a←,⍺ ⋄ ⍵←{0=⍴⍴⍵:((⍴a)⍴1)⍴⍵ ⋄ ⍵}⍵",
-"   (⍴a)>⍴⍴⍵:↗'RANK ERROR' ⋄ a←(⍴⍴⍵)↑a ⋄ a←((a>0)×0⌊a-⍴⍵)+(a≤0)×0⌈a+⍴⍵ ⋄ a↑⍵}",
-"⍪←{(≢⍵)(×/1↓⍴⍵)⍴⍵ ; ⍺,[0]⍵}",
-"⊢←{⍵} ⋄ ⊣←{⍵;⍺}",
-"≢←{⍬⍴(⍴⍵),1; ~⍺≡⍵}",
-",←{(×/⍴⍵)⍴⍵}⍠,",
-"⌹←{norm←{(⍵+.×+⍵)*0.5}",
-"   QR←{n←(⍴⍵)[1] ⋄ 1≥n:{t←norm,⍵ ⋄ (⍵÷t)(⍪t)}⍵ ⋄ m←⌈n÷2 ⋄ a0←((1↑⍴⍵),m)↑⍵ ⋄ a1←(0,m)↓⍵ ⋄ (q0 r0)←∇a0",
-"       c←(+⍉q0)+.×a1 ⋄ (q1 r1)←∇a1-q0+.×c ⋄ (q0,q1)((r0,c)⍪((⌊n÷2),-n)↑r1)}",
-"   Rinv←{1=n←1↑⍴⍵:÷⍵ ⋄ m←⌈n÷2 ⋄ ai←∇(m,m)↑⍵ ⋄ di←∇(m,m)↓⍵ ⋄ b←(m,m-n)↑⍵ ⋄ bx←-ai+.×b+.×di ⋄ (ai,bx)⍪((⌊n÷2),-n)↑di}",
-"   0=⍴⍴⍵:÷⍵ ⋄ 1=⍴⍴⍵:,∇⍪⍵ ⋄ 2≠⍴⍴⍵:↗'RANK ERROR' ⋄ 0∊≥/⍴⍵:↗'LENGTH ERROR' ⋄ (Q R)←QR ⍵ ⋄ (Rinv R)+.×+⍉Q",
-"   ;",
-"   (⌹⍵)+.×⍺}",
-"⍨←{⍵⍶⍵;⍵⍶⍺}"
-].join('\n')
+const prelude=`
+⍬←() ⋄ ⎕d←'0123456789' ⋄ ⎕a←'ABCDEFGHIJKLMNOPQRSTUVWXYZ' ⋄ ⎕á←'ÁÂÃÇÈÊËÌÍÎÏÐÒÓÔÕÙÚÛÝþãìðòõ'
+~←~⍠{(~⍺∊⍵)/⍺}
+_atop←{⍶⍹⍵;⍶⍺⍹⍵}
+↑←{0=⍴⍴⍵:⊃⍵ ⋄ 0=×/⍴⍵:⍵ ⋄ shape←⍴⍵ ⋄ ⍵←,⍵ ⋄ r←⌈/≢¨shapes←⍴¨⍵ ⋄ max←⊃⌈/shapes←(⍴↓(r⍴1)∘,)¨shapes
+  (shape,max)⍴⊃⍪/shapes{max↑⍺⍴⍵}¨⍵}⍠↑
+⊃←⊃⍠{;1<⍴⍴⍺:↗'RANK ERROR' ⋄ x←⍵
+      {1<⍴⍴⍵:↗'RANK ERROR' ⋄ ⍵←,⍵ ⋄ (⍴⍵)≠⍴⍴x:↗'RANK ERROR' ⋄ ∨/⍵≥⍴x:↗'INDEX ERROR' ⋄ x←⊃⍵⌷x}¨⍺
+      x}
+⊂←⊂⍠{1<⍴⍴⍺:↗'RANK ERROR' ⋄ 1≠⍴⍴⍵:↗'NONCE ERROR' ⋄ ⍺←,⍺=0
+     keep←~1 1⍷⍺ ⋄ sel←keep/⍺ ⋄ dat←keep/⍵
+     {1=1↑sel:{sel←1↓sel ⋄ dat←1↓dat}⍬}⍬
+     {1=¯1↑sel:{sel←¯1↓sel ⋄ dat←¯1↓dat}⍬}⍬
+     sel←(⍴sel),⍨sel/⍳⍴sel ⋄ drop←0
+     sel{∆←drop↓⍺↑⍵ ⋄ drop←⍺+1 ⋄ ∆}¨⊂dat}
+↓←{0=⍴⍴⍵:⍵ ⋄ ⊂[¯1+⍴⍴⍵]⍵
+   ;
+   1<⍴⍴⍺:↗'RANK ERROR' ⋄ a←,⍺ ⋄ ⍵←{0=⍴⍴⍵:((⍴a)⍴1)⍴⍵ ⋄ ⍵}⍵
+   (⍴a)>⍴⍴⍵:↗'RANK ERROR' ⋄ a←(⍴⍴⍵)↑a ⋄ a←((a>0)×0⌊a-⍴⍵)+(a≤0)×0⌈a+⍴⍵ ⋄ a↑⍵}
+⍪←{(≢⍵)(×/1↓⍴⍵)⍴⍵ ; ⍺,[0]⍵}
+⊢←{⍵} ⋄ ⊣←{⍵;⍺}
+≢←{⍬⍴(⍴⍵),1; ~⍺≡⍵}
+,←{(×/⍴⍵)⍴⍵}⍠,
+⌹←{norm←{(⍵+.×+⍵)*0.5}
+   QR←{n←(⍴⍵)[1] ⋄ 1≥n:{t←norm,⍵ ⋄ (⍵÷t)(⍪t)}⍵ ⋄ m←⌈n÷2 ⋄ a0←((1↑⍴⍵),m)↑⍵ ⋄ a1←(0,m)↓⍵ ⋄ (q0 r0)←∇a0
+       c←(+⍉q0)+.×a1 ⋄ (q1 r1)←∇a1-q0+.×c ⋄ (q0,q1)((r0,c)⍪((⌊n÷2),-n)↑r1)}
+   Rinv←{1=n←1↑⍴⍵:÷⍵ ⋄ m←⌈n÷2 ⋄ ai←∇(m,m)↑⍵ ⋄ di←∇(m,m)↓⍵ ⋄ b←(m,m-n)↑⍵ ⋄ bx←-ai+.×b+.×di ⋄ (ai,bx)⍪((⌊n÷2),-n)↑di}
+   0=⍴⍴⍵:÷⍵ ⋄ 1=⍴⍴⍵:,∇⍪⍵ ⋄ 2≠⍴⍴⍵:↗'RANK ERROR' ⋄ 0∊≥/⍴⍵:↗'LENGTH ERROR' ⋄ (Q R)←QR ⍵ ⋄ (Rinv R)+.×+⍉Q
+   ;
+   (⌹⍵)+.×⍺}
+⍨←{⍵⍶⍵;⍵⍶⍺}`
 
 ,A=(a,s=[a.length])=>{
   if(a.length&&a instanceof Array){
