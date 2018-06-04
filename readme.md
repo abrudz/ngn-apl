@@ -1,4 +1,4 @@
-**[Demo](https://ngn.github.com/apl/web/index.html)**<br>
+**[Demo](https://n9n.gitlab.io/apl/web/index.html)**<br>
 
 An [APL](https://en.wikipedia.org/wiki/APL_%28programming_language%29) interpreter written in JavaScript.
 Runs in a browser or [NodeJS](https://nodejs.org/).
@@ -14,7 +14,7 @@ and [tio.run](https://tio.run/#apl-ngn).
 
 # Offline usage
 
-Download [apl.js](https://ngn.github.io/apl/apl.js) and run it with [NodeJS](https://nodejs.org/) to start a REPL:
+Run `apl.js` with [Node](https://nodejs.org/) to start a REPL:
 
     node apl.js
 
@@ -29,10 +29,10 @@ An APL script can be given as argument:
 
 or used in an HTML page:
 
-    <script src='https://ngn.github.io/apl/apl.js'></script>
+    <script src='apl.js'></script>
     <script>var r=apl('1 2 3+4 5 6')</script>
 
 # Editor support
 
-* [Vim keymap and syntax](https://github.com/ngn/vim-apl)
+* [Vim keymap and syntax](https://gitlab.com/n9n/vim-apl)
 * [baruchel/vim-notebook](https://github.com/baruchel/vim-notebook): evaluate blocks of APL code in a vim buffer
