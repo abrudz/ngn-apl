@@ -645,8 +645,8 @@ voc['⌈']=withId(-Infinity,perv(
   Z.ceil,
   real((x,y)=>Math.max(x,y))
 ))
-voc._fork1=(h,g)=>{asrt(typeof h==='function');asrt(typeof g==='function');return[h,g]}
-voc._fork2=(hg,f)=>{let[h,g]=hg;asrt(typeof h==='function');return(b,a)=>g(h(b,a),f(b,a))}
+voc._fork1=(h,g)=>{asrt(typeof h==='function');return[h,g]}
+voc._fork2=(hg,f)=>{let[h,g]=hg;return(b,a)=>g(h(b,a),f.isA?f:f(b,a))}
 voc['⍕']=(y,x)=>{x&&nyiErr();let t=fmt(y);return A(t.join(''),[t.length,t[0].length])}
 const fmt=x=>{ // as array of strings
   const t=typeof x
@@ -1093,8 +1093,8 @@ const NOUN=1,VRB=2,ADV=3,CNJ=4
               i++
             }
           }
-          if(h.length===2&&h[0]!==NOUN&&h[1]!==NOUN){a=[['T'].concat(a)];h=[VRB]}     // atops
-          if(h.length>=3&&h.length%2&&h.indexOf(NOUN)<0){a=[['F'].concat(a)];h=[VRB]} // forks
+          if(h.length===2&&h[h.length-1]==VRB){a=[['T'].concat(a)];h=[VRB]}             // atops
+          if(h.length>=3&&h.length%2&&h[h.length-1]===VRB){a=[['F'].concat(a)];h=[VRB]} // forks
           if(h[h.length-1]!==NOUN){
             if(h.length>1)synErrAt(a[h.length-1])
           }else{
