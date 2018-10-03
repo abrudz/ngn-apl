@@ -201,7 +201,7 @@ const ltr='_A-Za-zªµºÀ-ÖØ-öø-ˁˆ-ˑˠ-ˤˬˮͰ-ʹͶ-ͷͺ-ͽΆΈ-ΊΌΎ-
   }
   a.push({t:'$',v:'',o:i,s})
   // AST node types: 'B' a⋄b  ':' a:b  'N' 1  'S' 'a'  'X' a  'J' «a»  '⍬' ()  '{' {}  '[' a[b]  '←' a←b  '.' a b
-  // '.' gets replaced with: 'V' 1 2  'M' +1  'D' 1+2  'A' +/  'C' +.×  'T' +÷  'F' +÷≢
+  // '.' gets replaced with: 'V' 1 2  'M' +1  'D' 1+2  'A' +/  'C' +.×  'T' +÷
   i=0 // offset in a
   const dmnd=x=>a[i].t===x?i++:prsErr()
   ,prsErr=x=>synErr({file:o.file,offset:a[i].o,aplCode:s})
@@ -1093,8 +1093,7 @@ const NOUN=1,VRB=2,ADV=3,CNJ=4
               i++
             }
           }
-          if(h.length===2&&h[h.length-1]==VRB){a=[['T'].concat(a)];h=[VRB]}             // atops
-          if(h.length>=3&&h.length%2&&h[h.length-1]===VRB){a=[['F'].concat(a)];h=[VRB]} // forks
+          if(h.length>1&&h[h.length-1]===VRB){a=[['T'].concat(a)];h=[VRB]} // trains
           if(h[h.length-1]!==NOUN){
             if(h.length>1)synErrAt(a[h.length-1])
           }else{
@@ -1148,10 +1147,9 @@ const NOUN=1,VRB=2,ADV=3,CNJ=4
     case'M':return rndr(x[2]).concat(rndr(x[1]),MON)
     case'A':return rndr(x[1]).concat(rndr(x[2]),MON)
     case'D':case'C':return rndr(x[3]).concat(rndr(x[2]),rndr(x[1]),DYA)
-    case'T':{const v=x.scp.v._atop;return rndr(x[2]).concat(GET,v.d,v.i,rndr(x[1]),DYA)}
-    case'F':{const u=x.scp.v._atop,v=x.scp.v._fork1,w=x.scp.v._fork2;let i=x.length-1,r=rndr(x[i--])
+    case'T':{const u=x.scp.v._atop,v=x.scp.v._fork1,w=x.scp.v._fork2;let i=x.length-1,r=rndr(x[i--])
              while(i>=2)r=r.concat(GET,v.d,v.i,rndr(x[i--]),DYA,GET,w.d,w.i,rndr(x[i--]),DYA)
-             return i?r.concat(rndr(x[1]),GET,u.d,u.i,DYA):r}
+             return i?r.concat(GET,u.d,u.i,rndr(x[1]),DYA):r}
   }}
   const rndrLHS=x=>{switch(x[0]){default:asrt(0)
     case'X':{const s=x[1],vars=x.scp.v,v=vars['set_'+s];return v&&v.g===VRB?[GET,v.d,v.i,MON]:[SET,vars[s].d,vars[s].i]}
