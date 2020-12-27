@@ -1,11 +1,11 @@
-**i'll delete this project in january 2021**
+**This is an archive of ngn/apl**
 
-**it served its purpose and has now become a distraction.
-most of my free time now is devoted to creating a free [impl](https://git.sr.ht/~ngn/k) of [k6](https://en.wikipedia.org/wiki/K_(programming_language)) (a simpler and faster language than apl) and i encourage people to use that instead**
+**Its author thinks it has served its purpose and has become a distraction.
+Most of his free time now is devoted to creating a free [implementation](https://git.sr.ht/~ngn/k) of [K6](https://en.wikipedia.org/wiki/K_(programming_language)) and he encourages people to use that instead.**
 
 ----
 
-**[Demo](https://n9n.gitlab.io/apl/web/index.html)**<br>
+**[Demo](https://abrudz.github.io/ngn-apl)**<br>
 
 An [APL](https://en.wikipedia.org/wiki/APL_%28programming_language%29) interpreter written in JavaScript.
 Runs in a browser or [NodeJS](https://nodejs.org/).
