@@ -1,3 +1,10 @@
+**i'll delete this project in january 2021**
+
+**it served its purpose and has now become a distraction.
+most of my free time now is devoted to creating a free [impl](https://git.sr.ht/~ngn/k) of [k6](https://en.wikipedia.org/wiki/K_(programming_language)) (a simpler and faster language than apl) and i encourage people to use that instead**
+
+----
+
 **[Demo](https://n9n.gitlab.io/apl/web/index.html)**<br>
 
 An [APL](https://en.wikipedia.org/wiki/APL_%28programming_language%29) interpreter written in JavaScript.
