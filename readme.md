@@ -1,7 +1,7 @@
 **This is an archive of ngn/apl**
 
 **Its author thinks it has served its purpose and has become a distraction.
-Most of his free time now is devoted to creating a free [implementation](https://git.sr.ht/~ngn/k) of [K6](https://en.wikipedia.org/wiki/K_(programming_language)) and he encourages people to use that instead.**
+Most of his free time now is devoted to creating a free [implementation](https://codeberg.org/ngn/k) of [K6](https://en.wikipedia.org/wiki/K_(programming_language)) and he encourages people to use that instead.**
 
 ----
 
