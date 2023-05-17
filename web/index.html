@@ -1,28 +1,40 @@
 <!DOCTYPE html>
-<html><head><meta charset=utf-8><title>ngn/apl</title><style>
-@font-face{font-family:a;src:url(Apl385.woff)format('woff');}
-/* http://www.apl385.com/fonts/index.htm as of 2017-08-10 says:
-"All fonts listed on this page are original artwork by Adrian Smith, and are freely placed into the public domain." */
-body,textarea,input{font-family:a,monospace}
-a{color:#008;text-decoration:none}
-a:hover{text-decoration:underline}
-#code{width:100%;outline:none}
-#go{float:right;width:64px}
-#rslt{margin-top:16px;white-space:pre}
-#rslt.err{color:red}
-</style></head><body>
-<span style=float:right>
- <a href='javascript:(d=>{let e=d.createElement("script");e.src="https://n9n.gitlab.io/apl/web/lb.js";d.body.appendChild(e)})(document)'
-    id=lbbm title='bookmarklet - language bar in (almost) any web page'>lb</a>
- <a id=perm href=# title='bookmarkable link to the APL code below'>#</a>
-</span>
-<a id=logo href=https://github.com/abrudz/ngn-apl#readme title='project home at github'>ngn/apl</a>
-<textarea id=code rows=8 autofocus></textarea>
-<input id=go type=submit value=⍎ title='Execute (Ctrl-Enter)'>
-<div id=rslt></div>
-<script src=../apl.js></script>
-<script src=../t.js  ></script>
-<script src=index.js ></script>
-<script src=lb.js    ></script>
+<html lang="en">
+<head>
+   <meta charset=utf-8>
+   <title>ngn/apl</title>
+   <meta name="viewport" content="width=device-width, initial-scale=1">
+   <style>
+      @font-face{font-family:a;src:url(Apl385.woff)format('woff');}
+      /* http://www.apl385.com/fonts/index.htm as of 2017-08-10 says: "All fonts listed on this page are original artwork by Adrian Smith, and are freely placed into the public domain." */
+      html{font-size:110%}
+      body,textarea,input{font-family:a,monospace}
+      a{color:#008;text-decoration:none}
+      a:hover{text-decoration:underline}
+      #code{width:100%;outline:none}
+      #go{float:right;width:64px}
+      #rslt{margin-top:16px;white-space:pre}
+      #rslt.err{color:red}
+   </style>
+</head>
+<body>
+   <header>
+      <h1 id="page-title">
+         <a id="logo" href="https://github.com/abrudz/ngn-apl#readme" title='project home at github'>ngn/apl</a>
+      </h1>
+   </header>
+   <nav style=float:right>
+      <a href='javascript:(d=>{let%20e=d.createElement("script");e.src="https://abrudz.github.io/lb/lb.js";d.body.appendChild(e)})(document)' id="lbbm" title="bookmarklet - language bar in (almost) any web page">lb</a>
+      <a id="perm" href="#" title='bookmarkable link to the APL code below'>#</a>
+   </nav>
+   <main>
+      <textarea id="code" rows="8" aria-labelledby="page-title" autofocus></textarea>
+      <input id="go" type="submit" value="run" title='Execute (Ctrl-Enter)'>
+      <div id="rslt"></div>
+   </main>
+   <script src="../apl.js"></script>
+   <script src="../t.js"></script>
+   <script src="index.js"></script>
+   <script src="lb.js"></script>
 </body>
 </html>
