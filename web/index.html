@@ -5,10 +5,12 @@
    <title>ngn/apl</title>
    <meta name="viewport" content="width=device-width, initial-scale=1">
    <style>
-      @font-face{font-family:a;src:url(Apl385.woff)format('woff');}
+      @font-face{font-family:'a';src:url('Apl385.woff')format('woff');}
       /* http://www.apl385.com/fonts/index.htm as of 2017-08-10 says: "All fonts listed on this page are original artwork by Adrian Smith, and are freely placed into the public domain." */
       html{font-size:110%}
       body,textarea,input{font-family:a,monospace}
+      textarea{font-size: 1.25em}
+      input{font-size:1.75em;}
       a{color:#008;text-decoration:none}
       a:hover{text-decoration:underline}
       #code{width:100%;outline:none}
@@ -29,7 +31,7 @@
    </nav>
    <main>
       <textarea id="code" rows="8" aria-labelledby="page-title" autofocus></textarea>
-      <input id="go" type="submit" value="run" title='Execute (Ctrl-Enter)'>
+      <input id="go" type="submit" value="⍎" title='Execute (Ctrl-Enter)'>
       <div id="rslt"></div>
    </main>
    <script src="../apl.js"></script>

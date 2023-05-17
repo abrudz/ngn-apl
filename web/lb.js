@@ -29,10 +29,10 @@
   }
   let d = document, el = d.createElement('div'); el.innerHTML =
     `<div class=ngn_lb><span class=ngn_x title=Close>❎</span>${lbh}</div>
- <style>@font-face{font-family:"DejaVu Sans Mono";src:local("DejaVu Sans Mono"),url(DejaVuBQNSansMono.ttf)format('ttf');}</style>
+ <style>@font-face{font-family:'a';src:local('Apl385.woff'),url('Apl385.woff')format('woff');}</style>
  <style>
   .ngn_lb{position:fixed;top:0;left:0;right:0;background-color:#eee;color:#000;cursor:default;z-index:2147483647;
-    font-family:"DejaVu Sans Mono",monospace;border-bottom:solid #999 1px;padding:2px 2px 0 2px;word-wrap:break-word;}
+    font-family:a,monospace;border-bottom:solid #999 1px;padding:2px 2px 0 2px;word-wrap:break-word;}
   .ngn_lb b{cursor:pointer;padding:0 1px;font-weight:normal}
   .ngn_lb b:hover,.ngn_bq .ngn_lb{background-color:#777;color:#fff}
   .ngn_x{float:right;color:#999;cursor:pointer;margin-top:-3px}
