@@ -7,24 +7,70 @@
    <link rel="manifest" href="../manifest.json">
    <link rel="icon" type="image/png" href="../icons/apl-logo.png">
    <style>
-      @font-face{font-family:'a';src:url('Apl385.woff')format('woff');}
       /* http://www.apl385.com/fonts/index.htm as of 2017-08-10 says: "All fonts listed on this page are original artwork by Adrian Smith, and are freely placed into the public domain." */
-      html{font-size:110%}
-      body,textarea,input{font-family:a,monospace}
-      textarea{font-size: 1.25em}
-      input{font-size:1.75em;}
-      a{color:#008;text-decoration:none}
-      a:hover{text-decoration:underline}
-      #code{width:100%;outline:none}
-      #go{float:right;width:64px}
-      #rslt{margin-top:16px;white-space:pre}
-      #rslt.err{color:red}
+      @font-face {
+        font-family:'a';
+        src:url('Apl385.woff') format('woff');
+      }
+
+      html {
+        font-size: 110%;
+      }
+
+      body, textarea, input {
+        font-family: a,monospace;
+      }
+
+      textarea {
+        font-size: 1.25em;
+      }
+
+      input {
+        font-size: 1.75em;
+      }
+
+      a {
+        color: #008;
+        text-decoration: none;
+      }
+
+      a:hover {
+        text-decoration: underline;
+      }
+
+      #logo img {
+        height: 1em; 
+        width: auto; 
+        vertical-align: middle;
+      }
+
+      #code {
+        width: 100%;
+        outline: none;
+      }
+
+      #go {
+        float: right;
+        width: 64px;
+      }
+
+      #rslt {
+        margin-top: 16px;
+        white-space: pre;
+      }
+
+      #rslt.err {
+        color: red;
+      }
    </style>
 </head>
 <body>
    <header>
       <h1 id="page-title">
-         <a id="logo" href="https://github.com/sohang3112/ngn-apl#readme" title='project home at github'>ngn/apl</a>
+         <a id="logo" href="https://github.com/sohang3112/ngn-apl#readme" title='project home at github'>
+            <img src="../icons/apl-logo.png">
+            ngn/apl
+        </a>
       </h1>
    </header>
    <nav style=float:right>
