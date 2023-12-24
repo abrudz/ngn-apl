@@ -1,0 +1,12 @@
+{
+    "name": "ngn/apl",
+    "icons": [
+      {
+        "src": "icons/apl-logo.png",
+        "type": "image/png",
+        "sizes": "512x512"
+      }
+    ],
+    "start_url": "../web/index.html",
+    "display": "standalone"
+}

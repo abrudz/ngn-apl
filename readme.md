@@ -1,11 +1,10 @@
-**This is an archive of ngn/apl**
+**This is a fork of [ngn/apl](https://github.com/abrudz/ngn-apl)**
 
-**Its author thinks it has served its purpose and has become a distraction.
-Most of his free time now is devoted to creating a free [implementation](https://codeberg.org/ngn/k) of [K6](https://en.wikipedia.org/wiki/K_(programming_language)) and he encourages people to use that instead.**
+This fork adds the ability to install & use this as a [PWA (Progressive Web App)](https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps/Guides/What_is_a_progressive_web_app).
 
 ----
 
-**[Demo](https://abrudz.github.io/ngn-apl)**<br>
+**[Demo](https://sohang3112.github.io/ngn-apl)**
 
 An [APL](https://en.wikipedia.org/wiki/APL_%28programming_language%29) interpreter written in JavaScript.
 Runs in a browser or [NodeJS](https://nodejs.org/).
