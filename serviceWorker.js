@@ -18,7 +18,7 @@ async function addToCache() {
         await cache.addAll(urlsToCache);
         console.log('All urls cached')
     } catch(error) {
-        console.error('One or more URLs failed to cache:', error);
+        console.error('One or more URLs failed to cache:', error.url || error);
     }
 }
 
