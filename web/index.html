@@ -82,6 +82,22 @@
       <input id="go" type="submit" value="⍎" title='Execute (Ctrl-Enter)'>
       <div id="rslt"></div>
    </main>
+   <script>
+      (async function() {
+        let reg = await navigator.serviceWorker.register('../serviceWorker.js');
+        console.log('Registered Service Worker');
+        if (reg.installing) {
+            const sw = reg.installing || reg.waiting;
+            sw.onstatechange = function() {
+                if (sw.state === 'installed') {
+                    console.log('Service Worker installed');
+                }
+            };
+        } else if (reg.active) {
+            console.log('Service Worker already active');
+        }
+    })();
+   </script>
    <script src="../apl.js"></script>
    <script src="../t.js"></script>
    <script src="index.js"></script>
