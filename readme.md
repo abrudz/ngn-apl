@@ -1,4 +1,6 @@
-**This is a fork of [ngn/apl](https://github.com/abrudz/ngn-apl)**
+# ngn/apl
+
+This is a fork of [ngn/apl](https://github.com/abrudz/ngn-apl).
 
 This fork adds the ability to install & use this as a [PWA (Progressive Web App)](https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps/Guides/What_is_a_progressive_web_app).
 
