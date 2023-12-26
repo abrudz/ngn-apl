@@ -12,9 +12,14 @@ const urlsToCache = [
 ];
 
 async function addToCache() {
-    let cache = await caches.open(CACHE_NAME);
-    console.log('Opened cache');
-    return cache.addAll(urlsToCache);
+    try {
+        let cache = await caches.open(CACHE_NAME);
+        console.log('Opened cache');
+        await cache.addAll(urlsToCache);
+        console.log('All urls cached')
+    } catch(error) {
+        console.error('One or more URLs failed to cache:', error);
+    }
 }
 
 self.addEventListener('install', function(event) {
@@ -29,6 +34,9 @@ async function fetchEvent(event) {
     if (cacheResponse) {
         return cacheResponse;
     }
+
+    // Ideally there should be no cache miss 
+    // as all urls should already be added to cache when service worker was installed
     console.log('Cache missed', event.request.url)
 
     // IMPORTANT: Clone the request. A request is a stream and
@@ -51,8 +59,9 @@ async function fetchEvent(event) {
     let responseToCache = response.clone();
 
     let cache = await caches.open(CACHE_NAME);
-    cache.put(event.request, responseToCache);
+    await cache.put(event.request, responseToCache);
     console.log('Put in cache', event.request.url);
+
     return response;     
 }
 
