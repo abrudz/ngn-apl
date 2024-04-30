@@ -7,6 +7,6 @@
         "sizes": "512x512"
       }
     ],
-    "start_url": "../web/index.html",
+    "start_url": "https://sohang3112.github.io/ngn-apl/web/index.html",
     "display": "standalone"
 }
