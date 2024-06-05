@@ -4,7 +4,9 @@ Its author thinks it has served its purpose and has become a distraction. He wen
 
 ----
 
-**[Demo](https://abrudz.github.io/ngn-apl)**<br>
+[Online Demo](https://abrudz.github.io/ngn-apl) - can also be installed offline as a [PWA (Progressive Web App)](https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps/Guides/What_is_a_progressive_web_app)
+
+![Screenshot](ngn-apl-screenshot.png)
 
 An [APL](https://aplwiki.com) interpreter written in JavaScript.
 Runs in a browser or [NodeJS](https://nodejs.org/).
@@ -18,7 +20,7 @@ prototypes, modified assignment (`x+←1`), control structures (`:If`), object-o
 Used in [Paul L Jackson's web site](https://plj541.github.io/APL.js/), [repl.it](https://repl.it/languages/APL),
 and [tio.run](https://tio.run/#apl-ngn).
 
-# Offline usage
+# Offline usage with NodeJS
 
 Run `apl.js` with [Node](https://nodejs.org/) to start a REPL:
 
