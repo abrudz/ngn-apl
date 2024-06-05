@@ -4,7 +4,7 @@ Its author thinks it has served its purpose and has become a distraction. He wen
 
 ----
 
-[Online Demo](https://abrudz.github.io/ngn-apl) - can also be installed offline as a [PWA (Progressive Web App)](https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps/Guides/What_is_a_progressive_web_app)
+[Online Demo](https://abrudz.github.io/ngn-apl) - can also be installed offline as a [PWA (Progressive Web App)](https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps/Guides/What_is_a_progressive_web_app) on a computer / phone - even without internet!
 
 ![Screenshot](ngn-apl-screenshot.png)
 
