@@ -1,12 +1,14 @@
-# ngn/apl
+**This is an archive of ngn/apl but PRs to this repo are still accepted. Feel free to contribute!**
 
-Try using it online **[here](https://abrudz.github.io/ngn-apl)**. It can also be used as a [PWA (Progressive Web App)](https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps/Guides/What_is_a_progressive_web_app) on a computer / phone - even without internet!
-
-![Screenshot](ngn-apl-screenshot.png)
+Its author thinks it has served its purpose and has become a distraction. He went on to create a free [implementation](https://codeberg.org/ngn/k) of [K6](https://en.wikipedia.org/wiki/K_(programming_language)) and encouraged people to use that instead, until he stopped supporting that too.
 
 ----
 
-An [APL](https://en.wikipedia.org/wiki/APL_%28programming_language%29) interpreter written in JavaScript.
+[Online Demo](https://abrudz.github.io/ngn-apl) - can also be installed offline as a [PWA (Progressive Web App)](https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps/Guides/What_is_a_progressive_web_app)
+
+![Screenshot](ngn-apl-screenshot.png)
+
+An [APL](https://aplwiki.com) interpreter written in JavaScript.
 Runs in a browser or [NodeJS](https://nodejs.org/).
 
 Supports: most primitives, dfns (`{⍺ ⍵}`), nested arrays, complex numbers (`1j2`), infinities (`¯` or `∞`), forks and
