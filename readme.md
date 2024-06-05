@@ -1,8 +1,6 @@
-**This is an archive of ngn/apl**
+**This is an archive of ngn/apl but PRs to this repo are still accepted. Feel free to contribute!**
 
-**Its author thinks it has served its purpose and has become a distraction. He went on to create a free [implementation](https://codeberg.org/ngn/k) of [K6](https://en.wikipedia.org/wiki/K_(programming_language)) and encouraged people to use that instead, until he stopped supporting that too.**
-
-**However, this PRs to this repo are still accepted. Feel free to contribute!**
+Its author thinks it has served its purpose and has become a distraction. He went on to create a free [implementation](https://codeberg.org/ngn/k) of [K6](https://en.wikipedia.org/wiki/K_(programming_language)) and encouraged people to use that instead, until he stopped supporting that too.
 
 ----
 
