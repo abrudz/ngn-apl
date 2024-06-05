@@ -1,13 +1,14 @@
 **This is an archive of ngn/apl**
 
-**Its author thinks it has served its purpose and has become a distraction.
-Most of his free time now is devoted to creating a free [implementation](https://codeberg.org/ngn/k) of [K6](https://en.wikipedia.org/wiki/K_(programming_language)) and he encourages people to use that instead.**
+**Its author thinks it has served its purpose and has become a distraction. He went on to create a free [implementation](https://codeberg.org/ngn/k) of [K6](https://en.wikipedia.org/wiki/K_(programming_language)) and encouraged people to use that instead, until he stopped supporting that too.**
+
+**However, this PRs to this repo are still accepted. Feel free to contribute!**
 
 ----
 
 **[Demo](https://abrudz.github.io/ngn-apl)**<br>
 
-An [APL](https://en.wikipedia.org/wiki/APL_%28programming_language%29) interpreter written in JavaScript.
+An [APL](https://aplwiki.com) interpreter written in JavaScript.
 Runs in a browser or [NodeJS](https://nodejs.org/).
 
 Supports: most primitives, dfns (`{⍺ ⍵}`), nested arrays, complex numbers (`1j2`), infinities (`¯` or `∞`), forks and
