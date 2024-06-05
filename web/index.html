@@ -1,113 +1,42 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-   <meta charset=utf-8>
-   <title>ngn/apl</title>
-   <meta name="viewport" content="width=device-width, initial-scale=1">
-   <meta property="og:image" content="../ngn-apl-screenshot.png" />
+<meta charset=utf-8>
+<title>ngn/apl</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta property="og:image" content="../ngn-apl-screenshot.png" />
+<link rel="manifest" href="../manifest.json">
+<link rel="icon" type="image/png" href="../icons/apl-logo.png">
 
-   <!-- Disable cache - source: https://stackoverflow.com/a/65475919/12947681 -->
-   <meta http-equiv='cache-control' content='no-cache'> 
-   <meta http-equiv='expires' content='0'> 
-   <meta http-equiv='pragma' content='no-cache'>
+<!-- Disable cache - source: https://stackoverflow.com/a/65475919/12947681 -->
+<meta http-equiv='cache-control' content='no-cache'> 
+<meta http-equiv='expires' content='0'> 
+<meta http-equiv='pragma' content='no-cache'>
 
-   <link rel="manifest" href="../manifest.json">
-   <link rel="icon" type="image/png" href="../icons/apl-logo.png">
-   <style>
-      /* http://www.apl385.com/fonts/index.htm as of 2017-08-10 says: "All fonts listed on this page are original artwork by Adrian Smith, and are freely placed into the public domain." */
-      @font-face {
-        font-family:'a';
-        src:url('Apl385.woff') format('woff');
-      }
-
-      html {
-        font-size: 110%;
-      }
-
-      body, textarea, input {
-        font-family: a,monospace;
-      }
-
-      textarea {
-        font-size: 1.25em;
-      }
-
-      input {
-        font-size: 1.75em;
-      }
-
-      a {
-        color: #008;
-        text-decoration: none;
-      }
-
-      a:hover {
-        text-decoration: underline;
-      }
-
-      #logo img {
-        height: 1em; 
-        width: auto; 
-        vertical-align: middle;
-      }
-
-      #code {
-        width: 100%;
-        outline: none;
-      }
-
-      #go {
-        float: right;
-        width: 64px;
-      }
-
-      #rslt {
-        margin-top: 16px;
-        white-space: pre;
-      }
-
-      #rslt.err {
-        color: red;
-      }
-   </style>
-</head>
-<body>
-   <header>
-      <h1 id="page-title">
-         <a id="logo" href="https://github.com/abrudz/ngn-apl#readme" title='project home at github'>
-            <img src="../icons/apl-logo.png">
-            ngn/apl
-        </a>
-      </h1>
-   </header>
-   <nav style=float:right>
-      <a href='javascript:(d=>{let%20e=d.createElement("script");e.src="lb.js";d.body.appendChild(e)})(document)' id="lbbm" title="APL language bar to type glyphs">lb</a>
-      <a id="perm" href="#" title='bookmarkable link to the APL code below'>#</a>
-   </nav>
-   <main>
-      <textarea id="code" rows="8" aria-labelledby="page-title" autofocus></textarea>
-      <input id="go" type="submit" value="⍎" title='Execute (Ctrl-Enter)'>
-      <div id="rslt"></div>
-   </main>
-   <script>
-      (async function() {
-        let reg = await navigator.serviceWorker.register('../serviceWorker.js');
-        console.log('Registered Service Worker');
-        if (reg.installing) {
-            const sw = reg.installing || reg.waiting;
-            sw.onstatechange = function() {
-                if (sw.state === 'installed') {
-                    console.log('Service Worker installed');
-                }
-            };
-        } else if (reg.active) {
-            console.log('Service Worker already active');
-        }
-    })();
-   </script>
-   <script src="../apl.js"></script>
-   <script src="../t.js"></script>
-   <script src="index.js"></script>
-   <script src="lb.js"></script>
+<style>
+@font-face{font-family:a;src:url(Apl385.woff)format('woff');}
+/* http://www.apl385.com/fonts/index.htm as of 2017-08-10 says:
+"All fonts listed on this page are original artwork by Adrian Smith, and are freely placed into the public domain." */
+body,textarea,input{font-family:a,monospace}
+a{color:#008;text-decoration:none}
+a:hover{text-decoration:underline}
+#code{width:100%;outline:none}
+#go{float:right;width:64px}
+#rslt{margin-top:16px;white-space:pre}
+#rslt.err{color:red}
+</style></head><body>
+<span style=float:right>
+ <a href='javascript:(d=>{let e=d.createElement("script");e.src="https://n9n.gitlab.io/apl/web/lb.js";d.body.appendChild(e)})(document)'
+    id=lbbm title='bookmarklet - language bar in (almost) any web page'>lb</a>
+ <a id=perm href=# title='bookmarkable link to the APL code below'>#</a>
+</span>
+<a id=logo href=https://github.com/abrudz/ngn-apl#readme title='project home at github'>ngn/apl</a>
+<textarea id=code rows=8 autofocus></textarea>
+<input id=go type=submit value=⍎ title='Execute (Ctrl-Enter)'>
+<div id=rslt></div>
+<script src=../apl.js></script>
+<script src=../t.js  ></script>
+<script src=index.js ></script>
+<script src=lb.js    ></script>
 </body>
 </html>
