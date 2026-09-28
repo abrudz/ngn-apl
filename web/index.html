@@ -38,5 +38,22 @@ a:hover{text-decoration:underline}
 <script src=../t.js  ></script>
 <script src=index.js ></script>
 <script src=lb.js    ></script>
+<script>
+// Save APL code & output across page reloads
+const codeTextarea = document.getElementById('code');
+const rsltDiv = document.getElementById('rslt');
+const savedCode = localStorage.getItem('apl_code');
+const savedRslt = localStorage.getItem('apl_rslt');
+if (savedCode !== null) {
+    codeTextarea.value = savedCode;
+}
+if (savedRslt !== null) {
+    rsltDiv.innerHTML = savedRslt;
+}
+window.addEventListener('beforeunload', () => {
+    localStorage.setItem('apl_code', codeTextarea.value);
+    localStorage.setItem('apl_rslt', rsltDiv.innerHTML);
+});
+</script>
 </body>
 </html>
